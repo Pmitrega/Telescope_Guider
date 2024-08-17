@@ -1,4 +1,5 @@
 (fp_lib_table
   (version 7)
   (lib (name "stepper_ctrl_lib")(type "KiCad")(uri "${KIPRJMOD}/stepper_ctrl_lib.pretty")(options "")(descr ""))
+  (lib (name "stepper_controller_v2")(type "KiCad")(uri "D:/Studia/Magisterka_telskop/stepper_controller/stepper_controller_V2/pcb/stepper_controller_v2.pretty")(options "")(descr ""))
 )

@@ -1,4 +1,4 @@
-23130161572556081
+23126724103678609
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -56839,6 +56839,13 @@ heatsink
 0
 0
 0
+Hewelisz
+Hewelusz_fuse_holder
+
+
+0
+4
+2
 Inductor_SMD
 L_6.3x6.3_H3
 Choke, SMD, 6.3x6.3mm 3mm height
@@ -94734,27 +94741,6 @@ Varistor
 Varistor_Panasonic_VF
 Panasonic VF series varistor, 6x8mm body, 3.2mm height, https://mediap.industry.panasonic.eu/assets/imported/industrial.panasonic.com/cdbs/www-data/pdf/AWA0000/AWA0000C4.pdf
 Varistor VF
-0
-2
-2
-stepper_controller_v2
-stars
-
-
-0
-0
-0
-stepper_ctrl_lib
-stepper ST4
-
-
-0
-6
-6
-stepper_ctrl_lib
-stepper TACT_SWITCH
-
-
 0
 2
 2
