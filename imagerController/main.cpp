@@ -1,39 +1,20 @@
 #include <cstdlib>
 #include "ASICamera2.h"
-#include <stdio.h>
+#include <iostream>
+#include "cameraController.hpp"
+#include "logger.hpp"
 
 int main(){
-    int width;
-	const char* bayer[] = {"RG","BG","GR","GB"};
-
-	int height;
-	int i;
-	char c;
-	bool bresult;
-
-	int time1,time2;
-	int count=0;
-
-	char buf[128]={0};
-
-	int CamNum=0;
-
-	int numDevices = ASIGetNumOfConnectedCameras();
-	if(numDevices <= 0)
-	{
-		printf("no camera connected, press any key to exit\n");
-		getchar();
-		return -1;
+	
+	CameraController cam_controller;
+	cam_controller.scanForCameras();
+	auto camera_list = cam_controller.getCameraList();
+	std::cout<< camera_list.size() << std::endl;
+	for(auto it = camera_list.cbegin(); it < camera_list.cend(); it++ ){
+		std::cout<< (*it) << std::endl;
 	}
-	else
-		printf("attached cameras:\n");
-
-	ASI_CAMERA_INFO ASICameraInfo;
-
-	for(i = 0; i < numDevices; i++)
-	{
-		ASIGetCameraProperty(&ASICameraInfo, i);
-		printf("%d %s\n",i, ASICameraInfo.Name);
-	}
+	cam_controller.openCameraByProducerAndID(ASI, 0U);
+	cam_controller.setCameraExposure_us(10);
+	cam_controller.setCameraGain(110);
     return EXIT_SUCCESS;
 }
