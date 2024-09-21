@@ -5,7 +5,6 @@
 #include "logger.hpp"
 
 int main(){
-	
 	CameraController cam_controller;
 	cam_controller.scanForCameras();
 	auto camera_list = cam_controller.getCameraList();
@@ -14,7 +13,10 @@ int main(){
 		std::cout<< (*it) << std::endl;
 	}
 	cam_controller.openCameraByProducerAndID(ASI, 0U);
-	cam_controller.setCameraExposure_us(10);
-	cam_controller.setCameraGain(110);
+	cam_controller.setCameraExposure_us(10000);
+	cam_controller.setCameraGain(50);
+	cam_controller.setImageType(IMG_RAW16);
+	cam_controller.takeAnImage();
+	cam_controller.saveBufferToFile("abc.raw");
     return EXIT_SUCCESS;
 }
