@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
         std::string s(argv[1]);
         if(s == "-h"){
             std::cout << "----HELP----" <<std::endl;
-            std::cout << "{width} {height} {input} {output} - to convert RAW16 to tiff with the same name" <<std::endl;
+            std::cout << "{width} {height} {input} {output} - to convert RAW16 to any file (cv recognized output format by extension)" <<std::endl;
         }
         return 0;
     }
