@@ -2,6 +2,7 @@
 #include <vector>
 #include <memory>
 #include <map>
+#include <atomic>
 
 #include "ASICamera2.h"
 
@@ -57,7 +58,7 @@ class CameraController{
         ~CameraController();
 
         /**
-        * @brief Updated internal list of connected cameras, 
+        * @brief Updated internal list of connected cameras,
         * @return number of found cameras
         */
         int scanForCameras();
@@ -78,15 +79,27 @@ class CameraController{
          *         when setting gain failed it returns -1
          */
         int setCameraGain(int gain);
+
         /**
          * @brief set image tape
          */
         bool setImageType(IMG_TYPE img_type);
         /**
+         * @brief set image tape
+         */
+        std::shared_ptr<uint8_t[]> getBuffer(){
+            return m_image_buffer;
+        }
+
+        /**
          * @brief Close currently opened camera
          */
         bool closeCamera();
 
+        /**
+         * @brief Takes and image
+         */
+        void runContionousCapture(uint16_t ms_betw_frames);
         /**
          * @brief Takes and image
          */
@@ -102,7 +115,12 @@ class CameraController{
         /**
          * @brief Stops exposure
          */
-        bool stopsExposure();
+        bool stopExposure();
+        /**
+         * @brief Calls camera API to get exposure time in us
+         * returns -1 if can't read exposure value.
+         */
+        int getExposuretTime_us();
 
     protected:
         /**
@@ -115,6 +133,7 @@ class CameraController{
         std::pair<uint16_t, uint16_t> getImageSizeASI();
         IMG_TYPE getImageTypeSVBONY();
     private:
+        std::atomic<bool> m_run_countinious_capture = false;
         std::shared_ptr<uint8_t[]> m_image_buffer;
         long m_image_buffer_size;
         std::vector<CameraInfo> m_camera_list;

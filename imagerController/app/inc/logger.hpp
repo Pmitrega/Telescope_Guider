@@ -22,7 +22,7 @@
             printf(x, ##__VA_ARGS__); \
             printf(KDEF); \
         }
-#else        
+#else
 #define LOG_INFO(x, ...)
 #endif
 
@@ -34,7 +34,7 @@
             printf(x, ##__VA_ARGS__); \
             printf(KDEF); \
         }
-#else        
+#else
 #define LOG_WARNING(x, ...)
 #endif
 
@@ -46,6 +46,6 @@
             printf(x, ##__VA_ARGS__); \
             printf(KDEF); \
         }
-#else        
+#else
 #define LOG_ERROR(x, ...)
 #endif

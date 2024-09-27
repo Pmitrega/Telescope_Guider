@@ -4,6 +4,9 @@
 #include <iomanip>
 #include <memory>
 #include <fstream>
+#include <chrono>
+#include <ctime>
+#include <thread>
 
 #include "ASICamera2.h"
 #include "cameraController.hpp"
@@ -295,6 +298,35 @@ std::pair<uint16_t, uint16_t> CameraController::getImageSizeASI(){
     return ret;
 }
 
+void CameraController::runContionousCapture(uint16_t ms_betw_frames){
+    int read_exposure = getExposuretTime_us();
+    if(read_exposure == -1){
+        LOG_ERROR("Couldn't start countinous capture! \r\n");
+        return;
+    }
+
+    m_run_countinious_capture.store(true);
+    while(m_run_countinious_capture.load()){
+        auto capture_start_time =  std::chrono::system_clock::now();
+        if(takeAnImage() != CAM_CTRL_FAIL){
+            saveBufferToFile("test_dd.raw");
+            auto capture_end_time =  std::chrono::system_clock::now();
+            std::chrono::duration<float> elapesed_time = capture_end_time - capture_start_time;
+            std::cout << "et:"<< elapesed_time<< std::endl;
+            int sleep_time = (ms_betw_frames) - static_cast<int>(1000*elapesed_time.count());
+            std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
+            capture_end_time =  std::chrono::system_clock::now();
+            elapesed_time = capture_end_time - capture_start_time;
+            std::cout << "Image captured et:"<< elapesed_time<< std::endl;
+        }
+        else{
+            LOG_ERROR("Couldn't take an image! \r\n");
+            m_run_countinious_capture.store(false);
+        }
+
+    }
+    return;
+}
 
 bool CameraController::prepareImageBuffer(){
     bool ret = CAM_CTRL_FAIL;
@@ -331,6 +363,7 @@ bool CameraController::prepareImageBuffer(){
     }
     return ret;
 }
+
 
 
 bool CameraController::takeAnImage(){
@@ -371,7 +404,10 @@ bool CameraController::saveBufferToFile(std::string filename){
         fout.open(filename.c_str(), std::ios::binary | std::ios::out);
         fout.write((const char *)m_image_buffer.get(), m_image_buffer_size);
         fout.close();
+    }else{
+        return CAM_CTRL_FAIL;
     }
+    return CAM_CTRL_SUCCESS;
 }
 
 bool CameraController::startExposure(){
@@ -398,7 +434,7 @@ bool CameraController::startExposure(){
     }
     return ret;
 }
-bool CameraController::stopsExposure(){
+bool CameraController::stopExposure(){
     bool ret = CAM_CTRL_FAIL;
     if(m_connected_camera != nullptr){
         LOG_WARNING("There is no camera connected, can't stop exposure \r\n")
@@ -421,5 +457,32 @@ bool CameraController::stopsExposure(){
         }
     }
 
+    return ret;
+}
+
+
+int CameraController::getExposuretTime_us(){
+    int ret = -1;
+    switch (m_connected_camera->cameraProducer)
+    {
+    case ASI:
+        {
+        long read_exposure;
+        ASI_BOOL is_auto;
+        if(ASIGetControlValue(m_connected_camera->cameraID, ASI_EXPOSURE, &read_exposure, &is_auto) == ASI_SUCCESS){
+            ret = read_exposure;
+        }
+        else{
+            LOG_ERROR("Couldn't read camera exposuer \r\n");
+        }
+        }
+        break;
+    case SVBONY:
+        {
+        }
+        break;
+    default:
+        break;
+    }
     return ret;
 }
