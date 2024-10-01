@@ -24,4 +24,4 @@ set(INCLUDES
 add_executable(${PROJECT_NAME} ${SOURCES})
 
 target_include_directories(${PROJECT_NAME} ${INCLUDES})
-target_link_libraries(${PROJECT_NAME} ASICamera2 opencv_core opencv_imgcodecs opencv_imgproc)
+target_link_libraries(${PROJECT_NAME} ASICamera2 opencv_core opencv_imgcodecs opencv_imgproc opencv_highgui)
