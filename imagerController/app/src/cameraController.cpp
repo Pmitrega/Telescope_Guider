@@ -351,7 +351,8 @@ bool CameraController::prepareImageBuffer(){
                                                                         m_roi_info.height,
                                                                         image_bytes)
             if(m_img_type != IMG_END && img_size.first != 0 && img_size.second !=0){
-                m_image_buffer = std::make_shared<uint8_t[]>(image_bytes, 0);
+                uint8_t* buffer = new uint8_t[image_bytes];
+                m_image_buffer = std::make_shared<uint8_t*>(buffer);
                 m_image_buffer_size = image_bytes;
             }
             break;
@@ -383,7 +384,7 @@ bool CameraController::takeAnImage(){
             }
         }
         if(exp_status == ASI_EXP_SUCCESS){
-            auto asi_ret = ASIGetDataAfterExp(m_connected_camera->cameraID, m_image_buffer.get(), m_image_buffer_size);
+            auto asi_ret = ASIGetDataAfterExp(m_connected_camera->cameraID, (uint8_t*)m_image_buffer.get(), m_image_buffer_size);
             if(asi_ret == ASI_SUCCESS){
                 ret = CAM_CTRL_SUCCESS;
             }

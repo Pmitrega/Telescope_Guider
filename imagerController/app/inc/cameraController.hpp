@@ -87,7 +87,7 @@ class CameraController{
         /**
          * @brief set image tape
          */
-        std::shared_ptr<uint8_t[]> getBuffer(){
+        std::shared_ptr<uint8_t*> getBuffer(){
             return m_image_buffer;
         }
 
@@ -134,7 +134,7 @@ class CameraController{
         IMG_TYPE getImageTypeSVBONY();
     private:
         std::atomic<bool> m_run_countinious_capture = false;
-        std::shared_ptr<uint8_t[]> m_image_buffer;
+        std::shared_ptr<uint8_t*> m_image_buffer;
         long m_image_buffer_size;
         std::vector<CameraInfo> m_camera_list;
         CameraROIInfo m_roi_info;

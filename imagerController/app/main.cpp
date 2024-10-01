@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <thread>
 #include <fstream>
+#include <chrono>
 
 #include "ASICamera2.h"
 #include <iostream>

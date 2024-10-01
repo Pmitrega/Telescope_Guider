@@ -180,6 +180,6 @@ cv::Mat StarLocator::filterAndTreshold(cv::Mat& image_to_filter, cv::Mat& im_fil
     double min, max;
     cv::minMaxLoc(im_filtered, &min, &max);
     im_filtered.convertTo(im_filtered, CV_16U);
-    cv::threshold(im_filtered, im_filtered, min*6/2, UINT16_MAX, cv::THRESH_BINARY);
+    cv::threshold(im_filtered, im_filtered, min*3/2, UINT16_MAX, cv::THRESH_BINARY);
     return im_filtered;
 }
