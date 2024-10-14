@@ -190,7 +190,7 @@ void StartDefaultTask(void *argument)
   osDelay(10);
   initializeMotors();
   setDecMotorSpeed(-147);
-  setRaMotorSpeed(-1470);
+  setRaMotorSpeed(-14);
   const uint16_t LED_BRIGHTNESS = 30;
   osMutexAcquire(usbTransmitMutexHandle, 0U);
   CDC_Transmit_FS("STAR GUIDER CONTROLLER!\r\n"
@@ -255,9 +255,9 @@ void voltageInfoTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(100);
+    osDelay(1000);
     osMutexAcquire(usbTransmitMutexHandle, 0U);
-    int length = sprintf(uart_transmit_buffer,"%d, %d, %d\r\n", getBatteryVoltagemV(), getBuck1VoltagemV(), getBuck2VoltagemV());
+    int length = sprintf(uart_transmit_buffer,"%d, %d\r\n", getStepsRa(), getStepsDec());
     CDC_Transmit_FS(uart_transmit_buffer, length);
     osMutexRelease(usbTransmitMutexHandle);
     if(suspendVoltageInfo == 1){
@@ -332,10 +332,10 @@ int USB_CDC_RxHandler(uint8_t* Buf, uint32_t *Len){
       }
       else if(strcmp(cmd_buff, "VI") == 0){
         if(Buf[4] == '1'){
-          suspendVoltageInfo = 1;
+          suspendVoltageInfo = 0;
         }
         else if(Buf[4] == '0'){
-          suspendVoltageInfo = 0;
+          suspendVoltageInfo = 1;
         }
       }
       }

@@ -83,6 +83,12 @@ void stopMotorDec(){
 void shutdownMotors(){
 }
 
+int getStepsRa(){
+    return fullStepsRa;
+}
+int getStepsDec(){
+    return fullStepsDec;
+}
 /*Requested speed in Full_steps per minute for Ra motor*/
 void setRaMotorSpeed(int requested_speed){
     if(requested_speed < 0){
@@ -92,8 +98,12 @@ void setRaMotorSpeed(int requested_speed){
     else{
         RaDir = 1;
     }
-    uint32_t PSC_value = (4 *(uint32_t)FULL_STEP)/((uint32_t)microsteps) - 1;
-    uint32_t CCR_value = (SystemCoreClock/(uint32_t)(requested_speed))/(PSC_value * 64/(uint32_t)microsteps) * SECONDS_IN_MINUTE;
+    uint32_t PSC_value = ((uint32_t)FULL_STEP)/((uint32_t)microsteps) - 1;
+    uint32_t CCR_value = (uint32_t)((float)SystemCoreClock/(float)(requested_speed))/(((float)PSC_value+1.f) * 64/(float)microsteps) * SECONDS_IN_MINUTE - 1;
+    while(CCR_value >= UINT16_MAX){
+        PSC_value = (PSC_value+1)*2-1;
+        CCR_value = (uint32_t)((float)SystemCoreClock/(float)(requested_speed))/(((float)PSC_value+1.f) * 64/(float)microsteps) * SECONDS_IN_MINUTE - 1;
+    }
     __HAL_TIM_SET_AUTORELOAD(&htim6,  CCR_value);
     __HAL_TIM_SET_PRESCALER(&htim6, PSC_value);
 }
@@ -108,8 +118,12 @@ void setDecMotorSpeed(int requested_speed){
     else{
         DecDir = 1;
     }
-    uint32_t PSC_value = (4 *(uint32_t)FULL_STEP)/((uint32_t)microsteps) - 1;
-    uint32_t CCR_value = (SystemCoreClock/(uint32_t)(requested_speed))/(PSC_value * 64/(uint32_t)microsteps) * SECONDS_IN_MINUTE;
+    uint32_t PSC_value = ((uint32_t)FULL_STEP)/((uint32_t)microsteps) - 1;
+    uint32_t CCR_value = (uint32_t)((float)SystemCoreClock/(float)(requested_speed))/(((float)PSC_value+1.f) * 64/(float)microsteps) * SECONDS_IN_MINUTE - 1;
+    while(CCR_value >= UINT16_MAX){
+        PSC_value = (PSC_value+1)*2-1;
+        CCR_value = (uint32_t)((float)SystemCoreClock/(float)(requested_speed))/(((float)PSC_value+1.f) * 64/(float)microsteps) * SECONDS_IN_MINUTE - 1;
+    }
     __HAL_TIM_SET_AUTORELOAD(&htim7,  CCR_value);
     __HAL_TIM_SET_PRESCALER(&htim7, PSC_value);
 }
