@@ -1,6 +1,7 @@
 #include "motor_controller.h"
 #include "tim.h"
 
+
 #define SECONDS_IN_MINUTE (60U)
 
 const uint16_t PWM1_microsteps_array[] = {1000 ,902  ,805  ,710  ,618  ,529  ,445  ,366  ,293  ,227  ,169  ,119  ,77   ,44   ,20   ,5    ,
@@ -34,6 +35,12 @@ typedef enum NUMBER_OF_MICROSTEPS{
 /*division of frequency of */
 static uint32_t frequency_division;
 
+static int RaDir = 1;
+static int DecDir = 1;
+
+static int fullStepsRa = 0;
+static int fullStepsDec = 0;
+
 static NUMBER_OF_MICROSTEPS microsteps = MICROSTEPS_16;
 
 extern uint32_t SystemCoreClock;
@@ -57,20 +64,86 @@ void initializeMotors(){
     HAL_TIM_Base_Start_IT(&htim7);
 }
 
+void startMotorRa(){
+    HAL_TIM_Base_Start_IT(&htim6);
+}
+
+void startMotorDec(){
+    HAL_TIM_Base_Start_IT(&htim7);
+}
+
+void stopMotorRa(){
+    HAL_TIM_Base_Stop_IT(&htim6);
+}
+
+void stopMotorDec(){
+    HAL_TIM_Base_Stop_IT(&htim7);
+}
+
+void shutdownMotors(){
+}
+
 /*Requested speed in Full_steps per minute for Ra motor*/
-void setRaMotorSpeed(uint32_t requested_speed){
-    uint32_t PSC_value = (72U*(uint32_t)FULL_STEP)/((uint32_t)microsteps) - 1;
-    uint32_t CCR_value = (SystemCoreClock/(uint32_t)(requested_speed * SECONDS_IN_MINUTE))/(PSC_value * 4);
-    __HAL_TIM_SET_COMPARE(&htim6, TIM_CHANNEL_1, CCR_value);
+void setRaMotorSpeed(int requested_speed){
+    if(requested_speed < 0){
+        requested_speed = -requested_speed;
+        RaDir = -1;
+    }
+    else{
+        RaDir = 1;
+    }
+    uint32_t PSC_value = (4 *(uint32_t)FULL_STEP)/((uint32_t)microsteps) - 1;
+    uint32_t CCR_value = (SystemCoreClock/(uint32_t)(requested_speed))/(PSC_value * 64/(uint32_t)microsteps) * SECONDS_IN_MINUTE;
+    __HAL_TIM_SET_AUTORELOAD(&htim6,  CCR_value);
     __HAL_TIM_SET_PRESCALER(&htim6, PSC_value);
 }
 
 
 /*Requested speed in Full_steps per minute for Dec motor*/
-void setDecMotorSpeed(uint32_t requested_speed){
-    uint32_t PSC_value = (72U*(uint32_t)FULL_STEP)/((uint32_t)microsteps) - 1;
-    uint32_t CCR_value = (SystemCoreClock/(uint32_t)(requested_speed * SECONDS_IN_MINUTE))/(PSC_value * 4);
-    __HAL_TIM_SET_COMPARE(&htim7, TIM_CHANNEL_1, CCR_value);
+void setDecMotorSpeed(int requested_speed){
+    if(requested_speed < 0){
+        requested_speed = -requested_speed;
+        DecDir = -1;
+    }
+    else{
+        DecDir = 1;
+    }
+    uint32_t PSC_value = (4 *(uint32_t)FULL_STEP)/((uint32_t)microsteps) - 1;
+    uint32_t CCR_value = (SystemCoreClock/(uint32_t)(requested_speed))/(PSC_value * 64/(uint32_t)microsteps) * SECONDS_IN_MINUTE;
+    __HAL_TIM_SET_AUTORELOAD(&htim7,  CCR_value);
     __HAL_TIM_SET_PRESCALER(&htim7, PSC_value);
 }
 
+void updateRaPWM(){
+    static int counter;
+    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, PWM1_microsteps_array[counter]);
+    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, PWM2_microsteps_array[counter]);
+    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, PWM3_microsteps_array[counter]);
+    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_4, PWM4_microsteps_array[counter]);
+    counter += (int)microsteps*RaDir;
+    if(counter >= 64){
+        counter = 0;
+        fullStepsRa +=1;
+    }
+    else if(counter < 0){
+        counter = 63;
+        fullStepsRa -=1;
+    }
+}
+
+void updateDecPWM(){
+    static int counter;
+    __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, PWM1_microsteps_array[counter]);
+    __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, PWM2_microsteps_array[counter]);
+    __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_3, PWM3_microsteps_array[counter]);
+    __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_4, PWM4_microsteps_array[counter]);
+    counter += (int)microsteps*DecDir;
+    if(counter >= 64){
+        counter = 0;
+        fullStepsDec +=1;
+    }
+    else if(counter < 0){
+        counter = 63;
+        fullStepsDec -=1;
+    }
+}

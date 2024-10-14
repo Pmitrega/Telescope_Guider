@@ -21,7 +21,11 @@
 #include "adc.h"
 
 /* USER CODE BEGIN 0 */
+
+#define FILTER_COEFF 0.05
+
 uint16_t adc_readings[ADC_TOTAL_CHANNELS];
+uint16_t adc_readings_filtered[ADC_TOTAL_CHANNELS];
 /* USER CODE END 0 */
 
 ADC_HandleTypeDef hadc1;
@@ -229,19 +233,27 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* adcHandle)
 
 /* USER CODE BEGIN 1 */
 int getBatteryVoltagemV(){
-  return BATT_RAW_TO_mV(adc_readings[BATT_V_CH]);
+  return BATT_RAW_TO_mV(adc_readings_filtered[BATT_V_CH]);
 }
 
 int getBuck1VoltagemV(){
-  return BUCK1_RAW_TO_mV(adc_readings[BUCK1_V_CH]);
+  return BUCK1_RAW_TO_mV(adc_readings_filtered[BUCK1_V_CH]);
 }
 int getBuck2VoltagemV(){
-  return BUCK2_RAW_TO_mV(adc_readings[BUCK2_V_CH]);
+  return BUCK2_RAW_TO_mV(adc_readings_filtered[BUCK2_V_CH]);
 };
 
 void startAdc(){
   HAL_ADCEx_Calibration_Start(&hadc1);
   HAL_ADC_Start_DMA(&hadc1, (uint32_t*)(adc_readings), ADC_TOTAL_CHANNELS);
+}
+
+void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
+{
+  /* Prevent unused argument(s) compilation warning */
+  adc_readings_filtered[BATT_V_CH] = (uint16_t)((float)adc_readings_filtered[BATT_V_CH] * (1.f-FILTER_COEFF) + (float)adc_readings[BATT_V_CH] * FILTER_COEFF);
+  adc_readings_filtered[BUCK1_V_CH] = (uint16_t)((float)adc_readings_filtered[BUCK1_V_CH] * (1.f-FILTER_COEFF) + (float)adc_readings[BUCK1_V_CH] * FILTER_COEFF);
+  adc_readings_filtered[BUCK2_V_CH] = (uint16_t)((float)adc_readings_filtered[BUCK2_V_CH] * (1.f-FILTER_COEFF) + (float)adc_readings[BUCK2_V_CH] * FILTER_COEFF);
 }
 
 /* USER CODE END 1 */
