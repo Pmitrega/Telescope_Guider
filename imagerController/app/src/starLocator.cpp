@@ -154,7 +154,6 @@ std::vector<StarLocator::StarCentroid> StarLocator::findStarCentroidsWCOG(const 
         centroids.push_back(centroid);
     }
     return centroids;
-
 }
 
 std::vector<StarLocator::StarCentroid> StarLocator::findStarCentroidsIWCOG(const cv::Mat& im_base,const std::vector<StarLocalizationRegion> regions){
@@ -182,4 +181,55 @@ cv::Mat StarLocator::filterAndTreshold(cv::Mat& image_to_filter, cv::Mat& im_fil
     im_filtered.convertTo(im_filtered, CV_16U);
     cv::threshold(im_filtered, im_filtered, min*3/2, UINT16_MAX, cv::THRESH_BINARY);
     return im_filtered;
+}
+
+StarLocator::StarCentroid StarLocator::matchCentroid(StarLocator::StarCentroid centroid,
+                                        const std::vector<StarLocator::StarCentroid>& searched_centroids,
+                                        double max_pixel_distance
+                                        ){
+
+    float norm = INFINITY;
+    StarCentroid found_centroid;
+    found_centroid.brightness = -1;
+    found_centroid.x_cent     = -1;
+    found_centroid.y_cent     = -1;
+
+    for(auto cent_it = searched_centroids.cbegin(); cent_it < searched_centroids.cend(); cent_it ++){
+        float calc_norm = getCentroidsNorm(centroid, *cent_it);
+        if(calc_norm < norm && calc_norm < max_pixel_distance){
+            found_centroid = *cent_it;
+            norm = calc_norm;
+        }
+    }
+
+    return found_centroid;
+}
+
+float StarLocator::getCentroidsNorm(const StarLocator::StarCentroid star1, const StarLocator::StarCentroid star2){
+    return std::sqrt((star1.x_cent-star2.x_cent)*(star1.x_cent-star2.x_cent) + (star1.y_cent-star2.y_cent)*(star1.y_cent-star2.y_cent));
+}
+
+
+StarLocator::StarCentroid StarLocator::findBestCentroid(const std::vector<StarLocator::StarCentroid>& searched_centroids, int width, int heigth){
+    float x_center = width/2;
+    float y_center = heigth/2;
+    /*Weight function will be brightness^2  - 1/25*distance from center^2
+    * A should be sth about 
+    */
+    float best_weight = -INFINITY;
+    StarCentroid best_centroid;
+    best_centroid.x_cent        = -1;
+    best_centroid.y_cent        = -1;
+    best_centroid.brightness    = -1;
+
+    for(auto cent_it = searched_centroids.cbegin(); cent_it < searched_centroids.cend(); cent_it ++){
+        float new_weigth =  ((cent_it->x_cent - x_center)*(cent_it->x_cent - x_center) + 
+                            (cent_it->y_cent - y_center)*(cent_it->y_cent - y_center)) * 10+ 
+                            cent_it->brightness*cent_it->brightness;
+        if(new_weigth > best_weight && cent_it->brightness > 10){
+            best_centroid = *cent_it;
+            best_weight = new_weigth;
+        }
+    }
+    return best_centroid;
 }
