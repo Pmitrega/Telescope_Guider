@@ -51,7 +51,7 @@ public:
     StarCentroid matchCentroid(StarCentroid centroid, const std::vector<StarCentroid>& searched_centroids, double max_pixel_distance = 20);
     StarCentroid findBestCentroid(const std::vector<StarCentroid>& searched_centroids, int width = 1280, int heigth = 960);
 protected:
-    std::vector<StarCentroid> findStarCentroidsCOG(const cv::Mat& im_base,const std::vector<StarLocalizationRegion> regions);
+    std::vector<StarCentroid>findStarCentroidsCOG(const cv::Mat& im_base,const std::vector<StarLocalizationRegion> regions);
     std::vector<StarCentroid> findStarCentroidsWCOG(const cv::Mat& im_base,const std::vector<StarLocalizationRegion> regions, std::vector<StarCentroid> initial_centroids = {});
     std::vector<StarCentroid> findStarCentroidsIWCOG(const cv::Mat& im_base,const std::vector<StarLocalizationRegion> regions);
 private:
