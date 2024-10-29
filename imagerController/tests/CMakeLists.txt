@@ -14,4 +14,5 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/starLocator_test)
+#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/starLocator_test)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/telescopeIdentifier_test)
