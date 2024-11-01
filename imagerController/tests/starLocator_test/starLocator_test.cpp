@@ -202,3 +202,42 @@ TEST_F(StarLocatorTestFixture, star_region_centroids_IWCOG_linearity){
 
     EXPECT_TRUE(true);
 }
+
+/*Star selecting tests*/
+
+
+TEST_F(StarLocatorTestFixture, find_best_star){
+    const float epsilon = 2.f;
+    const int width = 1280;
+    const int heigth = 960;
+    const int bytes_per_pixel = 2;
+    const int buffer_len = width*heigth*bytes_per_pixel;
+    char buffer[buffer_len];
+    StarLocator star_locator;
+    std::string filename;
+    readFile("./series_2000ms/image00.raw", buffer, buffer_len);
+    cv::Mat image(heigth, width, CV_16U, reinterpret_cast<uint16_t*>(buffer));
+    auto regions = star_locator.findStarsRegions(image);
+    auto star_centroids = star_locator.findStarCentroids(image, regions, StarLocator::IWCOG);
+    auto best_centr = star_locator.findBestCentroid(star_centroids);
+    std::cout << best_centr.x_cent << std::endl;
+    std::cout << best_centr.y_cent << std::endl;
+    std::cout << best_centr.brightness << std::endl;
+
+    for(int i =1; i <=30; i++){
+        if(i < 10){
+                filename = std::string("image0") + std::to_string(i) + ".raw";
+        }
+        else{
+                filename = std::string("image") + std::to_string(i) + ".raw";
+        }
+        readFile("./series_2000ms/" + filename, buffer, buffer_len);
+        cv::Mat image(heigth, width, CV_16U, reinterpret_cast<uint16_t*>(buffer));
+        auto regions = star_locator.findStarsRegions(image);
+        auto star_centroids = star_locator.findStarCentroids(image, regions, StarLocator::IWCOG);
+        auto new_centr = star_locator.matchCentroid(best_centr, star_centroids);
+        EXPECT_NEAR(new_centr.x_cent, best_centr.x_cent, 4.f);
+        EXPECT_NEAR(new_centr.y_cent, best_centr.y_cent, 4.f);
+        best_centr = new_centr;
+    }
+}
