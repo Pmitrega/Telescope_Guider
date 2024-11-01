@@ -30,6 +30,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "motor_controller.h"
+#include "trace.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -105,7 +106,8 @@ int main(void)
   MX_TIM7_Init();
   /* USER CODE BEGIN 2 */
   HAL_Delay(100);
-
+  LOG_INFO("---Stepper Controller---\r\n"
+           "Type -h for help");
   /* USER CODE END 2 */
 
   /* Init scheduler */

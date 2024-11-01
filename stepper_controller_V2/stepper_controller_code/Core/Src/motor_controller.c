@@ -2,7 +2,11 @@
 #include "tim.h"
 
 
-#define SECONDS_IN_MINUTE (60U)
+#define SECONDS_IN_MINUTE   (60U)
+
+#define MOTOR_AUTO_MODE     (0U)
+#define MOTOR_MANUAL_MODE   (1U)
+
 
 const uint16_t PWM1_microsteps_array[] = {1000 ,902  ,805  ,710  ,618  ,529  ,445  ,366  ,293  ,227  ,169  ,119  ,77   ,44   ,20   ,5    ,
                                           0    ,5    ,20   ,44   ,77   ,119  ,169  ,227  ,293  ,366  ,445  ,529  ,618  ,710  ,805  ,902  ,
@@ -34,6 +38,7 @@ typedef enum NUMBER_OF_MICROSTEPS{
 
 /*division of frequency of */
 static uint32_t frequency_division;
+static uint8_t  motor_mode = MOTOR_AUTO_MODE;
 
 static int RaDir = 1;
 static int DecDir = 1;
@@ -64,6 +69,19 @@ void initializeMotors(){
     HAL_TIM_Base_Start_IT(&htim7);
 }
 
+void startMotorAutoMode(){
+    HAL_TIM_Base_Start_IT(&htim7);
+    HAL_TIM_Base_Start_IT(&htim6);
+    motor_mode = MOTOR_AUTO_MODE;
+}
+void startMotorManualMode(){
+    HAL_TIM_Base_Stop_IT(&htim6);
+    HAL_TIM_Base_Stop_IT(&htim7);
+    motor_mode = MOTOR_MANUAL_MODE;
+}
+
+uint8_t getMotorMode(){return motor_mode;}
+
 void startMotorRa(){
     HAL_TIM_Base_Start_IT(&htim6);
 }
@@ -89,6 +107,53 @@ int getStepsRa(){
 int getStepsDec(){
     return fullStepsDec;
 }
+
+/*Set PWM for coil 1 from -1000 to 1000*/
+void setCoilM1C1(int val){
+    if(val >= 0){
+        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 1000U);
+        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, 1000 - (uint32_t)val);
+    }
+    else{
+        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 1000 - (uint32_t)(-val));
+        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, 1000U);
+    }
+}
+
+/*Set PWM for coil 2 from -1000 to 1000*/
+void setCoilM1C2(int val){
+    if(val >= 0){
+        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, 1000U);
+        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_4, 1000 - (uint32_t)val);
+    }
+    else{
+        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, 1000 - (uint32_t)(-val));
+        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_4, 1000U);
+    }
+}
+
+void setCoilM2C1(int val){
+    if(val >= 0){
+        __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 1000U);
+        __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, 1000 - (uint32_t)val);
+    }
+    else{
+        __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 1000 - (uint32_t)(-val));
+        __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, 1000U);
+    }
+}
+
+void setCoilM2C2(int val){
+    if(val >= 0){
+        __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_3, 1000U);
+        __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_4, 1000 - (uint32_t)val);
+    }
+    else{
+        __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_3, 1000  - (uint32_t)(-val));
+        __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_4, 1000U);
+    }
+}
+
 /*Requested speed in Full_steps per minute for Ra motor*/
 void setRaMotorSpeed(int requested_speed){
     if(requested_speed < 0){
@@ -135,6 +200,9 @@ void updateRaPWM(){
     __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, PWM3_microsteps_array[counter]);
     __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_4, PWM4_microsteps_array[counter]);
     counter += (int)microsteps*RaDir;
+
+    htim8.Instance->CCR2 = PWM1_microsteps_array[counter];
+
     if(counter >= 64){
         counter = 0;
         fullStepsRa +=1;
@@ -152,6 +220,12 @@ void updateDecPWM(){
     __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_3, PWM3_microsteps_array[counter]);
     __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_4, PWM4_microsteps_array[counter]);
     counter += (int)microsteps*DecDir;
+
+    htim8.Instance->CCR1 = PWM1_microsteps_array[counter];
+    //   osDelay(10);
+    // }
+    // for(uint16_t i = 0; i < LED_BRIGHTNESS; i++){
+    //   htim8.Instance->CCR2 = LED_BRIGHTNESS * 10U - i * 10U - 8U;
     if(counter >= 64){
         counter = 0;
         fullStepsDec +=1;

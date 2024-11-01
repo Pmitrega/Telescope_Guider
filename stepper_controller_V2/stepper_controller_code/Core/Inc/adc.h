@@ -35,10 +35,11 @@ extern "C" {
 extern ADC_HandleTypeDef hadc1;
 
 /* USER CODE BEGIN Private defines */
+#define CALIB_COEFF 1532
 #define ADC_TOTAL_CHANNELS 8U
-#define BATT_RAW_TO_mV(RAW) (int)((RAW * 10000) / 1562)
-#define BUCK1_RAW_TO_mV(RAW) (int)((RAW * 10000) / 1562)
-#define BUCK2_RAW_TO_mV(RAW) (int)((RAW * 10000) / 1562)
+#define BATT_RAW_TO_mV(RAW) (int)((RAW * 10000) / CALIB_COEFF)
+#define BUCK1_RAW_TO_mV(RAW) (int)((RAW * 10000) / CALIB_COEFF)
+#define BUCK2_RAW_TO_mV(RAW) (int)((RAW * 10000) / CALIB_COEFF)
 /* USER CODE END Private defines */
 
 void MX_ADC1_Init(void);
@@ -48,6 +49,12 @@ void MX_ADC1_Init(void);
 int getBatteryVoltagemV();
 int getBuck1VoltagemV();
 int getBuck2VoltagemV();
+
+int getCurrentM1C1mA();
+int getCurrentM1C2mA();
+int getCurrentM2C1mA();
+int getCurrentM2C2mA();
+
 void startAdc();
 
 typedef enum ADC_CHANNELS{

@@ -58,6 +58,8 @@ typedef StaticSemaphore_t osStaticMutexDef_t;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim8;
+extern uint8_t uart_recieve_buff[1];
+extern UART_HandleTypeDef huart3;
 int suspendVoltageInfo = 0;
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
@@ -185,6 +187,7 @@ void StartDefaultTask(void *argument)
   HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_2);
   HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_3);
+  HAL_UART_Receive_IT(&huart3, uart_recieve_buff, 1);
   SetBuck1(ENABLE);
   SetBuck2(ENABLE);
   osDelay(10);
@@ -192,25 +195,20 @@ void StartDefaultTask(void *argument)
   setDecMotorSpeed(-147);
   setRaMotorSpeed(-14);
   const uint16_t LED_BRIGHTNESS = 30;
-  osMutexAcquire(usbTransmitMutexHandle, 0U);
-  CDC_Transmit_FS("STAR GUIDER CONTROLLER!\r\n"
-                  "  Send -h for more info!\r\n"
-                                      , 52);
-  osMutexRelease(usbTransmitMutexHandle);
   /* Infinite loop */
   for(;;)
   {
     if(!suspendVoltageInfo){
       osThreadResume(voltageInfoHandle);
     }
-    for(uint16_t i = 0; i < LED_BRIGHTNESS; i++){
-      htim8.Instance->CCR1 = LED_BRIGHTNESS * 10U - i*10U - 8U;
-      osDelay(10);
-    }
-    for(uint16_t i = 0; i < LED_BRIGHTNESS; i++){
-      htim8.Instance->CCR2 = LED_BRIGHTNESS * 10U - i * 10U - 8U;
-      osDelay(10);
-    }
+    // for(uint16_t i = 0; i < LED_BRIGHTNESS; i++){
+    //   htim8.Instance->CCR1 = LED_BRIGHTNESS * 10U - i*10U - 8U;
+    //   osDelay(10);
+    // }
+    // for(uint16_t i = 0; i < LED_BRIGHTNESS; i++){
+    //   htim8.Instance->CCR2 = LED_BRIGHTNESS * 10U - i * 10U - 8U;
+    //   osDelay(10);
+    // }
 
     for(uint16_t i = 0; i < LED_BRIGHTNESS; i++){
       htim8.Instance->CCR3 = LED_BRIGHTNESS * 10U - i * 10U - 8U;
@@ -269,84 +267,5 @@ void voltageInfoTask(void *argument)
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
-int USB_CDC_RxHandler(uint8_t* Buf, uint32_t *Len){
-  if(*Len >= 2){
-    if(Buf[0]== '-' && Buf[1] == 'h'){
-      osMutexAcquire(usbTransmitMutexHandle, 0U);
-      CDC_Transmit_FS("STAR GUIDER HELP!\r\n"
-                      "  --buck[x] - voltage of buck x\r\n"
-                      "  --batt    - voltage of battery\r\n"
-                      "  --RS[x]   - x is speed [fullsteps/minute] of Ra\r\n"
-                      "  --DS[x]   - x is speed [fullsteps/minute] of Dec\r\n"
-                      "  --VI[x]   - x is 0 or 1 if 0:Transmit voltage info of batt and buck"
-                      , 259);
-      osMutexRelease(usbTransmitMutexHandle);
-    }
-    else if(Buf[0] =='-'&& Buf[1] == '-'){
-      uint32_t st_index = 2;
-      char cmd_buff[MAX_CMD_LENGTH + 1];
-      while(st_index < *Len){
-        if(IsLetter(Buf[st_index])){
-          cmd_buff[st_index - 2] = Buf[st_index];
-          st_index = st_index + 1;
-        }
-        else{
-          /*put zero at the end and leave loop*/
-          cmd_buff[st_index -2] = '\0';
-          break;
-        }
-      }
-      if(strcmp(cmd_buff, "RS") == 0){
-        uint8_t num_buff[MAX_NUM_ARG_LENGTH];
-        uint8_t indx = 4;
-        while(Buf[indx] && indx < (MAX_NUM_ARG_LENGTH + 4)){
-          num_buff[indx - 4] = Buf[indx];
-          indx +=1;
-        }
-        num_buff[indx - 4] = '\0';
-        int numb = atoi(num_buff);
-        setRaMotorSpeed(numb);
-      }
-      else if(strcmp(cmd_buff, "DS") == 0){
-        uint8_t num_buff[MAX_NUM_ARG_LENGTH];
-        uint8_t indx = 4;
-        while(Buf[indx] && indx < (MAX_NUM_ARG_LENGTH + 4)){
-          num_buff[indx - 4] = Buf[indx];
-          indx +=1;
-        }
-        num_buff[indx - 4] = '\0';
-        int numb = atoi(num_buff);
-        setDecMotorSpeed(numb);
-      }
-      else if(strcmp(cmd_buff, "batt") == 0){
-        osMutexAcquire(usbTransmitMutexHandle, 0U);
-        int length = sprintf(uart_transmit_buffer,"Battery voltage is %d mV!\r\n", getBatteryVoltagemV());
-        CDC_Transmit_FS(uart_transmit_buffer, length);
-        osMutexRelease(usbTransmitMutexHandle);
-      }
-      else if(strcmp(cmd_buff, "buck") == 0){
-        osMutexAcquire(usbTransmitMutexHandle, 0U);
-        int length = sprintf(uart_transmit_buffer,"Buck1_V is %d mV, Buck2_V is %d mV!\r\n",getBuck1VoltagemV(), getBuck2VoltagemV());
-        CDC_Transmit_FS(uart_transmit_buffer, length);
-        osMutexRelease(usbTransmitMutexHandle);
-      }
-      else if(strcmp(cmd_buff, "VI") == 0){
-        if(Buf[4] == '1'){
-          suspendVoltageInfo = 0;
-        }
-        else if(Buf[4] == '0'){
-          suspendVoltageInfo = 1;
-        }
-      }
-      }
-      else{
-        osMutexAcquire(usbTransmitMutexHandle, 0U);
-        CDC_Transmit_FS("STAR GUIDER CONTROLLER!\r\n"
-                        "  Send -h for more info!\r\n"
-                                                , 52);
-        osMutexRelease(usbTransmitMutexHandle);
-      }
-  }
-}
 /* USER CODE END Application */
 

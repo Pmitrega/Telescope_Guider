@@ -243,6 +243,22 @@ int getBuck2VoltagemV(){
   return BUCK2_RAW_TO_mV(adc_readings_filtered[BUCK2_V_CH]);
 };
 
+int getCurrentM1C1mA(){
+  return adc_readings[MOT1_C1_SENS_CH];
+};
+
+int getCurrentM1C2mA(){
+  return adc_readings[MOT1_C2_SENS_CH];
+};
+
+int getCurrentM2C1mA(){
+  return adc_readings[MOT2_C1_SENS_CH];
+};
+
+int getCurrentM2C2mA(){
+  return adc_readings[MOT2_C2_SENS_CH];
+};
+
 void startAdc(){
   HAL_ADCEx_Calibration_Start(&hadc1);
   HAL_ADC_Start_DMA(&hadc1, (uint32_t*)(adc_readings), ADC_TOTAL_CHANNELS);
