@@ -62,21 +62,26 @@ void initializeMotors(){
     HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
     HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
     HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_4);
+}
 
+void startMotorAutoMode(){
     /*Start Ra motor timer*/
     HAL_TIM_Base_Start_IT(&htim6);
     /*Start Dec motor timer*/
     HAL_TIM_Base_Start_IT(&htim7);
-}
-
-void startMotorAutoMode(){
-    HAL_TIM_Base_Start_IT(&htim7);
-    HAL_TIM_Base_Start_IT(&htim6);
     motor_mode = MOTOR_AUTO_MODE;
 }
 void startMotorManualMode(){
     HAL_TIM_Base_Stop_IT(&htim6);
     HAL_TIM_Base_Stop_IT(&htim7);
+    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 0U);
+    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, 0U);
+    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, 0U);
+    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_4, 0U);
+    __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 0U);
+    __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, 0U);
+    __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_3, 0U);
+    __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_4, 0U);
     motor_mode = MOTOR_MANUAL_MODE;
 }
 
@@ -235,3 +240,4 @@ void updateDecPWM(){
         fullStepsDec -=1;
     }
 }
+

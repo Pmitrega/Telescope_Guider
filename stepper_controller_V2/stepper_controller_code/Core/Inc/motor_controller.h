@@ -20,6 +20,7 @@ void setCoilM1C2(int val);
 void setCoilM2C1(int val);
 void setCoilM2C2(int val);
 
+void estimateResistance();
 void startMotorAutoMode();
 void startMotorManualMode();
 uint8_t getMotorMode();

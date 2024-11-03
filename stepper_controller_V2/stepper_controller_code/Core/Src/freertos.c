@@ -184,6 +184,8 @@ void StartDefaultTask(void *argument)
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN StartDefaultTask */
   startAdc();
+  osDelay(200);
+  callibrateCurrent();
   HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_2);
   HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_3);
@@ -192,6 +194,8 @@ void StartDefaultTask(void *argument)
   SetBuck2(ENABLE);
   osDelay(10);
   initializeMotors();
+  estimateResistance();
+  startMotorAutoMode();
   setDecMotorSpeed(-147);
   setRaMotorSpeed(-14);
   const uint16_t LED_BRIGHTNESS = 30;

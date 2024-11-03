@@ -35,7 +35,7 @@ extern "C" {
 extern ADC_HandleTypeDef hadc1;
 
 /* USER CODE BEGIN Private defines */
-#define CALIB_COEFF 1532
+#define CALIB_COEFF 1544
 #define ADC_TOTAL_CHANNELS 8U
 #define BATT_RAW_TO_mV(RAW) (int)((RAW * 10000) / CALIB_COEFF)
 #define BUCK1_RAW_TO_mV(RAW) (int)((RAW * 10000) / CALIB_COEFF)
@@ -54,6 +54,9 @@ int getCurrentM1C1mA();
 int getCurrentM1C2mA();
 int getCurrentM2C1mA();
 int getCurrentM2C2mA();
+void callibrateCurrent();
+int getEstimatedBattCurrmA();
+int getBatteryPercentage();
 
 void startAdc();
 

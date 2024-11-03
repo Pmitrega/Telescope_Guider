@@ -20,12 +20,13 @@ int CmdProcessor(uint8_t* Buf, uint32_t *Len){
     if(Buf[0]== '-' && Buf[1] == 'h'){
         LOG_INFO("STAR GUIDER HELP!\r\n"
                       "  -V[x]   - voltage  0 - battery | 1 - buck1 | 2 - buck2\r\n"
-                      "  -C[x]   - current  0 - M1C1 | 1 - M1C2 | 2 - M2C1 | 2 - M2C2\r\n"
+                      "  -C[x]   - current  0 - M1C1 | 1 - M1C2 | 2 - M2C1 | 3 - M2C2 | 4 - BC\r\n"
+                      "  -P[x]   - batt percentage\r\n"
                       "  -R[x]   - x is speed [fullsteps/minute] of Ra\r\n"
                       "  -D[x]   - x is speed [fullsteps/minute] of Dec\r\n"
-                      "  -A[x]   - swich between auto and manual coil ctrl\r\n"
-                      "  -u,i,o,p[x]   - raw ctrl coil1/2/3/4\r\n"
-                      , 334);
+                      "  -A[x]   - go speed mode\r\n"
+                      "  -M[x]   - go manual control of coils\r\n"
+                      "  -u,i,o,p[x]   - raw ctrl coil1/2/3/4\r\n");
     }
     else if(Buf[0] =='-'&& Buf[1] == 'R'){
         uint8_t num_buff[MAX_NUM_ARG_LENGTH];
@@ -79,6 +80,9 @@ int CmdProcessor(uint8_t* Buf, uint32_t *Len){
             LOG_INFO("B2 %d\r\n", getBuck2VoltagemV());
         }
       }
+    else if(Buf[0] =='-'&& Buf[1] == 'P'){
+        LOG_INFO("PP %d\r\n", getBatteryPercentage());
+      }
     else if(Buf[0] =='-'&& Buf[1] == 'C'){
         uint8_t num_buff[MAX_NUM_ARG_LENGTH];
         uint8_t indx = 2;
@@ -89,27 +93,33 @@ int CmdProcessor(uint8_t* Buf, uint32_t *Len){
         num_buff[indx - 2] = '\0';
         int numb = atoi(num_buff);
         if(numb == 0){
-            LOG_INFO("M1C1 %d\r\n", getCurrentM1C1mA());
+            LOG_INFO("C0 %d\r\n", getCurrentM1C1mA());
         }
         else if(numb == 1){
-            LOG_INFO("M1C2 %d\r\n", getCurrentM1C2mA());
+            LOG_INFO("C1 %d\r\n", getCurrentM1C2mA());
         }
         else if(numb == 2){
-            LOG_INFO("M2C1 %d\r\n", getCurrentM2C1mA());
+            LOG_INFO("C2 %d\r\n", getCurrentM2C1mA());
         }
         else if(numb == 3){
-            LOG_INFO("M2C2 %d\r\n", getCurrentM2C2mA());
+            LOG_INFO("C3 %d\r\n", getCurrentM2C2mA());
+        }
+        else if(numb == 4){
+            LOG_INFO("BC %d\r\n",getEstimatedBattCurrmA());
         }
       }
     else if(Buf[0] =='-'&& Buf[1] == 'A'){
       uint8_t mode = getMotorMode();
+      if(mode == MOTOR_MANUAL_MODE){
+        startMotorAutoMode();
+        LOG_INFO("ENTERING AUTO MODE\r\n");
+      }
+      }
+    else if(Buf[0] =='-'&& Buf[1] == 'M'){
+      uint8_t mode = getMotorMode();
       if(mode == MOTOR_AUTO_MODE){
         startMotorManualMode();
         LOG_INFO("ENTERING MANUAL MODE\r\n");
-      }
-      else{
-        startMotorAutoMode();
-        LOG_INFO("ENTERING AUTO MODE\r\n");
       }
       }
     else if(Buf[0] =='-'&& (Buf[1] == 'u' || Buf[1] == 'i' || Buf[1] == 'o' || Buf[1] == 'p')){

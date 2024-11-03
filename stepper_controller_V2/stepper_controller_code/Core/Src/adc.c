@@ -21,11 +21,29 @@
 #include "adc.h"
 
 /* USER CODE BEGIN 0 */
+#include "FreeRTOS.h"
+#define RAW_TO_mA(raw)            ((int)((float)raw * 0.67f))
+#define BUCK_TO_BATT_CURR(buck)   ((float)buck * 0.75f)
+#define STANDBY_CURRENT           77 /*mA*/
+
 
 #define FILTER_COEFF 0.05
+#define BATT_CURR_FILT_COEFF 0.001
+#define BATT_VOL_FILT_COEFF 0.001
 
 uint16_t adc_readings[ADC_TOTAL_CHANNELS];
 uint16_t adc_readings_filtered[ADC_TOTAL_CHANNELS];
+uint16_t curr_callib_offset[4];
+float battery_curr = 0;
+float battery_volt = 0;
+float batt_conn_resistance = 0;
+
+static const float batt_volatage_table[] = {13500, 13000, 12850, 12800, 12750, 12500, 12300,
+                                            12150, 12050, 11950, 11810, 11660, 11510, 10500};
+
+static const int batt_perc_table []= {100, 97, 95, 93, 90, 80, 70,
+                                        60 , 50, 40, 30, 20, 10, 0};
+
 /* USER CODE END 0 */
 
 ADC_HandleTypeDef hadc1;
@@ -233,7 +251,7 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* adcHandle)
 
 /* USER CODE BEGIN 1 */
 int getBatteryVoltagemV(){
-  return BATT_RAW_TO_mV(adc_readings_filtered[BATT_V_CH]);
+  return (int)(battery_volt);
 }
 
 int getBuck1VoltagemV(){
@@ -244,20 +262,59 @@ int getBuck2VoltagemV(){
 };
 
 int getCurrentM1C1mA(){
-  return adc_readings[MOT1_C1_SENS_CH];
+  return RAW_TO_mA(adc_readings[MOT1_C1_SENS_CH] - curr_callib_offset[0]);
 };
 
 int getCurrentM1C2mA(){
-  return adc_readings[MOT1_C2_SENS_CH];
+  return RAW_TO_mA(adc_readings[MOT1_C2_SENS_CH] - curr_callib_offset[1]);
 };
 
 int getCurrentM2C1mA(){
-  return adc_readings[MOT2_C1_SENS_CH];
+  return RAW_TO_mA(adc_readings[MOT2_C1_SENS_CH] - curr_callib_offset[2]);
 };
 
+int getEstimatedBattCurrmA(){
+  return (int)battery_curr;
+}
+
 int getCurrentM2C2mA(){
-  return adc_readings[MOT2_C2_SENS_CH];
+  return RAW_TO_mA(adc_readings[MOT2_C2_SENS_CH] - curr_callib_offset[3]);
 };
+
+/*shall be called before running current through load*/
+void callibrateCurrent(){
+  curr_callib_offset[0] = 0U;
+  curr_callib_offset[1] = 0U;
+  curr_callib_offset[2] = 0U;
+  curr_callib_offset[3] = 0U;
+  for(int i = 0; i < 5; i++){
+    osDelay(10);
+    curr_callib_offset[0] += adc_readings[MOT1_C1_SENS_CH];
+    curr_callib_offset[1] += adc_readings[MOT1_C2_SENS_CH];
+    curr_callib_offset[2] += adc_readings[MOT2_C1_SENS_CH];
+    curr_callib_offset[3] += adc_readings[MOT2_C2_SENS_CH];
+  }
+  curr_callib_offset[0] /= 5U;
+  curr_callib_offset[1] /= 5U;
+  curr_callib_offset[2] /= 5U;
+  curr_callib_offset[3] /= 5U;
+}
+
+
+int getBatteryPercentage(){
+  int i = sizeof(batt_volatage_table)/sizeof(int) - 1;
+  while(i >= 0){
+    if(battery_volt > batt_volatage_table[i]){
+      i-=1;
+    }
+    else{
+      break;
+    }
+  }
+  return batt_perc_table[i];
+}
+
+
 
 void startAdc(){
   HAL_ADCEx_Calibration_Start(&hadc1);
@@ -267,9 +324,46 @@ void startAdc(){
 void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
 {
   /* Prevent unused argument(s) compilation warning */
-  adc_readings_filtered[BATT_V_CH] = (uint16_t)((float)adc_readings_filtered[BATT_V_CH] * (1.f-FILTER_COEFF) + (float)adc_readings[BATT_V_CH] * FILTER_COEFF);
+  float calc_bat_v = BATT_RAW_TO_mV(adc_readings[BATT_V_CH]) + battery_curr * batt_conn_resistance;
+  battery_volt = ((float)battery_volt * (1.f-BATT_CURR_FILT_COEFF) + (float)calc_bat_v * BATT_CURR_FILT_COEFF);
   adc_readings_filtered[BUCK1_V_CH] = (uint16_t)((float)adc_readings_filtered[BUCK1_V_CH] * (1.f-FILTER_COEFF) + (float)adc_readings[BUCK1_V_CH] * FILTER_COEFF);
   adc_readings_filtered[BUCK2_V_CH] = (uint16_t)((float)adc_readings_filtered[BUCK2_V_CH] * (1.f-FILTER_COEFF) + (float)adc_readings[BUCK2_V_CH] * FILTER_COEFF);
+  float tot_buck_curr = (float)RAW_TO_mA(adc_readings[MOT1_C1_SENS_CH] - curr_callib_offset[0])+
+                        (float)RAW_TO_mA(adc_readings[MOT1_C2_SENS_CH] - curr_callib_offset[1])+
+                        (float)RAW_TO_mA(adc_readings[MOT2_C1_SENS_CH] - curr_callib_offset[2])+
+                        (float)RAW_TO_mA(adc_readings[MOT2_C2_SENS_CH] - curr_callib_offset[3]);
+  battery_curr = battery_curr*(1.f- BATT_CURR_FILT_COEFF) + BATT_CURR_FILT_COEFF *( BUCK_TO_BATT_CURR(tot_buck_curr) + STANDBY_CURRENT);
+}
+
+void estimateResistance(){
+    /*Set PWM for coil 1 from -1000 to 1000*/
+    setCoilM1C1(0);
+    setCoilM1C2(0);
+    setCoilM2C1(0);
+    setCoilM2C2(0);
+    osDelay(3000);
+    volatile int start_voltage = getBatteryVoltagemV();
+    volatile int start_current = getEstimatedBattCurrmA();
+    osDelay(10);
+    setCoilM1C1(1000);
+    setCoilM1C2(1000);
+    setCoilM2C1(1000);
+    setCoilM2C2(1000);
+    osDelay(3000);
+    volatile int end_voltage = getBatteryVoltagemV();
+    volatile int end_current = getEstimatedBattCurrmA();
+    osDelay(200);
+    setCoilM1C1(0);
+    setCoilM1C2(0);
+    setCoilM2C1(0);
+    setCoilM2C2(0);
+    if(end_current - start_current != 0){
+      float res = (float)(start_voltage - end_voltage)/(float)(end_current - start_current);
+      if(res > 10){
+        res = 10;
+      }
+      batt_conn_resistance = res;
+    }
 }
 
 /* USER CODE END 1 */
