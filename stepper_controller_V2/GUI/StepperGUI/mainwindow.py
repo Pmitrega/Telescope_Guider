@@ -1,6 +1,10 @@
 # This Python file uses the following encoding: utf-8
 import sys
 import serial as ser
+import asyncio
+import time
+from websockets.sync.client import connect,ClientConnection
+import json
 from PySide6.QtWidgets import QApplication, QMainWindow
 from PySide6.QtCore import QTimer
 from PySide6.QtCharts import QChart
@@ -21,13 +25,20 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.conn_handler = None
+        self.ws_handler = None
         self.rx_timer = QTimer()
         self.iter = 0
         self.rx_timer.timeout.connect(self.txTimerTimout)
         self.update_image_timer = QTimer()
         self.update_image_timer.timeout.connect(self.updateImageTimeout)
         self.update_image_timer.start(2000)
+    def connectTarget(self):
+        if self.ui.checkBox_ws.isChecked():
+            self.connectWS()
+        elif self.ui.checkBox_serial.isChecked():
+            self.connectSerial()
     def connectSerial(self):
+        print("connecting Serial!")
         if self.conn_handler is None:
             COM_PORT = self.ui.textEdit.toPlainText()
             try:
@@ -47,6 +58,47 @@ class MainWindow(QMainWindow):
         else:
             self.ui.radioButton.setChecked(False)
             self.rx_timer.stop()
+
+    def connectWS(self):
+        print("connecting WS!")
+        address = self.ui.ws_address.toPlainText()
+        try:
+            self.ws_handler = connect(address, max_size=10000000)
+            self.ui.radioButton.setChecked(True)
+            self.reqDataTimer = QTimer()
+            self.reqDataTimer.timeout.connect(self.WSRequestBatteryVoltage)
+            self.reqDataTimer.start(200)
+        except:
+            self.ui.radioButton.setChecked(False)
+            print("Failed to connect!")
+
+    def WSRequestBatteryVoltage(self):
+        if self.ws_handler is None:
+            return
+        else:
+            m_send = False
+            match self.iter%2:
+                case 0:
+                    request = {"request_type": "batt_volt"}
+                    self.ws_handler.send(json.dumps(request))
+                    m_send = True
+                case 1:
+                    request = {"request_type": "coils_curr"}
+                    self.ws_handler.send(json.dumps(request))
+                    m_send = True
+            self.iter = self.iter + 1
+            if m_send:
+                message = self.ws_handler.recv()
+                data_received = json.loads(message)
+                if data_received["response_type"] == "batt_volt":
+                        self.ui.lcdNumber_7.display(float(data_received["content"]))
+                elif data_received["response_type"] == "coils_curr":
+                    self.ui.lcdNumber.display(data_received["content"][0]/1000)
+                    self.ui.lcdNumber_2.display(data_received["content"][1]/1000)
+                    self.ui.lcdNumber_3.display(data_received["content"][2]/1000)
+                    self.ui.lcdNumber_4.display(data_received["content"][3]/1000)
+
+
     def txTimerTimout(self):
         match self.iter%10:
             case 0:
