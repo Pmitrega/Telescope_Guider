@@ -32,7 +32,6 @@ int main(){
 		}
 		auto capture_end_time =  std::chrono::system_clock::now();
         std::chrono::duration<float> elapesed_time = capture_end_time - capture_start_time;
-        // std::cout << "et:"<< elapesed_time<< std::endl;
         int sleep_time = (ms_betw_frames) - static_cast<int>(1000*elapesed_time.count());
         std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
 		std::string filename;
@@ -43,7 +42,7 @@ int main(){
 			filename = std::string("image") + std::to_string(i) + ".raw";
 		}
 		i++;
-		std::cout << filename << std::endl;
+		LOG_INFO("Saving to file ... \r\n");
 		cam_controller.saveBufferToFile(filename);
 		// std::cout<< "Adding to buffer" << std::endl;
 		// star_locator.addToBuffer(cam_controller.getBuffer().get(), 1280, 960, CV_16U, false);

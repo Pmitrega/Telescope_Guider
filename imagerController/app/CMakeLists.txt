@@ -7,6 +7,7 @@ set(SOURCES
     src/cameraController.cpp
     src/starLocator.cpp
     src/telescopeIdentifier.cpp
+    src/stepperComm.cpp
 )
 
 set(STATIC_LIBS

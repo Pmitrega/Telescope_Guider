@@ -351,8 +351,7 @@ bool CameraController::prepareImageBuffer(){
                                                                         m_roi_info.height,
                                                                         image_bytes)
             if(m_img_type != IMG_END && img_size.first != 0 && img_size.second !=0){
-                uint8_t* buffer = new uint8_t[image_bytes];
-                m_image_buffer = std::make_shared<uint8_t*>(buffer);
+                m_image_buffer = std::shared_ptr<uint8_t[]>(new uint8_t[image_bytes],std::default_delete<uint8_t[]>());
                 m_image_buffer_size = image_bytes;
             }
             break;
@@ -373,20 +372,27 @@ bool CameraController::takeAnImage(){
     {
     case ASI:
         {
+        LOG_INFO("Starting exopsure \r\n");
         if(startExposure() == CAM_CTRL_FAIL){
             return CAM_CTRL_FAIL;
         }
         ASI_EXPOSURE_STATUS exp_status = ASI_EXP_WORKING;
+        
         while(exp_status == ASI_EXP_WORKING){
             if(ASIGetExpStatus(m_connected_camera->cameraID, &exp_status) != ASI_SUCCESS){
                 LOG_ERROR("Couldn't get exposure status \r\n");
                 return CAM_CTRL_FAIL;
             }
         }
+        LOG_INFO("Exposure finished\r\n");
         if(exp_status == ASI_EXP_SUCCESS){
+            LOG_INFO("Buffer size %d\r\n", m_image_buffer_size);
             auto asi_ret = ASIGetDataAfterExp(m_connected_camera->cameraID, (uint8_t*)m_image_buffer.get(), m_image_buffer_size);
             if(asi_ret == ASI_SUCCESS){
                 ret = CAM_CTRL_SUCCESS;
+            }
+            else{
+                LOG_ERROR("Failed geting image data ..., ec: %d\r\n", asi_ret);
             }
         }
         break;
