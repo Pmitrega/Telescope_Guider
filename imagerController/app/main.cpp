@@ -8,9 +8,12 @@
 #include "cameraController.hpp"
 #include "starLocator.hpp"
 #include "logger.hpp"
+#include "stepperComm.hpp"
 
-int main(){
-	CameraController cam_controller;
+
+
+void takeTestImages(){
+		CameraController cam_controller;
 	StarLocator star_locator;
 	cam_controller.scanForCameras();
 	auto camera_list = cam_controller.getCameraList();
@@ -49,5 +52,16 @@ int main(){
 		// std::cout<< "finding stars" << std::endl;
 		// star_locator.findStars();
 	}
+}
+
+void testStepperControllerComm(){
+	stepperCommunicator step_com;
+	step_com.connectSerial("ttyUSB0");
+
+}
+
+
+int main(){
+	testStepperControllerComm();
     return EXIT_SUCCESS;
 }
