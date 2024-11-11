@@ -1,6 +1,7 @@
 # Other
 *.zip
 stepper_controller_V2/stepper_controller_code/build/
+imagerController/build/
 .vscode
 .idea
 # Prerequisites
