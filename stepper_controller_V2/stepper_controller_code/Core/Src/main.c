@@ -21,7 +21,7 @@
 #include "cmsis_os.h"
 #include "adc.h"
 #include "dma.h"
-#include "spi.h"
+#include "i2c.h"
 #include "tim.h"
 #include "usart.h"
 #include "usb_device.h"
@@ -100,10 +100,11 @@ int main(void)
   MX_TIM2_Init();
   MX_TIM3_Init();
   MX_USART3_UART_Init();
-  MX_SPI3_Init();
   MX_TIM8_Init();
   MX_TIM6_Init();
   MX_TIM7_Init();
+  MX_I2C2_Init();
+  MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
   HAL_Delay(100);
   LOG_INFO("---Stepper Controller---\r\n"
@@ -194,8 +195,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   if (htim->Instance == TIM6){
     updateRaPWM();
   }
-  if (htim->Instance == TIM7){
+  else if (htim->Instance == TIM7){
     updateDecPWM();
+  }
+  else if (htim->Instance == TIM4){
+    HAL_GPIO_TogglePin(BUZZER_GPIO_Port, BUZZER_Pin);
   }
   /* USER CODE END Callback 0 */
   if (htim->Instance == TIM1) {
