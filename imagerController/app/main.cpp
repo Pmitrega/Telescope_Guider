@@ -74,7 +74,7 @@ void streamCameraMQTT(){
 	cam_controller.setImageType(IMG_RAW16);
 	uint8_t buffer[1280*960*2];
 	int  i = 0;
-	int ms_betw_frames = 3000;
+	int ms_betw_frames = 2000;
 	while(true){
         auto capture_start_time =  std::chrono::system_clock::now();
 		auto t = std::time(nullptr);
@@ -91,6 +91,14 @@ void streamCameraMQTT(){
 		auto tm = *std::localtime(&t);
 		std::ostringstream oss;
 		oss << std::put_time(&tm, "%d-%m-%Y %H-%M-%S");
+		mqtt_client.publishMessageNumber("sensors/battV", 3.14);
+		mqtt_client.publishMessageNumber("sensors/buck1V", 4.14);
+		mqtt_client.publishMessageNumber("sensors/buck2V", 5.14);
+		mqtt_client.publishMessageNumber("sensors/M1C1curr", 6.14);
+		mqtt_client.publishMessageNumber("sensors/M1C2curr", 7.14);
+		mqtt_client.publishMessageNumber("sensors/M2C1curr", 8.14);
+		mqtt_client.publishMessageNumber("sensors/M2C2curr", 9.14);
+		mqtt_client.publishMessageNumber("sensors/battcurr", 10.14);
 		mqtt_client.publishMessageString("images/raw/title", filename);
 		mqtt_client.publishMessageString("images/raw/capture_time", oss.str());
 		mqtt_client.publishMessageNumber("images/raw/exposure", 500);
@@ -104,7 +112,7 @@ void streamCameraMQTT(){
 		auto capture_end_time =  std::chrono::system_clock::now();
         std::chrono::duration<float> elapesed_time = capture_end_time - capture_start_time;
         int sleep_time = (ms_betw_frames) - static_cast<int>(1000*elapesed_time.count());
-		LOG_INFO("sleep time: %d ms", sleep_time)
+		LOG_INFO("sleep time: %d ms\r\n", sleep_time)
         std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
 
 		i++;

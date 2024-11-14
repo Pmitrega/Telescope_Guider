@@ -39,7 +39,8 @@ int MqttClientWrapper::publishMessageImageRaw(std::string topic, char* image, in
     pubmsg.retained = 0;
     MQTTClient_deliveryToken token;
     MQTTClient_publishMessage(m_client, topic.c_str(), &pubmsg, &token);
-    int rc = MQTTClient_waitForCompletion(m_client, token, TIMEOUT);
+    int rc = 0;
+    rc = MQTTClient_waitForCompletion(m_client, token, TIMEOUT);
     if(rc != MQTTCLIENT_SUCCESS){
         LOG_ERROR("Failed to publish image with return code: %d \r\n", rc);
     }
@@ -59,9 +60,10 @@ int MqttClientWrapper::publishMessageNumber(std::string topic, float value){
     pubmsg.retained = 0;
     MQTTClient_deliveryToken token;
     MQTTClient_publishMessage(m_client, topic.c_str(), &pubmsg, &token);
-    int rc = MQTTClient_waitForCompletion(m_client, token, TIMEOUT);
+    int rc = 0;
+    rc = MQTTClient_waitForCompletion(m_client, token, TIMEOUT);
     if(rc != MQTTCLIENT_SUCCESS){
-        LOG_ERROR("Failed to publish message with return code: %d \r\n", rc);
+        LOG_ERROR("Failed to publish image with return code: %d \r\n", rc);
     }
     return rc;
 }
@@ -75,9 +77,10 @@ int MqttClientWrapper::publishMessageString(std::string topic, std::string mess)
     pubmsg.retained = 0;
     MQTTClient_deliveryToken token;
     MQTTClient_publishMessage(m_client, topic.c_str(), &pubmsg, &token);
-    int rc = MQTTClient_waitForCompletion(m_client, token, TIMEOUT);
+    int rc = 0;
+    rc = MQTTClient_waitForCompletion(m_client, token, TIMEOUT);
     if(rc != MQTTCLIENT_SUCCESS){
-        LOG_ERROR("Failed to publish message with return code: %d \r\n", rc);
+        LOG_ERROR("Failed to publish image with return code: %d \r\n", rc);
     }
     return rc;
 }
@@ -87,14 +90,14 @@ void testMQTT(){
     /*TO SUBSCRIBE FOR ALL TOPICS*/
     /*mosquitto_sub -v -h localhost -p 1883 -t '#' -u stepper -P stepper*/
     MqttClientWrapper mqtt_client;
-    // mqtt_client.publishMessageNumber("sensors/battV", 3.14);
-    // mqtt_client.publishMessageNumber("sensors/buck1V", 4.14);
-    // mqtt_client.publishMessageNumber("sensors/buck2V", 5.14);
-    // mqtt_client.publishMessageNumber("sensors/M1C1curr", 6.14);
-    // mqtt_client.publishMessageNumber("sensors/M1C2curr", 7.14);
-    // mqtt_client.publishMessageNumber("sensors/M2C1curr", 8.14);
-    // mqtt_client.publishMessageNumber("sensors/M2C2curr", 9.14);
-    // mqtt_client.publishMessageNumber("sensors/battcurr", 10.14);
+    mqtt_client.publishMessageNumber("sensors/battV", 3.14);
+    mqtt_client.publishMessageNumber("sensors/buck1V", 4.14);
+    mqtt_client.publishMessageNumber("sensors/buck2V", 5.14);
+    mqtt_client.publishMessageNumber("sensors/M1C1curr", 6.14);
+    mqtt_client.publishMessageNumber("sensors/M1C2curr", 7.14);
+    mqtt_client.publishMessageNumber("sensors/M2C1curr", 8.14);
+    mqtt_client.publishMessageNumber("sensors/M2C2curr", 9.14);
+    mqtt_client.publishMessageNumber("sensors/battcurr", 10.14);
     mqtt_client.publishMessageNumber("hello", 0.0);
     for(int i =0; i< 1000; i++){
         const int width = 1280;

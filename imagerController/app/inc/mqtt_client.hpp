@@ -6,7 +6,7 @@
 #define CLIENTID    "ExampleClientPub"
 #define TOPIC       "test/topic"
 #define PAYLOAD     "Hello World!"
-#define QOS         1
+#define QOS         0
 #define TIMEOUT     10000L
 
 void testMQTT();
