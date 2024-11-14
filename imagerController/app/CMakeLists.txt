@@ -9,6 +9,7 @@ set(SOURCES
     src/starLocator.cpp
     src/telescopeIdentifier.cpp
     src/stepperComm.cpp
+    src/mqtt_client.cpp
 )
 
 set(STATIC_LIBS
