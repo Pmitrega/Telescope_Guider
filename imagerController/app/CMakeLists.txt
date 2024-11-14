@@ -1,6 +1,7 @@
 project(ImagerController)
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.20)
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(SOURCES
     main.cpp
@@ -26,4 +27,4 @@ set(INCLUDES
 add_executable(${PROJECT_NAME} ${SOURCES})
 
 target_include_directories(${PROJECT_NAME} ${INCLUDES})
-target_link_libraries(${PROJECT_NAME} ASICamera2 opencv_core opencv_imgcodecs opencv_imgproc opencv_highgui boost_system paho-mqtt3c)
+target_link_libraries(${PROJECT_NAME} ASICamera2 opencv_core opencv_imgcodecs opencv_imgproc opencv_highgui paho-mqtt3c boost_thread)
