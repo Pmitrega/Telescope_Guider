@@ -112,3 +112,8 @@ void SetBuck1(BUCK_POWER pwr_status){
 void SetBuck2(BUCK_POWER pwr_status){
     HAL_GPIO_WritePin(BUCK2_EN_GPIO_Port, BUCK2_EN_Pin, (int)pwr_status);
 }
+
+void signalLowBattery(){
+
+    
+}

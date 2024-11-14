@@ -31,11 +31,11 @@
 #include "adc.h"
 #include "power_manager.h"
 #include "motor_controller.h"
+#include "buzzer.h"s
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 typedef StaticTask_t osStaticThreadDef_t;
-typedef StaticSemaphore_t osStaticMutexDef_t;
 /* USER CODE BEGIN PTD */
 
 /* USER CODE END PTD */
@@ -58,9 +58,13 @@ typedef StaticSemaphore_t osStaticMutexDef_t;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim8;
+extern TIM_HandleTypeDef htim4;
 extern uint8_t uart_recieve_buff[1];
 extern UART_HandleTypeDef huart3;
 int suspendVoltageInfo = 0;
+// int runBuzzerSignal = 0;
+// int runBuzzerSignalQueue[BUZZER_QUEUE_SIZE] = {0};
+
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
@@ -86,25 +90,17 @@ const osThreadAttr_t pwrManagerTask_attributes = {
   .stack_size = sizeof(powerManagerTasBuffer),
   .priority = (osPriority_t) osPriorityNormal,
 };
-/* Definitions for voltageInfo */
-osThreadId_t voltageInfoHandle;
-uint32_t voltageInfoBuffer[ 128 ];
-osStaticThreadDef_t voltageInfoControlBlock;
-const osThreadAttr_t voltageInfo_attributes = {
-  .name = "voltageInfo",
-  .cb_mem = &voltageInfoControlBlock,
-  .cb_size = sizeof(voltageInfoControlBlock),
-  .stack_mem = &voltageInfoBuffer[0],
-  .stack_size = sizeof(voltageInfoBuffer),
+/* Definitions for BuzzerTask */
+osThreadId_t BuzzerTaskHandle;
+uint32_t BuzzerBuffer[ 128 ];
+osStaticThreadDef_t BuzzerControlBlock;
+const osThreadAttr_t BuzzerTask_attributes = {
+  .name = "BuzzerTask",
+  .cb_mem = &BuzzerControlBlock,
+  .cb_size = sizeof(BuzzerControlBlock),
+  .stack_mem = &BuzzerBuffer[0],
+  .stack_size = sizeof(BuzzerBuffer),
   .priority = (osPriority_t) osPriorityLow,
-};
-/* Definitions for usbTransmitMutex */
-osMutexId_t usbTransmitMutexHandle;
-osStaticMutexDef_t usbTransmitMutexControlBlock;
-const osMutexAttr_t usbTransmitMutex_attributes = {
-  .name = "usbTransmitMutex",
-  .cb_mem = &usbTransmitMutexControlBlock,
-  .cb_size = sizeof(usbTransmitMutexControlBlock),
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -113,11 +109,12 @@ int USB_CDC_RxHandler(uint8_t* Buf, uint32_t *Len);
 extern uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len);
 extern uint16_t adc_readings[];
 uint8_t uart_transmit_buffer[100];
+
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
 void startPowerManager(void *argument);
-void voltageInfoTask(void *argument);
+void StartBuzzer(void *argument);
 
 extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -129,11 +126,8 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
   */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
-
+  static int signalType = 0;
   /* USER CODE END Init */
-  /* Create the mutex(es) */
-  /* creation of usbTransmitMutex */
-  usbTransmitMutexHandle = osMutexNew(&usbTransmitMutex_attributes);
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
@@ -158,8 +152,8 @@ void MX_FREERTOS_Init(void) {
   /* creation of pwrManagerTask */
   pwrManagerTaskHandle = osThreadNew(startPowerManager, NULL, &pwrManagerTask_attributes);
 
-  /* creation of voltageInfo */
-  voltageInfoHandle = osThreadNew(voltageInfoTask, NULL, &voltageInfo_attributes);
+  /* creation of BuzzerTask */
+  BuzzerTaskHandle = osThreadNew(StartBuzzer, (void*) signalType, &BuzzerTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -183,7 +177,9 @@ void StartDefaultTask(void *argument)
   /* init code for USB_DEVICE */
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN StartDefaultTask */
+  static int signalType = 0;
   startAdc();
+  queueBuzzerSignal(BUZZER_SIGNAL_STARTUP);
   osDelay(200);
   callibrateCurrent();
   HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
@@ -192,32 +188,22 @@ void StartDefaultTask(void *argument)
   HAL_UART_Receive_IT(&huart3, uart_recieve_buff, 1);
   SetBuck1(ENABLE);
   SetBuck2(ENABLE);
-  osDelay(10);
+  testBuzzer();
   initializeMotors();
   estimateResistance();
   startMotorAutoMode();
   setDecMotorSpeed(-147);
   setRaMotorSpeed(-14);
   const uint16_t LED_BRIGHTNESS = 30;
+
   /* Infinite loop */
   for(;;)
   {
-    if(!suspendVoltageInfo){
-      osThreadResume(voltageInfoHandle);
-    }
-    // for(uint16_t i = 0; i < LED_BRIGHTNESS; i++){
-    //   htim8.Instance->CCR1 = LED_BRIGHTNESS * 10U - i*10U - 8U;
-    //   osDelay(10);
-    // }
-    // for(uint16_t i = 0; i < LED_BRIGHTNESS; i++){
-    //   htim8.Instance->CCR2 = LED_BRIGHTNESS * 10U - i * 10U - 8U;
-    //   osDelay(10);
-    // }
-
     for(uint16_t i = 0; i < LED_BRIGHTNESS; i++){
       htim8.Instance->CCR3 = LED_BRIGHTNESS * 10U - i * 10U - 8U;
       osDelay(10);
     }
+
   }
   /* USER CODE END StartDefaultTask */
 }
@@ -244,29 +230,29 @@ void startPowerManager(void *argument)
   /* USER CODE END startPowerManager */
 }
 
-/* USER CODE BEGIN Header_voltageInfoTask */
+/* USER CODE BEGIN Header_StartBuzzer */
+/*ARR 1000 - 500Hz
+  frq = 1/ARR * 500 000
+  ARR = 500 000 / frq
+*/
+
+
+
 /**
-* @brief Function implementing the voltageInfo thread.
+* @brief Function implementing the BuzzerTask thread.
 * @param argument: Not used
 * @retval None
 */
-/* USER CODE END Header_voltageInfoTask */
-void voltageInfoTask(void *argument)
+/* USER CODE END Header_StartBuzzer */
+void StartBuzzer(void *argument)
 {
-  /* USER CODE BEGIN voltageInfoTask */
+  /* USER CODE BEGIN StartBuzzer */
   /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1000);
-    osMutexAcquire(usbTransmitMutexHandle, 0U);
-    int length = sprintf(uart_transmit_buffer,"%d, %d\r\n", getStepsRa(), getStepsDec());
-    CDC_Transmit_FS(uart_transmit_buffer, length);
-    osMutexRelease(usbTransmitMutexHandle);
-    if(suspendVoltageInfo == 1){
-      osThreadSuspend(voltageInfoHandle);
-    }
+  for(;;){
+    osDelay(250);
+    handleBuzzer();
   }
-  /* USER CODE END voltageInfoTask */
+  /* USER CODE END StartBuzzer */
 }
 
 /* Private application code --------------------------------------------------*/
