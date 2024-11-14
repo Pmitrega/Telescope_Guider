@@ -16,6 +16,7 @@ public:
     MqttClientWrapper();
     ~MqttClientWrapper();
     int publishMessageNumber(std::string topic, float value);
+    int publishMessageString(std::string topic, std::string mess);
     int publishMessageImageRaw(std::string topic, char* image, int image_size);
 private:
     MQTTClient m_client;

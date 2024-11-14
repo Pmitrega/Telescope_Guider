@@ -9,7 +9,7 @@
 #include "starLocator.hpp"
 #include "logger.hpp"
 #include "stepperComm.hpp"
-
+#include "mqtt_client.hpp"
 
 
 void takeTestImages(){
@@ -89,6 +89,7 @@ void testStepperControllerComm(){
 
 
 int main(){
-	testStepperControllerComm();
+	//testStepperControllerComm();
+	testMQTT();
     return EXIT_SUCCESS;
 }

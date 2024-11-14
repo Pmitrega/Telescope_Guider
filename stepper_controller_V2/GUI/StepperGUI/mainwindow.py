@@ -1,10 +1,14 @@
 # This Python file uses the following encoding: utf-8
 import sys
+import os
 import serial as ser
 import asyncio
 import time
-from websockets.sync.client import connect,ClientConnection
 import json
+import cv2
+import paho.mqtt.client as mqtt
+import numpy as np
+import threading
 from PySide6.QtWidgets import QApplication, QMainWindow
 from PySide6.QtCore import QTimer
 from PySide6.QtCharts import QChart
@@ -12,6 +16,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
+
 # Important:
 # You need to run the following command to generate the ui_form.py file
 #     pyside6-uic form.ui -o ui_form.py, or
@@ -31,12 +36,55 @@ class MainWindow(QMainWindow):
         self.rx_timer.timeout.connect(self.txTimerTimout)
         self.update_image_timer = QTimer()
         self.update_image_timer.timeout.connect(self.updateImageTimeout)
-        self.update_image_timer.start(2000)
+        self.update_image_timer.start(100)
+        self.data_rec_thread = None
+        self.title = "UNKNOWN"
+        self.last_update_time = 0
+        self.new_image = True
+
     def connectTarget(self):
         if self.ui.checkBox_ws.isChecked():
             self.connectWS()
         elif self.ui.checkBox_serial.isChecked():
             self.connectSerial()
+    def connectMQTT(self):
+        address = self.ui.ws_address.toPlainText()
+        def on_connect(client, userdata, flags, reason_code, properties):
+            print(f"Connected with result code {reason_code}")
+            # Subscribing in on_connect() means that if we lose the connection and
+            # reconnect then subscriptions will be renewed.
+            client.subscribe("#")
+
+        # The callback for when a PUBLISH message is received from the server.
+        def on_message(client, userdata, msg):
+            print(msg.topic)
+            if len(msg.topic) > 8  and msg.topic[0:8] == "sensors/":
+                print(msg.topic+" "+str(msg.payload))
+            elif msg.topic == "images/raw":
+                deserialized_bytes = np.frombuffer(msg.payload, dtype=np.uint16)
+                deserialized_bytes =  np.reshape(deserialized_bytes, newshape=(960, 1280))
+                cv2.imwrite('output.png', deserialized_bytes)
+                self.new_image = True
+            elif msg.topic == "images/raw/title":
+                self.title = str(msg.payload)
+
+        mqttc = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+        mqttc.on_connect = on_connect
+        mqttc.on_message = on_message
+        mqttc.password = "stepper"
+        mqttc.username = "stepper"
+        mqttc.connect("localhost", 1883, 60)
+        # Blocking call that processes network traffic, dispatches callbacks and
+        # handles reconnecting.
+        # Other loop*() functions are available that give a threaded interface and a
+        # manual interface.
+        # mqttc.loop_forever()
+
+        self.data_rec_thread = threading.Thread(target=mqttc.loop_forever)
+        self.data_rec_thread.start()
+
+
+
     def connectSerial(self):
         print("connecting Serial!")
         if self.conn_handler is None:
@@ -60,17 +108,8 @@ class MainWindow(QMainWindow):
             self.rx_timer.stop()
 
     def connectWS(self):
-        print("connecting WS!")
-        address = self.ui.ws_address.toPlainText()
-        try:
-            self.ws_handler = connect(address, max_size=10000000)
-            self.ui.radioButton.setChecked(True)
-            self.reqDataTimer = QTimer()
-            self.reqDataTimer.timeout.connect(self.WSRequestBatteryVoltage)
-            self.reqDataTimer.start(200)
-        except:
-            self.ui.radioButton.setChecked(False)
-            print("Failed to connect!")
+        print("connecting MQTT!")
+        self.connectMQTT()
 
     def WSRequestBatteryVoltage(self):
         if self.ws_handler is None:
@@ -147,8 +186,10 @@ class MainWindow(QMainWindow):
         self.iter = self.iter + 1
 
     def updateImageTimeout(self):
-        self.ui.label_10.setPixmap(QPixmap(u"image00.png"))
-        pass
+        if self.new_image:
+            self.ui.label_10.setPixmap(QPixmap(u"output.png"))
+            self.ui.textBrowser.setText(str(self.title))
+            self.new_image = False
 
     def goManualCoils(self):
         self.conn_handler.write(b'-M\r\n')

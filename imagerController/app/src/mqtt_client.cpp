@@ -9,6 +9,9 @@ void readFile(std::string filename, char* buffer, long buff_len){
         std::ifstream fin;
         fin.open(filename.c_str(), std::ios::binary | std::ios::in);
         fin.read(buffer, buff_len);
+        if(!fin.is_open()){
+            LOG_ERROR("Can't open file!!")
+        }
         fin.close();
     }
 
@@ -63,6 +66,21 @@ int MqttClientWrapper::publishMessageNumber(std::string topic, float value){
     return rc;
 }
 
+
+int MqttClientWrapper::publishMessageString(std::string topic, std::string mess){
+    MQTTClient_message pubmsg = MQTTClient_message_initializer;
+    pubmsg.payload = (void*)mess.c_str();
+    pubmsg.payloadlen = mess.length();
+    pubmsg.qos = QOS;
+    pubmsg.retained = 0;
+    MQTTClient_deliveryToken token;
+    MQTTClient_publishMessage(m_client, topic.c_str(), &pubmsg, &token);
+    int rc = MQTTClient_waitForCompletion(m_client, token, TIMEOUT);
+    if(rc != MQTTCLIENT_SUCCESS){
+        LOG_ERROR("Failed to publish message with return code: %d \r\n", rc);
+    }
+    return rc;
+}
 void testMQTT(){
     /*TO SUBSCRIBE FOR TOPIC*/
     /*mosquitto_sub -v -h localhost -p 1883 -t myTopic -u stepper -P stepper*/
@@ -77,14 +95,28 @@ void testMQTT(){
     // mqtt_client.publishMessageNumber("sensors/M2C1curr", 8.14);
     // mqtt_client.publishMessageNumber("sensors/M2C2curr", 9.14);
     // mqtt_client.publishMessageNumber("sensors/battcurr", 10.14);
+    mqtt_client.publishMessageNumber("hello", 0.0);
     for(int i =0; i< 1000; i++){
         const int width = 1280;
         const int heigth = 960;
         const int bytes_per_pixel = 2;
         const int buffer_len = width*heigth*bytes_per_pixel;
         char buffer[buffer_len];
-        readFile("test_im1.raw", buffer, buffer_len);
-        mqtt_client.publishMessageImageRaw("images/raw", buffer, buffer_len);
-        std::this_thread::sleep_for(std::chrono::milliseconds(4000));
+        std::string filename;
+        for(int j =0; j <=30; j++){
+            if(j < 10){
+                    filename = std::string("image0") + std::to_string(j) + ".raw";
+            }
+            else{
+                    filename = std::string("image") + std::to_string(j) + ".raw";
+            }
+            readFile("../tests/starLocator_test/series_2000ms/" + filename, buffer, buffer_len);
+            mqtt_client.publishMessageNumber("images/raw/height", heigth);
+            mqtt_client.publishMessageNumber("images/raw/width", width);
+            mqtt_client.publishMessageNumber("images/raw/bytes_per_pixel", bytes_per_pixel);
+            mqtt_client.publishMessageString("images/raw/title", filename);
+            mqtt_client.publishMessageImageRaw("images/raw", buffer, buffer_len);
+            std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+        }
     }
 }
