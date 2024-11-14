@@ -56,8 +56,35 @@ void takeTestImages(){
 
 void testStepperControllerComm(){
 	stepperCommunicator step_com;
-	step_com.connectSerial("ttyUSB0");
+	step_com.connectSerial("/dev/ttyUSB0");
+	step_com.setManualMode();
+	std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+	step_com.setAutoMode();
+	step_com.setRaSpeed(1200);
+	// std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+	// step_com.setRaSpeed(5000 - i*100 + 50);
+	for(int i = 0; i < 100;i++){
+		// step_com.setRaSpeed(5000 - i*100 + 50);
+		step_com.reqBattVolt();
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    	step_com.reqBuck1Volt();
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    	step_com.reqBuck2Volt();
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    	step_com.reqM1C1Current();
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    	step_com.reqM1C2Current();
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    	step_com.reqM2C1Current();
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    	step_com.reqM2C2Current();
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    	step_com.reqBattCurrent();
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));
+	}
 
+	std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+	step_com.setManualMode();
 }
 
 
