@@ -187,14 +187,14 @@ class Ui_MainWindow(object):
         self.horizontalSlider_6.setOrientation(Qt.Orientation.Horizontal)
         self.progressBar = QProgressBar(self.centralwidget)
         self.progressBar.setObjectName(u"progressBar")
-        self.progressBar.setGeometry(QRect(1220, 30, 151, 41))
+        self.progressBar.setGeometry(QRect(1290, 30, 151, 41))
         self.progressBar.setValue(0)
         self.lcdNumber_7 = QLCDNumber(self.centralwidget)
         self.lcdNumber_7.setObjectName(u"lcdNumber_7")
-        self.lcdNumber_7.setGeometry(QRect(1090, 30, 111, 41))
+        self.lcdNumber_7.setGeometry(QRect(1160, 30, 111, 41))
         self.lcdNumber_8 = QLCDNumber(self.centralwidget)
         self.lcdNumber_8.setObjectName(u"lcdNumber_8")
-        self.lcdNumber_8.setGeometry(QRect(1090, 90, 111, 41))
+        self.lcdNumber_8.setGeometry(QRect(1160, 90, 111, 41))
         self.label = QLabel(self.centralwidget)
         self.label.setObjectName(u"label")
         self.label.setGeometry(QRect(20, 250, 49, 16))
@@ -364,7 +364,11 @@ class Ui_MainWindow(object):
         self.radioButton = QRadioButton(self.centralwidget)
         self.radioButton.setObjectName(u"radioButton")
         self.radioButton.setGeometry(QRect(90, 20, 55, 20))
-        self.radioButton.setAutoFillBackground(True)
+        self.radioButton.setAutoFillBackground(False)
+        self.radioButton.setStyleSheet(u"QRadioButton::indicator\n"
+"                                   {\n"
+"                                   \"background-color : lightgreen\"\n"
+"                                   }")
         self.radioButton.setCheckable(True)
         self.radioButton.setChecked(False)
         self.label_5 = QLabel(self.centralwidget)
@@ -379,13 +383,13 @@ class Ui_MainWindow(object):
         self.label_6.setFont(font1)
         self.label_7 = QLabel(self.centralwidget)
         self.label_7.setObjectName(u"label_7")
-        self.label_7.setGeometry(QRect(1080, 10, 131, 21))
+        self.label_7.setGeometry(QRect(1150, 10, 131, 21))
         font2 = QFont()
         font2.setPointSize(11)
         self.label_7.setFont(font2)
         self.label_8 = QLabel(self.centralwidget)
         self.label_8.setObjectName(u"label_8")
-        self.label_8.setGeometry(QRect(1080, 70, 111, 21))
+        self.label_8.setGeometry(QRect(1150, 70, 111, 21))
         self.label_8.setFont(font2)
         self.label_9 = QLabel(self.centralwidget)
         self.label_9.setObjectName(u"label_9")
@@ -393,14 +397,14 @@ class Ui_MainWindow(object):
         self.label_9.setPixmap(QPixmap(u"motors_image.PNG"))
         self.label_10 = QLabel(self.centralwidget)
         self.label_10.setObjectName(u"label_10")
-        self.label_10.setGeometry(QRect(750, 230, 601, 561))
+        self.label_10.setGeometry(QRect(600, 180, 601, 561))
         self.label_10.setFrameShape(QFrame.Shape.Box)
         self.label_10.setLineWidth(2)
         self.label_10.setPixmap(QPixmap(u"image02.png"))
         self.label_10.setScaledContents(True)
         self.pushButton_2 = QPushButton(self.centralwidget)
         self.pushButton_2.setObjectName(u"pushButton_2")
-        self.pushButton_2.setGeometry(QRect(400, 210, 181, 51))
+        self.pushButton_2.setGeometry(QRect(390, 240, 191, 51))
         palette3 = QPalette()
         palette3.setBrush(QPalette.Active, QPalette.WindowText, brush6)
         palette3.setBrush(QPalette.Active, QPalette.Button, brush)
@@ -492,26 +496,156 @@ class Ui_MainWindow(object):
         self.lcdNumber_10 = QLCDNumber(self.centralwidget)
         self.lcdNumber_10.setObjectName(u"lcdNumber_10")
         self.lcdNumber_10.setGeometry(QRect(260, 400, 64, 21))
-        self.label_13 = QLabel(self.centralwidget)
-        self.label_13.setObjectName(u"label_13")
-        self.label_13.setGeometry(QRect(760, 190, 181, 31))
-        self.label_13.setFont(font3)
-        self.textBrowser = QTextBrowser(self.centralwidget)
-        self.textBrowser.setObjectName(u"textBrowser")
-        self.textBrowser.setGeometry(QRect(930, 190, 281, 41))
-        self.ws_address = QTextEdit(self.centralwidget)
-        self.ws_address.setObjectName(u"ws_address")
-        self.ws_address.setGeometry(QRect(120, 110, 151, 31))
+        self.textBrowser_im_title = QTextBrowser(self.centralwidget)
+        self.textBrowser_im_title.setObjectName(u"textBrowser_im_title")
+        self.textBrowser_im_title.setGeometry(QRect(1210, 230, 281, 41))
+        self.mqtt_address = QTextEdit(self.centralwidget)
+        self.mqtt_address.setObjectName(u"mqtt_address")
+        self.mqtt_address.setGeometry(QRect(120, 110, 151, 31))
+        self.mqtt_address.setToolTipDuration(-1)
         self.checkBox_serial = QCheckBox(self.centralwidget)
         self.checkBox_serial.setObjectName(u"checkBox_serial")
         self.checkBox_serial.setEnabled(True)
         self.checkBox_serial.setGeometry(QRect(20, 90, 81, 21))
-        self.checkBox_serial.setChecked(True)
+        self.checkBox_serial.setChecked(False)
         self.checkBox_ws = QCheckBox(self.centralwidget)
         self.checkBox_ws.setObjectName(u"checkBox_ws")
         self.checkBox_ws.setEnabled(True)
         self.checkBox_ws.setGeometry(QRect(130, 90, 81, 21))
-        self.checkBox_ws.setChecked(False)
+        self.checkBox_ws.setChecked(True)
+        self.label_14 = QLabel(self.centralwidget)
+        self.label_14.setObjectName(u"label_14")
+        self.label_14.setGeometry(QRect(1210, 200, 121, 31))
+        self.label_14.setFont(font1)
+        self.label_15 = QLabel(self.centralwidget)
+        self.label_15.setObjectName(u"label_15")
+        self.label_15.setGeometry(QRect(1210, 270, 211, 31))
+        self.label_15.setFont(font1)
+        self.textBrowser_im_capt = QTextBrowser(self.centralwidget)
+        self.textBrowser_im_capt.setObjectName(u"textBrowser_im_capt")
+        self.textBrowser_im_capt.setGeometry(QRect(1210, 300, 281, 41))
+        self.label_16 = QLabel(self.centralwidget)
+        self.label_16.setObjectName(u"label_16")
+        self.label_16.setGeometry(QRect(1210, 340, 341, 31))
+        self.label_16.setFont(font1)
+        self.label_17 = QLabel(self.centralwidget)
+        self.label_17.setObjectName(u"label_17")
+        self.label_17.setGeometry(QRect(1210, 430, 211, 31))
+        self.label_17.setFont(font1)
+        self.textBrowser_cam_gain = QTextBrowser(self.centralwidget)
+        self.textBrowser_cam_gain.setObjectName(u"textBrowser_cam_gain")
+        self.textBrowser_cam_gain.setGeometry(QRect(1210, 460, 281, 41))
+        self.textBrowser_cam_expo = QTextBrowser(self.centralwidget)
+        self.textBrowser_cam_expo.setObjectName(u"textBrowser_cam_expo")
+        self.textBrowser_cam_expo.setGeometry(QRect(1210, 530, 281, 41))
+        self.label_18 = QLabel(self.centralwidget)
+        self.label_18.setObjectName(u"label_18")
+        self.label_18.setGeometry(QRect(1210, 500, 211, 31))
+        self.label_18.setFont(font1)
+        self.label_19 = QLabel(self.centralwidget)
+        self.label_19.setObjectName(u"label_19")
+        self.label_19.setGeometry(QRect(1210, 570, 101, 31))
+        self.label_19.setFont(font1)
+        self.label_20 = QLabel(self.centralwidget)
+        self.label_20.setObjectName(u"label_20")
+        self.label_20.setGeometry(QRect(1350, 570, 101, 31))
+        self.label_20.setFont(font1)
+        self.label_21 = QLabel(self.centralwidget)
+        self.label_21.setObjectName(u"label_21")
+        self.label_21.setGeometry(QRect(1210, 630, 101, 31))
+        self.label_21.setFont(font1)
+        self.label_22 = QLabel(self.centralwidget)
+        self.label_22.setObjectName(u"label_22")
+        self.label_22.setGeometry(QRect(1350, 630, 101, 31))
+        self.label_22.setFont(font1)
+        self.textBrowser_roi_width = QTextBrowser(self.centralwidget)
+        self.textBrowser_roi_width.setObjectName(u"textBrowser_roi_width")
+        self.textBrowser_roi_width.setGeometry(QRect(1210, 600, 111, 31))
+        self.textBrowser_roi_heigh = QTextBrowser(self.centralwidget)
+        self.textBrowser_roi_heigh.setObjectName(u"textBrowser_roi_heigh")
+        self.textBrowser_roi_heigh.setGeometry(QRect(1350, 600, 111, 31))
+        self.textBrowser_roi_start_x = QTextBrowser(self.centralwidget)
+        self.textBrowser_roi_start_x.setObjectName(u"textBrowser_roi_start_x")
+        self.textBrowser_roi_start_x.setGeometry(QRect(1210, 660, 111, 31))
+        self.textBrowser_roi_start_y = QTextBrowser(self.centralwidget)
+        self.textBrowser_roi_start_y.setObjectName(u"textBrowser_roi_start_y")
+        self.textBrowser_roi_start_y.setGeometry(QRect(1350, 660, 111, 31))
+        self.textBrowser_cam_model = QTextBrowser(self.centralwidget)
+        self.textBrowser_cam_model.setObjectName(u"textBrowser_cam_model")
+        self.textBrowser_cam_model.setGeometry(QRect(1210, 390, 281, 41))
+        self.label_23 = QLabel(self.centralwidget)
+        self.label_23.setObjectName(u"label_23")
+        self.label_23.setGeometry(QRect(1210, 360, 211, 31))
+        self.label_23.setFont(font1)
+        self.label_24 = QLabel(self.centralwidget)
+        self.label_24.setObjectName(u"label_24")
+        self.label_24.setGeometry(QRect(390, 190, 201, 31))
+        self.label_24.setFont(font1)
+        self.textBrowser_roi_start_y_set = QTextBrowser(self.centralwidget)
+        self.textBrowser_roi_start_y_set.setObjectName(u"textBrowser_roi_start_y_set")
+        self.textBrowser_roi_start_y_set.setGeometry(QRect(490, 550, 91, 31))
+        self.textBrowser_roi_start_x_set = QTextBrowser(self.centralwidget)
+        self.textBrowser_roi_start_x_set.setObjectName(u"textBrowser_roi_start_x_set")
+        self.textBrowser_roi_start_x_set.setGeometry(QRect(380, 550, 91, 31))
+        self.label_25 = QLabel(self.centralwidget)
+        self.label_25.setObjectName(u"label_25")
+        self.label_25.setGeometry(QRect(490, 520, 101, 31))
+        self.label_25.setFont(font1)
+        self.textBrowser_roi_width_set = QTextBrowser(self.centralwidget)
+        self.textBrowser_roi_width_set.setObjectName(u"textBrowser_roi_width_set")
+        self.textBrowser_roi_width_set.setGeometry(QRect(380, 490, 91, 31))
+        self.label_28 = QLabel(self.centralwidget)
+        self.label_28.setObjectName(u"label_28")
+        self.label_28.setGeometry(QRect(380, 460, 101, 31))
+        self.label_28.setFont(font1)
+        self.textBrowser_cam_expo_set = QTextBrowser(self.centralwidget)
+        self.textBrowser_cam_expo_set.setObjectName(u"textBrowser_cam_expo_set")
+        self.textBrowser_cam_expo_set.setGeometry(QRect(380, 320, 111, 31))
+        self.textBrowser_cam_gain_set = QTextBrowser(self.centralwidget)
+        self.textBrowser_cam_gain_set.setObjectName(u"textBrowser_cam_gain_set")
+        self.textBrowser_cam_gain_set.setGeometry(QRect(380, 430, 61, 31))
+        self.label_30 = QLabel(self.centralwidget)
+        self.label_30.setObjectName(u"label_30")
+        self.label_30.setGeometry(QRect(490, 460, 101, 31))
+        self.label_30.setFont(font1)
+        self.label_31 = QLabel(self.centralwidget)
+        self.label_31.setObjectName(u"label_31")
+        self.label_31.setGeometry(QRect(380, 400, 71, 31))
+        font5 = QFont()
+        font5.setPointSize(13)
+        self.label_31.setFont(font5)
+        self.textBrowser_roi_heigh_set = QTextBrowser(self.centralwidget)
+        self.textBrowser_roi_heigh_set.setObjectName(u"textBrowser_roi_heigh_set")
+        self.textBrowser_roi_heigh_set.setGeometry(QRect(490, 490, 91, 31))
+        self.label_32 = QLabel(self.centralwidget)
+        self.label_32.setObjectName(u"label_32")
+        self.label_32.setGeometry(QRect(380, 520, 101, 31))
+        self.label_32.setFont(font1)
+        self.label_34 = QLabel(self.centralwidget)
+        self.label_34.setObjectName(u"label_34")
+        self.label_34.setGeometry(QRect(380, 300, 151, 21))
+        self.label_34.setFont(font5)
+        self.label_35 = QLabel(self.centralwidget)
+        self.label_35.setObjectName(u"label_35")
+        self.label_35.setGeometry(QRect(380, 350, 151, 21))
+        self.label_35.setFont(font5)
+        self.textBrowser_cam_inter = QTextBrowser(self.centralwidget)
+        self.textBrowser_cam_inter.setObjectName(u"textBrowser_cam_inter")
+        self.textBrowser_cam_inter.setGeometry(QRect(380, 370, 111, 31))
+        self.label_13 = QLabel(self.centralwidget)
+        self.label_13.setObjectName(u"label_13")
+        self.label_13.setGeometry(QRect(1000, 10, 131, 21))
+        self.label_13.setFont(font2)
+        self.lcdNumber_buck1 = QLCDNumber(self.centralwidget)
+        self.lcdNumber_buck1.setObjectName(u"lcdNumber_buck1")
+        self.lcdNumber_buck1.setGeometry(QRect(1010, 30, 111, 41))
+        self.lcdNumber_buck2 = QLCDNumber(self.centralwidget)
+        self.lcdNumber_buck2.setObjectName(u"lcdNumber_buck2")
+        self.lcdNumber_buck2.setGeometry(QRect(1010, 90, 111, 41))
+        self.label_26 = QLabel(self.centralwidget)
+        self.label_26.setObjectName(u"label_26")
+        self.label_26.setGeometry(QRect(1000, 70, 131, 21))
+        self.label_26.setFont(font2)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
@@ -592,30 +726,169 @@ class Ui_MainWindow(object):
         self.label_8.setText(QCoreApplication.translate("MainWindow", u"Total Current [A]", None))
         self.label_9.setText("")
         self.label_10.setText("")
-        self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"Start Guiding", None))
+        self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"Setup Camera", None))
         self.label_11.setText(QCoreApplication.translate("MainWindow", u"Current", None))
         self.label_12.setText(QCoreApplication.translate("MainWindow", u"Control", None))
-        self.label_13.setText(QCoreApplication.translate("MainWindow", u"Capture Time:", None))
-        self.textBrowser.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        self.textBrowser_im_title.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "hr { height: 1px; border-width: 0; }\n"
 "li.unchecked::marker { content: \"\\2610\"; }\n"
 "li.checked::marker { content: \"\\2612\"; }\n"
 "</style></head><body style=\" font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:14pt;\">dd</span></p></body></html>", None))
-        self.ws_address.setMarkdown(QCoreApplication.translate("MainWindow", u"ws://localhost:8765\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">UNKNOWN</span></p></body></html>", None))
+        self.mqtt_address.setMarkdown(QCoreApplication.translate("MainWindow", u"192.168.1.101\n"
 "\n"
 "", None))
-        self.ws_address.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        self.mqtt_address.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "hr { height: 1px; border-width: 0; }\n"
 "li.unchecked::marker { content: \"\\2610\"; }\n"
 "li.checked::marker { content: \"\\2612\"; }\n"
 "</style></head><body style=\" font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">ws://localhost:8765</p></body></html>", None))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">192.168.1.101</p></body></html>", None))
         self.checkBox_serial.setText(QCoreApplication.translate("MainWindow", u"Serial Port", None))
-        self.checkBox_ws.setText(QCoreApplication.translate("MainWindow", u"Websocket", None))
+        self.checkBox_ws.setText(QCoreApplication.translate("MainWindow", u"MQTT", None))
+        self.label_14.setText(QCoreApplication.translate("MainWindow", u"Image title", None))
+        self.label_15.setText(QCoreApplication.translate("MainWindow", u"Image capture time", None))
+        self.textBrowser_im_capt.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"hr { height: 1px; border-width: 0; }\n"
+"li.unchecked::marker { content: \"\\2610\"; }\n"
+"li.checked::marker { content: \"\\2612\"; }\n"
+"</style></head><body style=\" font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">UNKNOWN</span></p></body></html>", None))
+        self.label_16.setText(QCoreApplication.translate("MainWindow", u"---------Camera Settings-----------", None))
+        self.label_17.setText(QCoreApplication.translate("MainWindow", u"Gain", None))
+        self.textBrowser_cam_gain.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"hr { height: 1px; border-width: 0; }\n"
+"li.unchecked::marker { content: \"\\2610\"; }\n"
+"li.checked::marker { content: \"\\2612\"; }\n"
+"</style></head><body style=\" font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">UNKNOWN</span></p></body></html>", None))
+        self.textBrowser_cam_expo.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"hr { height: 1px; border-width: 0; }\n"
+"li.unchecked::marker { content: \"\\2610\"; }\n"
+"li.checked::marker { content: \"\\2612\"; }\n"
+"</style></head><body style=\" font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">UNKNOWN</span></p></body></html>", None))
+        self.label_18.setText(QCoreApplication.translate("MainWindow", u"Exposure time", None))
+        self.label_19.setText(QCoreApplication.translate("MainWindow", u"ROI Width", None))
+        self.label_20.setText(QCoreApplication.translate("MainWindow", u"ROI Heigth", None))
+        self.label_21.setText(QCoreApplication.translate("MainWindow", u"ROI Start X", None))
+        self.label_22.setText(QCoreApplication.translate("MainWindow", u"ROI Start Y", None))
+        self.textBrowser_roi_width.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"hr { height: 1px; border-width: 0; }\n"
+"li.unchecked::marker { content: \"\\2610\"; }\n"
+"li.checked::marker { content: \"\\2612\"; }\n"
+"</style></head><body style=\" font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">1280</span></p></body></html>", None))
+        self.textBrowser_roi_heigh.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"hr { height: 1px; border-width: 0; }\n"
+"li.unchecked::marker { content: \"\\2610\"; }\n"
+"li.checked::marker { content: \"\\2612\"; }\n"
+"</style></head><body style=\" font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">960</span></p></body></html>", None))
+        self.textBrowser_roi_start_x.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"hr { height: 1px; border-width: 0; }\n"
+"li.unchecked::marker { content: \"\\2610\"; }\n"
+"li.checked::marker { content: \"\\2612\"; }\n"
+"</style></head><body style=\" font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">0</span></p></body></html>", None))
+        self.textBrowser_roi_start_y.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"hr { height: 1px; border-width: 0; }\n"
+"li.unchecked::marker { content: \"\\2610\"; }\n"
+"li.checked::marker { content: \"\\2612\"; }\n"
+"</style></head><body style=\" font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">0</span></p></body></html>", None))
+        self.textBrowser_cam_model.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"hr { height: 1px; border-width: 0; }\n"
+"li.unchecked::marker { content: \"\\2610\"; }\n"
+"li.checked::marker { content: \"\\2612\"; }\n"
+"</style></head><body style=\" font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">UNKNOWN</span></p></body></html>", None))
+        self.label_23.setText(QCoreApplication.translate("MainWindow", u"Model", None))
+        self.label_24.setText(QCoreApplication.translate("MainWindow", u"--- Camera Settings ---", None))
+        self.textBrowser_roi_start_y_set.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"hr { height: 1px; border-width: 0; }\n"
+"li.unchecked::marker { content: \"\\2610\"; }\n"
+"li.checked::marker { content: \"\\2612\"; }\n"
+"</style></head><body style=\" font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">0</span></p></body></html>", None))
+        self.textBrowser_roi_start_x_set.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"hr { height: 1px; border-width: 0; }\n"
+"li.unchecked::marker { content: \"\\2610\"; }\n"
+"li.checked::marker { content: \"\\2612\"; }\n"
+"</style></head><body style=\" font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">0</span></p></body></html>", None))
+        self.label_25.setText(QCoreApplication.translate("MainWindow", u"ROI Start Y", None))
+        self.textBrowser_roi_width_set.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"hr { height: 1px; border-width: 0; }\n"
+"li.unchecked::marker { content: \"\\2610\"; }\n"
+"li.checked::marker { content: \"\\2612\"; }\n"
+"</style></head><body style=\" font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">1280</span></p></body></html>", None))
+        self.label_28.setText(QCoreApplication.translate("MainWindow", u"ROI Width", None))
+        self.textBrowser_cam_expo_set.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"hr { height: 1px; border-width: 0; }\n"
+"li.unchecked::marker { content: \"\\2610\"; }\n"
+"li.checked::marker { content: \"\\2612\"; }\n"
+"</style></head><body style=\" font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">500</span></p></body></html>", None))
+        self.textBrowser_cam_gain_set.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"hr { height: 1px; border-width: 0; }\n"
+"li.unchecked::marker { content: \"\\2610\"; }\n"
+"li.checked::marker { content: \"\\2612\"; }\n"
+"</style></head><body style=\" font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">70</span></p></body></html>", None))
+        self.label_30.setText(QCoreApplication.translate("MainWindow", u"ROI Heigth", None))
+        self.label_31.setText(QCoreApplication.translate("MainWindow", u"Gain", None))
+        self.textBrowser_roi_heigh_set.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"hr { height: 1px; border-width: 0; }\n"
+"li.unchecked::marker { content: \"\\2610\"; }\n"
+"li.checked::marker { content: \"\\2612\"; }\n"
+"</style></head><body style=\" font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">960</span></p></body></html>", None))
+        self.label_32.setText(QCoreApplication.translate("MainWindow", u"ROI Start X", None))
+        self.label_34.setText(QCoreApplication.translate("MainWindow", u"Exposure time(ms)", None))
+        self.label_35.setText(QCoreApplication.translate("MainWindow", u"Image interval(ms)", None))
+        self.textBrowser_cam_inter.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"hr { height: 1px; border-width: 0; }\n"
+"li.unchecked::marker { content: \"\\2610\"; }\n"
+"li.checked::marker { content: \"\\2612\"; }\n"
+"</style></head><body style=\" font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">2000</span></p></body></html>", None))
+        self.label_13.setText(QCoreApplication.translate("MainWindow", u"Buck1 Voltage [V]", None))
+        self.label_26.setText(QCoreApplication.translate("MainWindow", u"Buck2 Voltage [V]", None))
     # retranslateUi
 
