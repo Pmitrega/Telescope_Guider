@@ -1,9 +1,11 @@
 #!/bin/bash
-sudo apt-get update 
+sudo echo "deb http://ftp.de.debian.org/debian sid main" >> /etc/apt/sources.list
+sudo apt-get update
+sudo apt-get install libpaho-mqtt1.3
+sudo apt-get install build-essential
 sudo apt-get install libopencv-dev
 sudo apt-get install libboost-dev
 sudo apt-get install libboost-system-dev
-sudo aptitude install libstdc++-13-de
-sudo aptitude install libboost-thread-dev 
-sudo cp ./lib/ASICamera/arm8/libASICamera2.so.1.36 /usr/lib
+sudo apt-get install libboost-thread-dev
+sudo cp ./lib/ASICamera/armv8/libASICamera2.so.1.36 /usr/lib
 sudo ln /usr/lib/libASICamera2.so.1.36 /usr/lib/libASICamera2.so
