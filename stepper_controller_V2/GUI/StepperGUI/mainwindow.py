@@ -61,7 +61,7 @@ class MainWindow(QMainWindow):
         }
         self.last_update_time = 0
         self.new_image = True
-
+        self.mqtt_client = None
     def connectTarget(self):
         if self.ui.checkBox_ws.isChecked():
             self.connectMQTT()
@@ -89,15 +89,14 @@ class MainWindow(QMainWindow):
                 curr_c4 = int(rec_line[2:-1])
                 self.ui.lcdNumber_8.display(curr_c4 / 1000)
         '''
-        self.ui.lcdNumber_7.display(self.sensors_info["battV"])
-        self.ui.lcdNumber_buck1.display(self.sensors_info["buck1V"])
-        self.ui.lcdNumber_buck2.display(self.sensors_info["buck2V"])
-        self.ui.lcdNumber.display(self.sensors_info["M1C1curr"])
-        self.ui.lcdNumber_2.display(self.sensors_info["M1C2curr"])
-        self.ui.lcdNumber_3.display(self.sensors_info["M2C1curr"])
-        self.ui.lcdNumber_4.display(self.sensors_info["M2C2curr"])
-        self.ui.lcdNumber_8.display(self.sensors_info["battcurr"])
-        pass
+        self.ui.lcdNumber_7.display(self.sensors_info["battV"]/1000)
+        self.ui.lcdNumber_buck1.display(self.sensors_info["buck1V"]/1000)
+        self.ui.lcdNumber_buck2.display(self.sensors_info["buck2V"]/1000)
+        self.ui.lcdNumber.display(self.sensors_info["M1C1curr"]/1000)
+        self.ui.lcdNumber_2.display(self.sensors_info["M1C2curr"]/1000)
+        self.ui.lcdNumber_3.display(self.sensors_info["M2C1curr"]/1000)
+        self.ui.lcdNumber_4.display(self.sensors_info["M2C2curr"]/1000)
+        self.ui.lcdNumber_8.display(self.sensors_info["battcurr"]/1000)
     def connectMQTT(self):
         address = self.ui.mqtt_address.toPlainText()
         def on_connect(client, userdata, flags, reason_code, properties):
@@ -105,7 +104,6 @@ class MainWindow(QMainWindow):
             # Subscribing in on_connect() means that if we lose the connection and
             # reconnect then subscriptions will be renewed.
             client.subscribe("#")
-
         # The callback for when a PUBLISH message is received from the server.
         def on_message(client, userdata, msg):
 
@@ -158,16 +156,16 @@ class MainWindow(QMainWindow):
                 self.image_info["ROIstart_y"] = msg.payload.decode("utf-8")
 
 
-        mqttc = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
-        mqttc.on_connect = on_connect
-        mqttc.on_message = on_message
-        mqttc.password = "stepper"
-        mqttc.username = "stepper"
+        self.mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+        self.mqtt_client.on_connect = on_connect
+        self.mqtt_client.on_message = on_message
+        self.mqtt_client.password = "stepper"
+        self.mqtt_client.username = "stepper"
         print("connecting MQTT to address " + address)
-        mqttc.connect(address, 1883, 60)
+        self.mqtt_client.connect(address, 1883, 60)
         self.ui.radioButton.setChecked(True)
         print("succesfully connected MQTT" + address)
-        self.data_rec_thread = threading.Thread(target=mqttc.loop_forever)
+        self.data_rec_thread = threading.Thread(target=self.mqtt_client.loop_forever)
         self.data_rec_thread.start()
         # Blocking call that processes network traffic, dispatches callbacks and
         # handles reconnecting.
@@ -175,9 +173,10 @@ class MainWindow(QMainWindow):
         # manual interface.
         # mqttc.loop_forever()
 
-
-
-
+    def setupCamera(self):
+        self.mqtt_client.publish("camera/exposure", int(self.ui.textBrowser_cam_expo_set.toPlainText()))
+        self.mqtt_client.publish("camera/interval", int(self.ui.textBrowser_cam_inter.toPlainText()))
+        self.mqtt_client.publish("camera/gain", int(self.ui.textBrowser_cam_gain_set.toPlainText()))
 
     def connectSerial(self):
         print("connecting Serial!")
@@ -290,7 +289,8 @@ class MainWindow(QMainWindow):
             self.new_image = False
 
     def goManualCoils(self):
-        self.conn_handler.write(b'-M\r\n')
+        self.mqtt_client.publish("motors/mode", "MANUAL")
+        # self.conn_handler.write(b'-M\r\n')
     def setCoil0(self, val):
         cmd = "-u" + str(val) + "\r\n"
         print(cmd)
@@ -309,15 +309,18 @@ class MainWindow(QMainWindow):
 
     def setDecSpeed(self, val):
         if(val >10 or val < -10):
-            cmd = "-D" + str(val) + "\r\n"
-            self.conn_handler.write(cmd.encode())
+            self.mqtt_client.publish("motors/ra", str(val))
+            # cmd = "-D" + str(val) + "\r\n"
+            # self.conn_handler.write(cmd.encode())
     def setRaSpeed(self, val):
         if (val > 10 or val < -10):
-            cmd = "-R" + str(val) + "\r\n"
-            self.conn_handler.write(cmd.encode())
+            self.mqtt_client.publish("motors/dec", str(val))
+            # cmd = "-R" + str(val) + "\r\n"
+            # self.conn_handler.write(cmd.encode())
 
     def goManualSpeed(self):
-        self.conn_handler.write(b'-A\r\n')
+        self.mqtt_client.publish("motors/mode", "AUTO")
+        # self.conn_handler.write(b'-A\r\n')
 
 
 
