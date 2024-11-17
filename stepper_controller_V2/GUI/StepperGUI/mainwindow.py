@@ -308,13 +308,13 @@ class MainWindow(QMainWindow):
         self.conn_handler.write(cmd.encode())
 
     def setDecSpeed(self, val):
-        if(val >10 or val < -10):
-            self.mqtt_client.publish("motors/ra", str(val))
+        # if(val >10 or val < -10):
+        self.mqtt_client.publish("motors/dec", str(val))
             # cmd = "-D" + str(val) + "\r\n"
             # self.conn_handler.write(cmd.encode())
     def setRaSpeed(self, val):
-        if (val > 10 or val < -10):
-            self.mqtt_client.publish("motors/dec", str(val))
+        # if (val > 10 or val < -10):
+        self.mqtt_client.publish("motors/ra", str(val))
             # cmd = "-R" + str(val) + "\r\n"
             # self.conn_handler.write(cmd.encode())
 

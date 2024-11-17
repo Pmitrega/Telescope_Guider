@@ -67,10 +67,17 @@ void handleBuzzer(){
       BuzzerBeep(1000, 300, 100);
       BuzzerBeep(1000, 300, 100);
     }
-    else if(req_signal == BUZZER_SIGNAL_BUCK_ERROR){
+    else if(req_signal == BUZZER_SIGNAL_BUCK1_ERROR){
       BuzzerBeep(1000, 50, 100);
       BuzzerBeep(1000, 50, 100);
+      BuzzerBeep(500, 50, 100);
       BuzzerBeep(1000, 50, 100);
+      BuzzerBeep(1000, 50, 100);
+    }
+    else if(req_signal == BUZZER_SIGNAL_BUCK2_ERROR){
+      BuzzerBeep(1000, 50, 100);
+      BuzzerBeep(1000, 50, 100);
+      BuzzerBeep(1500, 50, 100);
       BuzzerBeep(1000, 50, 100);
       BuzzerBeep(1000, 50, 100);
     }
@@ -97,7 +104,9 @@ void testBuzzer(){
     osDelay(200);
     queueBuzzerSignal(BUZZER_SIGNAL_CRITICAL_BATTERY);
     osDelay(200);
-    queueBuzzerSignal(BUZZER_SIGNAL_BUCK_ERROR);
+    queueBuzzerSignal(BUZZER_SIGNAL_BUCK1_ERROR);
+    osDelay(200);
+    queueBuzzerSignal(BUZZER_SIGNAL_BUCK2_ERROR);
     osDelay(200);
     queueBuzzerSignal(BUZZER_SIGNAL_NO_RA_MOTOR);
     osDelay(200);

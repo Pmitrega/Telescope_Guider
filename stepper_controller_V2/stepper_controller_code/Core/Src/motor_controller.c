@@ -46,6 +46,9 @@ static int DecDir = 1;
 static int fullStepsRa = 0;
 static int fullStepsDec = 0;
 
+static uint8_t is_dec_running = 0;
+static uint8_t is_ra_running = 0;
+
 static NUMBER_OF_MICROSTEPS microsteps = MICROSTEPS_16;
 
 extern uint32_t SystemCoreClock;
@@ -70,10 +73,14 @@ void startMotorAutoMode(){
     /*Start Dec motor timer*/
     HAL_TIM_Base_Start_IT(&htim7);
     motor_mode = MOTOR_AUTO_MODE;
+    is_dec_running = 1;
+    is_ra_running = 1;
 }
 void startMotorManualMode(){
     HAL_TIM_Base_Stop_IT(&htim6);
     HAL_TIM_Base_Stop_IT(&htim7);
+    is_dec_running = 0;
+    is_ra_running = 0;
     __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 0U);
     __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, 0U);
     __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, 0U);
@@ -89,18 +96,22 @@ uint8_t getMotorMode(){return motor_mode;}
 
 void startMotorRa(){
     HAL_TIM_Base_Start_IT(&htim6);
+    is_ra_running = 1;
 }
 
 void startMotorDec(){
     HAL_TIM_Base_Start_IT(&htim7);
+    is_dec_running = 1;
 }
 
 void stopMotorRa(){
     HAL_TIM_Base_Stop_IT(&htim6);
+    is_ra_running = 0;
 }
 
 void stopMotorDec(){
     HAL_TIM_Base_Stop_IT(&htim7);
+    is_dec_running = 0;
 }
 
 void shutdownMotors(){
@@ -160,13 +171,19 @@ void setCoilM2C2(int val){
 }
 
 /*Requested speed in Full_steps per minute for Ra motor*/
-void setRaMotorSpeed(int requested_speed){
+void setRaMotorSpeed(volatile int requested_speed){
+    if(is_ra_running == 0 && requested_speed !=0){
+        startMotorRa();
+    }
     if(requested_speed < 0){
         requested_speed = -requested_speed;
         RaDir = -1;
     }
-    else{
+    else if(requested_speed > 0){
         RaDir = 1;
+    }
+    else{
+        stopMotorRa();
     }
     uint32_t PSC_value = ((uint32_t)FULL_STEP)/((uint32_t)microsteps) - 1;
     uint32_t CCR_value = (uint32_t)((float)SystemCoreClock/(float)(requested_speed))/(((float)PSC_value+1.f) * 64/(float)microsteps) * SECONDS_IN_MINUTE - 1;
@@ -181,12 +198,18 @@ void setRaMotorSpeed(int requested_speed){
 
 /*Requested speed in Full_steps per minute for Dec motor*/
 void setDecMotorSpeed(int requested_speed){
+    if(is_dec_running == 0 && requested_speed !=0){
+        startMotorRa();
+    }
     if(requested_speed < 0){
         requested_speed = -requested_speed;
         DecDir = -1;
     }
-    else{
+    else if(requested_speed > 0){
         DecDir = 1;
+    }
+    else{
+        stopMotorDec();
     }
     uint32_t PSC_value = ((uint32_t)FULL_STEP)/((uint32_t)microsteps) - 1;
     uint32_t CCR_value = (uint32_t)((float)SystemCoreClock/(float)(requested_speed))/(((float)PSC_value+1.f) * 64/(float)microsteps) * SECONDS_IN_MINUTE - 1;

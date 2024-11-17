@@ -188,7 +188,6 @@ void StartDefaultTask(void *argument)
   HAL_UART_Receive_IT(&huart3, uart_recieve_buff, 1);
   SetBuck1(ENABLE);
   SetBuck2(ENABLE);
-  testBuzzer();
   initializeMotors();
   estimateResistance();
   startMotorAutoMode();
@@ -219,7 +218,7 @@ void startPowerManager(void *argument)
 {
   /* USER CODE BEGIN startPowerManager */
 
-  osDelay(250);
+  osDelay(1250);
   initPowerManager();
   /* Infinite loop */
   for(;;)
