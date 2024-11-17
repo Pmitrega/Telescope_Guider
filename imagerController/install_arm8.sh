@@ -1,6 +1,10 @@
 #!/bin/bash
 sudo echo "deb http://ftp.de.debian.org/debian sid main" >> /etc/apt/sources.list
-sudo apt-get update
+sudo apt-get update -y
+sudo apt-get upgrade -y
+sudo apt-get install mosquitto mosquitto-clients -y
+sudo systemctl start mosquitto
+sudo systemctl enable mosquitto
 sudo apt-get install libpaho-mqtt1.3
 sudo apt-get install build-essential
 sudo apt-get install libopencv-dev
