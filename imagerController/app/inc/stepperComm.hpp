@@ -1,5 +1,8 @@
+#pragma once
+
 #include <string>
 #include <boost/asio.hpp>
+#include <mutex>
 
 class stepperCommunicator{
 public:
@@ -41,6 +44,7 @@ private:
     float m_M2C2_curr = 0;
     float m_batt_curr = 0;
     bool m_is_connected = false;
+    std::mutex com_transmission_mutex;
     boost::asio::io_service m_io_service;
     boost::asio::serial_port m_serial_port;
 };

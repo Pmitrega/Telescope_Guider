@@ -4,6 +4,13 @@
 #include <format>
 #include <fstream>
 #include <thread>
+#include <stdio.h>
+#include <functional>
+#include <iostream>
+#include <queue>
+
+static std::queue<MqttMessage> mqtt_message_queue;
+
 
 void readFile(std::string filename, char* buffer, long buff_len){
         std::ifstream fin;
@@ -15,6 +22,44 @@ void readFile(std::string filename, char* buffer, long buff_len){
         fin.close();
     }
 
+void delivered(void *context, MQTTClient_deliveryToken dt)
+{
+    printf("Message with token value %d delivery confirmed\n", dt);
+    // deliveredtoken = dt;
+}
+
+int msgarrvd(void *context, char *topicName, int topicLen, MQTTClient_message *message)
+{
+    std::string topic(topicName);
+    char payload_buffer[50];
+    sprintf(payload_buffer,"%.*s", message->payloadlen, (char*)message->payload);
+    std::string payload(payload_buffer);
+    LOG_INFO("Recieved message \r\n topic:%s \r\n payload: %s \r\n", topic.c_str(), payload.c_str());
+    MQTTClient_freeMessage(&message);
+    MQTTClient_free(topicName);
+    mqtt_message_queue.push({topic, payload});
+    return 1;
+}
+
+
+int MqttClientWrapper::checkForMessage(MqttMessage& mqtt_message){
+    if(!mqtt_message_queue.empty()){
+        mqtt_message = mqtt_message_queue.front();
+        mqtt_message_queue.pop();
+        return 0;
+    }
+    else{
+        return 1;
+    }
+}
+void connlost(void *context, char *cause)
+{
+    printf("\nConnection lost\n");
+    if (cause)
+    	printf("     cause: %s\n", cause);
+}
+
+
 MqttClientWrapper::MqttClientWrapper(){
     MQTTClient_connectOptions conn_opts = MQTTClient_connectOptions_initializer;
     MQTTClient_create(&m_client, ADDRESS, CLIENTID,
@@ -23,12 +68,22 @@ MqttClientWrapper::MqttClientWrapper(){
     conn_opts.cleansession = 1;
     conn_opts.password = "stepper";
     conn_opts.username = "stepper";
-    int rc = MQTTClient_connect(m_client, &conn_opts);
+    int rc;
+    if((rc= MQTTClient_setCallbacks(m_client, NULL, connlost, msgarrvd , delivered))!= MQTTCLIENT_SUCCESS)
+    {
+        printf("Failed to set callbacks, return code %d\n", rc);
+        rc = EXIT_FAILURE;
+        MQTTClient_destroy(&m_client);
+    }
+
+    rc = MQTTClient_connect(m_client, &conn_opts);
     if( rc != MQTTCLIENT_SUCCESS){
         LOG_ERROR("Failed to connect MQTT client with error code: %d \r\n", rc);
         m_connecton_status = rc;
     }
-
+    MQTTClient_subscribe(m_client, "camera/#", 0);
+    MQTTClient_subscribe(m_client, "stepper/#", 0);
+    MQTTClient_subscribe(m_client, "motors/#", 0);
 }
 
 int MqttClientWrapper::publishMessageImageRaw(std::string topic, char* image, int image_size){
@@ -89,6 +144,8 @@ void testMQTT(){
     /*mosquitto_sub -v -h localhost -p 1883 -t myTopic -u stepper -P stepper*/
     /*TO SUBSCRIBE FOR ALL TOPICS*/
     /*mosquitto_sub -v -h localhost -p 1883 -t '#' -u stepper -P stepper*/
+    /*TO PUBLISH*/
+    /*mosquitto_pub -h localhost -t test -m "hello world" -u "stepper" -P "stepper"*/
     MqttClientWrapper mqtt_client;
     mqtt_client.publishMessageNumber("sensors/battV", 3.14);
     mqtt_client.publishMessageNumber("sensors/buck1V", 4.14);

@@ -10,6 +10,7 @@ set(SOURCES
     src/telescopeIdentifier.cpp
     src/stepperComm.cpp
     src/mqtt_client.cpp
+    src/Worker.cpp
 )
 
 set(STATIC_LIBS

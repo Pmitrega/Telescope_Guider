@@ -13,6 +13,7 @@
 #include "logger.hpp"
 #include "stepperComm.hpp"
 #include "mqtt_client.hpp"
+#include <Worker.hpp>
 
 
 void takeTestImages(){
@@ -59,7 +60,7 @@ void takeTestImages(){
 }
 
 void streamCameraMQTT(){
-
+	stepperCommunicator step_com;
 	CameraController cam_controller;
 	MqttClientWrapper mqtt_client;
 	cam_controller.scanForCameras();
@@ -91,7 +92,7 @@ void streamCameraMQTT(){
 		auto tm = *std::localtime(&t);
 		std::ostringstream oss;
 		oss << std::put_time(&tm, "%d-%m-%Y %H-%M-%S");
-		mqtt_client.publishMessageNumber("sensors/battV", 3.14);
+		mqtt_client.publishMessageNumber("sensors/battV", 6.4);
 		mqtt_client.publishMessageNumber("sensors/buck1V", 4.14);
 		mqtt_client.publishMessageNumber("sensors/buck2V", 5.14);
 		mqtt_client.publishMessageNumber("sensors/M1C1curr", 6.14);
@@ -156,7 +157,17 @@ void testStepperControllerComm(){
 
 
 int main(){
-	streamCameraMQTT();
+	// streamCameraMQTT();
+	GuiderWorker worker;
+	
+	std::thread thread_MQTT_trans(&GuiderWorker::handleMQTTTransmission, &worker);
+	std::thread thread_UART_REQ(&GuiderWorker::handleUARTRequests, &worker);
+	std::thread thread_CameraControl(&GuiderWorker::handleCamera, &worker);
+	std::thread thread_MQTTRec(&GuiderWorker::handleMQTTRecieve, &worker);
+	thread_MQTTRec.join();
+	thread_CameraControl.join();
+	thread_MQTT_trans.join();
+	thread_UART_REQ.join();
 	//testStepperControllerComm();
 	//testMQTT();
     return EXIT_SUCCESS;

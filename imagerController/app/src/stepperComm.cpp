@@ -57,7 +57,9 @@ void stepperCommunicator::connectSerial(const std::string serial_port){
 stepperCommunicator::Status stepperCommunicator::setManualMode(){
     if(m_serial_port.is_open() == true){
         LOG_INFO("Setting manual\r\n");
+        com_transmission_mutex.lock();
         m_serial_port.write_some(boost::asio::buffer("-M\r\n"));
+        com_transmission_mutex.unlock();
         return SERIAL_OK;
     }
     else{
@@ -70,7 +72,9 @@ stepperCommunicator::Status stepperCommunicator::setManualMode(){
 stepperCommunicator::Status stepperCommunicator::setAutoMode(){
     if(m_serial_port.is_open() == true){
         LOG_INFO("Setting auto\r\n");
+        com_transmission_mutex.lock();
         m_serial_port.write_some(boost::asio::buffer("-A\r\n"));
+        com_transmission_mutex.unlock();
         return SERIAL_OK;
     }
     else{
@@ -84,7 +88,9 @@ stepperCommunicator::Status stepperCommunicator::setRaSpeed(int msecPerSec){
         LOG_INFO("Setting Ra\r\n");
         std::string message = std::format("-R{}\r\n", msecPerSec);
         std::cout <<message << std::endl;
+        com_transmission_mutex.lock();
         m_serial_port.write_some(boost::asio::buffer(message));
+        com_transmission_mutex.unlock();
         return SERIAL_OK;
     }
     else{
@@ -96,7 +102,9 @@ stepperCommunicator::Status stepperCommunicator::setDecSpeed(int msecPerSec){
     if(m_serial_port.is_open() == true){
         std::string message = std::format("-D{}\r\n", msecPerSec);
         std::cout <<message << std::endl;
+        com_transmission_mutex.lock();
         m_serial_port.write_some(boost::asio::buffer(message));
+        com_transmission_mutex.unlock();
         return SERIAL_OK;
     }
     else{
@@ -118,36 +126,52 @@ void stepperCommunicator::asyncMessageHandler(const boost::system::error_code& e
 
 
 stepperCommunicator::Status stepperCommunicator::reqBattVolt(){
+    com_transmission_mutex.lock();
     m_serial_port.write_some(boost::asio::buffer("-V0\r\n"));
+    com_transmission_mutex.unlock();
     return SERIAL_OK;
 }
 
 stepperCommunicator::Status stepperCommunicator::reqBuck1Volt(){
+    com_transmission_mutex.lock();
     m_serial_port.write_some(boost::asio::buffer("-V1\r\n"));
+    com_transmission_mutex.unlock();
     return SERIAL_OK;
 }
 stepperCommunicator::Status stepperCommunicator::reqBuck2Volt(){
+    com_transmission_mutex.lock();
     m_serial_port.write_some(boost::asio::buffer("-V2\r\n"));
+    com_transmission_mutex.unlock();
     return SERIAL_OK;
 }
 stepperCommunicator::Status stepperCommunicator::reqM1C1Current(){
+    com_transmission_mutex.lock();
     m_serial_port.write_some(boost::asio::buffer("-C0\r\n"));
+    com_transmission_mutex.unlock();
     return SERIAL_OK;
 }
 stepperCommunicator::Status stepperCommunicator::reqM1C2Current(){
+    com_transmission_mutex.lock();
     m_serial_port.write_some(boost::asio::buffer("-C1\r\n"));
+    com_transmission_mutex.unlock();
     return SERIAL_OK;
 }
 stepperCommunicator::Status stepperCommunicator::reqM2C1Current(){
+    com_transmission_mutex.lock();
     m_serial_port.write_some(boost::asio::buffer("-C2\r\n"));
+    com_transmission_mutex.unlock();
     return SERIAL_OK;
 }
 stepperCommunicator::Status stepperCommunicator::reqM2C2Current(){
+    com_transmission_mutex.lock();
     m_serial_port.write_some(boost::asio::buffer("-C3\r\n"));
+    com_transmission_mutex.unlock();
     return SERIAL_OK;
 }
 stepperCommunicator::Status stepperCommunicator::reqBattCurrent(){
+    com_transmission_mutex.lock();
     m_serial_port.write_some(boost::asio::buffer("-C4\r\n"));
+    com_transmission_mutex.unlock();
     return SERIAL_OK;
 }
 
@@ -174,7 +198,7 @@ void stepperCommunicator::messageParser(std::string message){
             }
             if(is_fine){
                 m_batt_volt = (float)std::stoi(pre_parsed.substr(3, pre_parsed.size()));
-                std::cout << "recieved batt v: " << m_batt_volt<<std::endl;
+                // std::cout << "recieved batt v: " << m_batt_volt<<std::endl;
             }
         }
         else if(pre_parsed.substr(0, 2) == "B1"){
@@ -188,7 +212,7 @@ void stepperCommunicator::messageParser(std::string message){
             }
             if(is_fine){
                 m_buck1_volt = (float)std::stoi(pre_parsed.substr(3, pre_parsed.size()));
-                std::cout << "recieved buck1 v: " << m_batt_volt<<std::endl;
+                // std::cout << "recieved buck1 v: " << m_batt_volt<<std::endl;
             }
         }
         else if(pre_parsed.substr(0, 2) == "B2"){
@@ -202,7 +226,7 @@ void stepperCommunicator::messageParser(std::string message){
             }
             if(is_fine){
                 m_buck2_volt = (float)std::stoi(pre_parsed.substr(3, pre_parsed.size()));
-                std::cout << "recieved buck2 v: " << m_batt_volt<<std::endl;
+                // std::cout << "recieved buck2 v: " << m_batt_volt<<std::endl;
             }
         }
         else if(pre_parsed.substr(0, 2) == "C0"){
@@ -216,7 +240,7 @@ void stepperCommunicator::messageParser(std::string message){
             }
             if(is_fine){
                 m_M1C1_curr = (float)std::stoi(pre_parsed.substr(3, pre_parsed.size()));
-                std::cout << "recieved M1C1 curr: " << m_M1C1_curr<<std::endl;
+                // std::cout << "recieved M1C1 curr: " << m_M1C1_curr<<std::endl;
             }
         }
         else if(pre_parsed.substr(0, 2) == "C1"){
@@ -230,7 +254,7 @@ void stepperCommunicator::messageParser(std::string message){
             }
             if(is_fine){
                 m_M1C2_curr = (float)std::stoi(pre_parsed.substr(3, pre_parsed.size()));
-                std::cout << "recieved M1C2 curr: " << m_M1C2_curr<<std::endl;
+                // std::cout << "recieved M1C2 curr: " << m_M1C2_curr<<std::endl;
             }
         }
         else if(pre_parsed.substr(0, 2) == "C2"){
@@ -244,7 +268,7 @@ void stepperCommunicator::messageParser(std::string message){
             }
             if(is_fine){
                 m_M2C1_curr = (float)std::stoi(pre_parsed.substr(3, pre_parsed.size()));
-                std::cout << "recieved M2C1 curr: " << m_M2C1_curr<<std::endl;
+                // std::cout << "recieved M2C1 curr: " << m_M2C1_curr<<std::endl;
             }
         }
         else if(pre_parsed.substr(0, 2) == "C3"){
@@ -258,7 +282,7 @@ void stepperCommunicator::messageParser(std::string message){
             }
             if(is_fine){
                 m_M2C2_curr = (float)std::stoi(pre_parsed.substr(3, pre_parsed.size()));
-                std::cout << "recieved M2C2 curr: " << m_M2C2_curr<<std::endl;
+                // std::cout << "recieved M2C2 curr: " << m_M2C2_curr<<std::endl;
             }
         }
         else if(pre_parsed.substr(0, 2) == "C4"){
@@ -272,7 +296,7 @@ void stepperCommunicator::messageParser(std::string message){
             }
             if(is_fine){
                 m_batt_curr = (float)std::stoi(pre_parsed.substr(3, pre_parsed.size()));
-                std::cout << "recieved batt curr v: " << m_batt_curr<<std::endl;
+                // std::cout << "recieved batt curr v: " << m_batt_curr<<std::endl;
             }
         }
         else{

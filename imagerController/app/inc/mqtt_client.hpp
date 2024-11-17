@@ -1,3 +1,5 @@
+#pragma once
+
 #include "MQTTClient.h"
 #include <cstdlib>
 #include <string>
@@ -11,6 +13,11 @@
 
 void testMQTT();
 
+struct MqttMessage{
+    std::string topic;
+    std::string payload;
+};
+
 class MqttClientWrapper{
 public:
     MqttClientWrapper();
@@ -18,6 +25,7 @@ public:
     int publishMessageNumber(std::string topic, float value);
     int publishMessageString(std::string topic, std::string mess);
     int publishMessageImageRaw(std::string topic, char* image, int image_size);
+    int checkForMessage(MqttMessage& mqtt_message);
 private:
     MQTTClient m_client;
     int m_connecton_status = -1;
