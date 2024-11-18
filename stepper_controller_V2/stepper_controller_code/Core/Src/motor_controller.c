@@ -199,7 +199,7 @@ void setRaMotorSpeed(volatile int requested_speed){
 /*Requested speed in Full_steps per minute for Dec motor*/
 void setDecMotorSpeed(int requested_speed){
     if(is_dec_running == 0 && requested_speed !=0){
-        startMotorRa();
+        startMotorDec();
     }
     if(requested_speed < 0){
         requested_speed = -requested_speed;
