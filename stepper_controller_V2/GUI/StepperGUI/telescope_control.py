@@ -1,0 +1,195 @@
+import math
+from typing import Callable
+import cv2
+import numpy as np
+import astropy
+
+class starCentroid:
+    def __init__(self, brightness, x_cent, y_cent):
+        self.brightness = brightness
+        self.x_cent = x_cent
+        self.y_cent = y_cent
+
+    def getDistance(self, star):
+        return ((self.x_cent - star.x_cent)**2 +  (self.y_cent - star.y_cent)**2)**(1/2)
+
+    def does_match(self, star):
+        distance = self.getDistance(star)
+        if distance < 10:
+            return True
+        else:
+            return False
+    def __eq__(self, other):
+        if self.x_cent == other.x_cent and self.y_cent == other.y_cent:
+            return True
+    def __repr__(self):
+        return "StarCentroid()"
+
+    def __str__(self):
+        return f"br: {self.brightness}, x_cent: {self.x_cent}, y_cent: {self.y_cent}"
+
+class TelescopeController:
+    def __init__(self, set_ra_speed_func: Callable[[int], None], set_dec_speed_func: Callable[[int], None]):
+        self.image_buffer = None
+        self.new_image = False
+        self.setRaSpeed = set_ra_speed_func
+        self.setDecSpeed = set_dec_speed_func
+        self.last_star_centroids = []
+        self.reference_star_initial = None
+        self.reference_star_current = None
+        self.time_interval = -1
+        self.sec_per_pixel = 6.33
+        self.camera_rotation = 45 / 180 * math.pi
+        self.telescope_ra_vect = (math.cos(self.camera_rotation), math.sin(self.camera_rotation))
+        self.telescope_dec_vect = (-math.sin(self.camera_rotation), math.cos(self.camera_rotation))
+        self.telescope_dec_angle = 70
+        self.go_to_loc = starCentroid(0, 1280/2 , 960/2)
+        self.mode = "IDEN_TEL_RA"
+        self.run_ra_ident = True
+        self.run_ra_ident_iter = 0
+        self.run_dec_ident = True
+        self.run_dec_ident_iter = 0
+        self.last_error = (0,0)
+    def genNewImage(self, image: np.ndarray, time_interval: int, auto_control: bool):
+        self.new_image = True
+        self.image_buffer = image
+        self.time_interval = time_interval
+        self.findStars()
+        if self.reference_star_current is not None and self.reference_star_initial is not None:
+            err = self.getErrorToRefStar(self.go_to_loc)
+            if self.run_dec_ident:
+                if self.run_dec_ident_iter == 0:
+                    self.setDecSpeed(1000)
+                elif self.run_dec_ident_iter == 1:
+                    pass
+                elif self.run_dec_ident_iter == 4:
+                    ident_dec = (self.last_error[0] - err[0], self.last_error[1] - err[1])
+                    amp = math.sqrt(ident_dec[0]**2 + ident_dec[1]**2)
+                    self.diff_amp = amp
+                    self.telescope_dec_vect = (-ident_dec[0]/amp, -ident_dec[1]/amp)
+                    self.telescope_ra_vect =  (-ident_dec[1] / amp, ident_dec[0] / amp)
+                    self.setDecSpeed(0)
+                    self.run_dec_ident = False
+                self.run_dec_ident_iter +=1
+                self.last_error = err[:]
+                return
+
+            if self.run_ra_ident:
+                if self.run_ra_ident_iter == 0:
+                    self.setRaSpeed(1000)
+                elif self.run_ra_ident_iter == 1:
+                    pass
+                elif self.run_ra_ident_iter == 4:
+                    ident_dec = (self.last_error[0] - err[0], self.last_error[1] - err[1])
+                    amp = math.sqrt(ident_dec[0]**2 + ident_dec[1]**2)
+                    cos_ident = amp/self.diff_amp
+                    self.setRaSpeed(0)
+                    if cos_ident < 1:
+                        self.telescope_dec_angle = math.acos(cos_ident) *180/math.pi
+                        print("identified  angle:", cos_ident)
+                    self.run_ra_ident = False
+                self.run_ra_ident_iter +=1
+                self.last_error = err[:]
+                return
+
+            # print(err)
+            self.setControl(err[0], err[1], auto_control)
+
+
+    def setControl(self, error_x, error_y, enabled:bool):
+        K_gain = 3
+        Pg = math.cos(self.telescope_dec_angle/180*math.pi)
+        dec_x = self.telescope_dec_vect[0]
+        dec_y = self.telescope_dec_vect[1]
+        ra_x = self.telescope_ra_vect[0]
+        ra_y = self.telescope_ra_vect[1]
+        A = np.array([[dec_x, ra_x*Pg],
+                      [dec_y, ra_y*Pg]])
+        B = np.array([error_x, error_y])
+        sol = np.linalg.solve(A,B)
+        sol = sol / np.linalg.norm(sol) * (error_x**2 + error_y**2)**(1/2) * K_gain
+
+        dec_control = sol[0]
+        ra_control = sol[1]
+        if dec_control > 1500:
+            dec_control = 1500
+        elif dec_control < -1500:
+            dec_control = -1500
+
+        if ra_control > 1500:
+            ra_control = 1500
+        elif ra_control < -1500:
+            ra_control = -1500
+        print("ra ctrl:",-int(ra_control))
+        print("dec ctrl:",-int(dec_control))
+        ra_control = - ra_control
+        dec_control = - dec_control
+        if enabled:
+            self.setRaSpeed(ra_control)
+            self.setDecSpeed(dec_control)
+
+        return sol
+
+    def getErrorToRefStar(self, star: starCentroid):
+        return ((self.reference_star_current.x_cent - star.x_cent) * self.sec_per_pixel, (self.reference_star_current.y_cent - star.y_cent) * self.sec_per_pixel)
+    def findStars(self):
+        if self.image_buffer is None:
+            return []
+        I_mat = cv2.blur(self.image_buffer, ksize=(5, 5))
+        I_mat = cv2.GaussianBlur(I_mat, ksize=(5, 5), sigmaX=2, sigmaY=2)
+        min_I = np.min(I_mat)
+        max_I = np.max(I_mat)
+        ret, I_mat = cv2.threshold(I_mat, min_I*1.4, 65535, cv2.THRESH_BINARY)
+        cv2.imwrite("binaraized.png", I_mat)
+        if max_I - min_I < 1000 or max_I/(min_I+1) < 1.5:
+            return
+
+
+        output = cv2.connectedComponentsWithStats(I_mat.astype(np.uint8))
+        current_star_centroids = []
+        for i in range(1,output[0]):
+            new_star = starCentroid(output[2][i, cv2.CC_STAT_AREA], output[3][i][0], output[3][i][1])
+            current_star_centroids.append(new_star)
+        found_reference = False
+        if not self.last_star_centroids:
+            self.last_star_centroids = current_star_centroids[:]
+            self.find_new_reference_star(current_star_centroids)
+            print("initial reference star:", self.reference_star_initial)
+        else:
+            for star_last in self.last_star_centroids:
+                for star_curr in current_star_centroids:
+                    if star_last.does_match(star_curr) and star_last == self.reference_star_current:
+                        self.reference_star_current = star_curr
+                        print(self.reference_star_current)
+                        found_reference = True
+                        print("reference current:", self.reference_star_current)
+                        break
+        self.last_star_centroids = current_star_centroids
+
+        if found_reference is False:
+            self.find_new_reference_star(self.last_star_centroids)
+        if self.reference_star_current is not None and self.reference_star_initial is not None:
+            print(self.getErrorToRefStar(self.reference_star_current))
+
+    def find_new_reference_star(self, centroids):
+        min_br = 0
+        for star in centroids:
+            if star.brightness > min_br:
+                min_br = star.brightness
+                self.reference_star_initial = star
+                self.reference_star_current = star
+
+    def getTrackedStar(self) -> starCentroid:
+        #return starCentroid(500,500,500)
+        return self.reference_star_current
+
+
+if __name__ == "__main__":
+    def setRaDummy(val: int):
+        print(f"Setting Ra control to {val}")
+    def setDecDummy(val: int):
+        print(f"Setting Dec control to {val}")
+
+    controller = TelescopeController(setRaDummy, setDecDummy)
+    sol = controller.setControl(100, 0)
+    print(sol)
