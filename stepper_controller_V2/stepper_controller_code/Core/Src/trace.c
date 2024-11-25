@@ -122,6 +122,9 @@ int CmdProcessor(uint8_t* Buf, uint32_t *Len){
         LOG_INFO("ENTERING MANUAL MODE\r\n");
       }
       }
+    else if(Buf[0] =='-'&& Buf[1] == 'Y'){
+        LOG_INFO("MR: %d %d %d %d\r\n", (int)(getM1C1Res()*1000), (int)(getM1C2Res()*1000), (int)(getM2C1Res()*1000), (int)(getM2C2Res()*1000));
+    }
     else if(Buf[0] =='-'&& (Buf[1] == 'u' || Buf[1] == 'i' || Buf[1] == 'o' || Buf[1] == 'p')){
         uint8_t num_buff[MAX_NUM_ARG_LENGTH] = {0};
         uint8_t indx = 2;
