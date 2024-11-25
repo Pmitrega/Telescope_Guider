@@ -20,6 +20,12 @@
 
 # Setup mosquito broker
 
+<code>
+    sudo apt-get install mosquitto mosquitto-clients -y
+    sudo systemctl start mosquitto
+    sudo systemctl enable mosquitto
+</code>
+
 Change mosquitto config
 <code>
     sudo nano /etc/mosquitto/mosquitto.conf
