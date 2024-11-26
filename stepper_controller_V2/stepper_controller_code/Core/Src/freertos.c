@@ -191,7 +191,7 @@ void StartDefaultTask(void *argument)
   initializeMotors();
   estimateResistance();
   startMotorAutoMode();
-  setDecMotorSpeed(-147);
+  setDecMotorSpeed(-100);
   setRaMotorSpeed(-14);
   const uint16_t LED_BRIGHTNESS = 30;
 
