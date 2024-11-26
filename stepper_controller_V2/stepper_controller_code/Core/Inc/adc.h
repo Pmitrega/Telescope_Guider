@@ -58,6 +58,11 @@ void callibrateCurrent();
 int getEstimatedBattCurrmA();
 int getBatteryPercentage();
 
+float getM1C1Res();
+float getM1C2Res();
+float getM2C1Res();
+float getM2C2Res();
+
 void startAdc();
 
 typedef enum ADC_CHANNELS{

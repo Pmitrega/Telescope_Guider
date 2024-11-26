@@ -38,6 +38,11 @@ float battery_curr = 0;
 float battery_volt = 0;
 float batt_conn_resistance = 0;
 
+float M1C1_res = 0.f;
+float M1C2_res = 0.f;
+float M2C1_res = 0.f;
+float M2C2_res = 0.f;
+
 static const float batt_volatage_table[] = {13500, 13000, 12850, 12800, 12750, 12500, 12300,
                                             12150, 12050, 11950, 11810, 11660, 11510, 10500};
 
@@ -281,6 +286,20 @@ int getCurrentM2C2mA(){
   return RAW_TO_mA(adc_readings[MOT2_C2_SENS_CH] - curr_callib_offset[3]);
 };
 
+float getM1C1Res(){
+  return M1C1_res;
+}
+
+float getM1C2Res(){
+  return M1C2_res;
+}
+float getM2C1Res(){
+  return M2C1_res;
+}
+float getM2C2Res(){
+  return M2C2_res;
+}
+
 /*shall be called before running current through load*/
 void callibrateCurrent(){
   curr_callib_offset[0] = 0U;
@@ -343,6 +362,9 @@ void estimateResistance(){
     setCoilM2C2(0);
     osDelay(3000);
     volatile int start_voltage = getBatteryVoltagemV();
+    int Buck1_volt = getBuck1VoltagemV();
+    int Buck2_volt = getBuck1VoltagemV();
+
     volatile int start_current = getEstimatedBattCurrmA();
     osDelay(10);
     setCoilM1C1(1000);
@@ -350,6 +372,13 @@ void estimateResistance(){
     setCoilM2C1(1000);
     setCoilM2C2(1000);
     osDelay(3000);
+
+
+
+    M1C1_res = (float)Buck1_volt/(float)(getCurrentM1C1mA());
+    M1C2_res = (float)Buck1_volt/(float)(getCurrentM1C2mA());
+    M2C1_res = (float)Buck2_volt/(float)(getCurrentM2C1mA());
+    M2C2_res = (float)Buck2_volt/(float)(getCurrentM2C2mA());
     volatile int end_voltage = getBatteryVoltagemV();
     volatile int end_current = getEstimatedBattCurrmA();
     osDelay(200);

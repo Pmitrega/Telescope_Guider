@@ -7,7 +7,6 @@
 #include <boost/shared_ptr.hpp>
 #include <logger.hpp>
 #include <iostream>
-#include <format>
 #include <vector>
 #include <thread>
 #include <fstream>
@@ -86,7 +85,9 @@ stepperCommunicator::Status stepperCommunicator::setAutoMode(){
 stepperCommunicator::Status stepperCommunicator::setRaSpeed(int msecPerSec){
     if(m_serial_port.is_open() == true){
         LOG_INFO("Setting Ra\r\n");
-        std::string message = std::format("-R{}\r\n", msecPerSec);
+        char buff[100];
+        sprintf(buff, "-R%d\r\n", msecPerSec);
+        std::string message = std::string(buff);
         std::cout <<message << std::endl;
         com_transmission_mutex.lock();
         m_serial_port.write_some(boost::asio::buffer(message));
@@ -100,7 +101,9 @@ stepperCommunicator::Status stepperCommunicator::setRaSpeed(int msecPerSec){
 }
 stepperCommunicator::Status stepperCommunicator::setDecSpeed(int msecPerSec){
     if(m_serial_port.is_open() == true){
-        std::string message = std::format("-D{}\r\n", msecPerSec);
+        char buff[100];
+        sprintf(buff, "-D%d\r\n", msecPerSec);
+        std::string message = std::string(buff);
         std::cout <<message << std::endl;
         com_transmission_mutex.lock();
         m_serial_port.write_some(boost::asio::buffer(message));

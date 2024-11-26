@@ -1,4 +1,5 @@
 # This Python file uses the following encoding: utf-8
+import math
 import sys
 import os
 import serial as ser
@@ -17,6 +18,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 
+import telescope_control
 # Important:
 # You need to run the following command to generate the ui_form.py file
 #     pyside6-uic form.ui -o ui_form.py, or
@@ -62,6 +64,7 @@ class MainWindow(QMainWindow):
         self.last_update_time = 0
         self.new_image = True
         self.mqtt_client = None
+        self.telescope_controller = telescope_control.TelescopeController(self.setRaSpeed, self.setDecSpeed)
     def connectTarget(self):
         if self.ui.checkBox_ws.isChecked():
             self.connectMQTT()
@@ -133,8 +136,22 @@ class MainWindow(QMainWindow):
                 self.updateSensorReadings()
             elif msg.topic == "images/raw":
                 deserialized_bytes = np.frombuffer(msg.payload, dtype=np.uint16)
-                deserialized_bytes =  np.reshape(deserialized_bytes, newshape=(960, 1280))
-                cv2.imwrite('output.png', deserialized_bytes)
+                Image =  np.reshape(deserialized_bytes, newshape=(960, 1280))
+                auto_ctrl = self.ui.checkBox_3.isChecked()
+                self.telescope_controller.genNewImage(Image, 2000, auto_ctrl)
+                tracked_star = self.telescope_controller.getTrackedStar()
+                displayed_img = Image/256
+                displayed_img = cv2.cvtColor(displayed_img.astype(np.uint8), cv2.COLOR_GRAY2RGB)
+
+                if tracked_star is not None:
+                    cv2.circle(displayed_img,(int(tracked_star.x_cent), int(tracked_star.y_cent)), int(math.sqrt(tracked_star.brightness/2)), (0,0,255), 3)
+                ra_vect = self.telescope_controller.telescope_ra_vect
+                dec_vect = self.telescope_controller.telescope_dec_vect
+                cv2.arrowedLine(displayed_img, (100,100), (100 + int(ra_vect[0] * 50), 100 + int(ra_vect[1] * 50)),(255,0,0), 3)
+                cv2.arrowedLine(displayed_img, (100, 100), (100 + int(dec_vect[0] * 50), 100 + int(dec_vect[1] * 50)), (0, 255, 0),3)
+                cv2.imwrite('output.png', displayed_img)
+                if self.ui.checkBox_4.isChecked():
+                    cv2.imwrite("./saved/" + self.image_info["title"]+".png", Image)
                 self.new_image = True
             elif msg.topic == "images/raw/title":
                 self.image_info["title"] = msg.payload.decode("utf-8")
@@ -309,11 +326,13 @@ class MainWindow(QMainWindow):
 
     def setDecSpeed(self, val):
         # if(val >10 or val < -10):
+        print(f"Setting Dec control to {val}")
         self.mqtt_client.publish("motors/dec", str(val))
             # cmd = "-D" + str(val) + "\r\n"
             # self.conn_handler.write(cmd.encode())
     def setRaSpeed(self, val):
         # if (val > 10 or val < -10):
+        print(f"Setting Ra control to {val}")
         self.mqtt_client.publish("motors/ra", str(val))
             # cmd = "-R" + str(val) + "\r\n"
             # self.conn_handler.write(cmd.encode())
@@ -322,6 +341,8 @@ class MainWindow(QMainWindow):
         self.mqtt_client.publish("motors/mode", "AUTO")
         # self.conn_handler.write(b'-A\r\n')
 
+    def select_clicked_star(self):
+        print("Selecting star")
 
 
 

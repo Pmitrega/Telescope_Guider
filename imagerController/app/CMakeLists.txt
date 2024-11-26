@@ -19,6 +19,7 @@ set(STATIC_LIBS
 set(LIB_INCLUDES
     PUBLIC
     ${BASE_DIR}/lib/ASICamera/includes
+    ${BASE_DIR}/lib/include
     /usr/include/opencv4/
 )
 set(INCLUDES
