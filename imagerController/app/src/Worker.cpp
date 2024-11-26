@@ -91,7 +91,7 @@ void GuiderWorker::handleMQTTTransmission(){
             m_image_info.image_capture_time.second = false;
 		    m_mqtt_client.publishMessageString("images/raw/capture_time", m_image_info.image_capture_time.first);
         }
-        if(m_image_info.image_buffer.second == true){
+        if(m_image_info.image_buffer.second == true && m_image_info.image_buffer.first != nullptr){
             LOG_INFO("transmiting %s\r\n", m_image_info.image_title.first.c_str());
             m_image_info.image_buffer.second = false;
 		    m_mqtt_client.publishMessageImageRaw("images/raw", (char*)m_image_info.image_buffer.first, 1280*960*2);
@@ -173,9 +173,10 @@ void GuiderWorker::handleCamera(){
         LOG_INFO("Waiting for camera ... \r\n");
         std::this_thread::sleep_for(std::chrono::milliseconds(2000));
         camera_list = m_cam_controller.getCameraList();
+        m_cam_controller.scanForCameras();
     }
-    
-	m_cam_controller.openCameraByProducerAndID(ASI, 0U);
+    auto current_camera = camera_list[0];
+	m_cam_controller.openCameraByProducerAndID(current_camera.cameraProducer, 0U);
 	m_cam_controller.setCameraExposure_us(std::stoi(m_camera_settings.exposure.first) * 1000);
 	m_cam_controller.setCameraGain(std::stoi(m_camera_settings.gain.first));
 	m_cam_controller.setImageType(IMG_RAW16);
@@ -190,33 +191,15 @@ void GuiderWorker::handleCamera(){
 	uint8_t buffer[1280*960*2];
 	int  i = 0;
 	int ms_betw_frames = std::stoi(m_camera_settings.interval.first);
-
+    m_cam_controller.startVideoCapture();
     while(true){
         auto capture_start_time =  std::chrono::system_clock::now();
 		auto t = std::time(nullptr);
-
-
-        if(m_camera_settings.exposure.second == true){
-            m_camera_settings.exposure.second = false;
-            m_cam_controller.setCameraExposure_us(std::stoi(m_camera_settings.exposure.first) * 1000);
-            m_image_info.image_exposure.first = m_camera_settings.exposure.first;
-        }
-        if(m_camera_settings.gain.second == true){
-            m_camera_settings.gain.second = false;
-            LOG_INFO("Updating gain to %s \r\n", m_camera_settings.gain.first.c_str());
-            m_image_info.image_gain.first = m_camera_settings.gain.first;
-            m_cam_controller.setCameraGain(std::stoi(m_camera_settings.gain.first));
-        }
-        if(m_camera_settings.interval.second == true){
-            m_camera_settings.interval.second = false;
-            LOG_INFO("Updating interval to %s \r\n", m_camera_settings.interval.first.c_str());
-            ms_betw_frames = std::stoi(m_camera_settings.interval.first);
-        }
-
-
-		if(CAM_CTRL_FAIL == m_cam_controller.takeAnImage()){
+		if(CAM_CTRL_FAIL == m_cam_controller.tryGetVideoData()){
+            m_cam_controller.tryReconnectCamera(current_camera);
 			continue;
 		}
+        handleCameraSettChangeReq();
 		std::string filename;
 		if(i < 10){
 			filename = std::string("image0") + std::to_string(i) + ".raw";
@@ -228,23 +211,14 @@ void GuiderWorker::handleCamera(){
 		std::ostringstream oss;
 		oss << std::put_time(&tm, "%d-%m-%Y %H-%M-%S");
         m_image_info.image_capture_time.first = oss.str();
-        m_image_info.image_capture_time.second = true;
-
         m_image_info.image_title.first = filename;
-        m_image_info.image_title.second = true;
-        m_image_info.image_buffer.second = true;
         m_image_info.image_buffer.first = m_cam_controller.getBuffer().get();
-        m_image_info.image_gain.second = true;
-        m_image_info.image_exposure.second = true;
-        m_image_info.image_width.second = true;
-        m_image_info.image_heigth.second = true;
-        m_image_info.image_xstart.second = true;
-        m_image_info.image_ystart.second = true;
+        requestImageTransimssion();
 		auto capture_end_time =  std::chrono::system_clock::now();
         std::chrono::duration<float> elapesed_time = capture_end_time - capture_start_time;
-        int sleep_time = (ms_betw_frames) - static_cast<int>(1000*elapesed_time.count());
-		LOG_INFO("sleep time: %d ms\r\n", sleep_time)
-        std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
+        // int sleep_time = (ms_betw_frames) - static_cast<int>(1000*elapesed_time.count());
+		// LOG_INFO("sleep time: %d ms\r\n", sleep_time)
+        // std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
 		i++;
 	}
 }
@@ -362,4 +336,37 @@ void GuiderWorker::handleUARTRequests(){
         }
 		std::this_thread::sleep_for(std::chrono::milliseconds(50));
 	}
+}
+
+
+void GuiderWorker::handleCameraSettChangeReq(){
+    if(m_camera_settings.exposure.second == true){
+        LOG_INFO("Updating exposure to %s \r\n", m_camera_settings.interval.first.c_str());
+        m_camera_settings.exposure.second = false;
+        m_cam_controller.setCameraExposure_us(std::stoi(m_camera_settings.exposure.first) * 1000);
+        m_image_info.image_exposure.first = m_camera_settings.exposure.first;
+        }
+    if(m_camera_settings.gain.second == true){
+        m_camera_settings.gain.second = false;
+        LOG_INFO("Updating gain to %s \r\n", m_camera_settings.gain.first.c_str());
+        m_image_info.image_gain.first = m_camera_settings.gain.first;
+        m_cam_controller.setCameraGain(std::stoi(m_camera_settings.gain.first));
+    }
+}
+
+
+void GuiderWorker::requestCameraInfoTransmision(){
+
+}
+
+void GuiderWorker::requestImageTransimssion(){
+        m_image_info.image_capture_time.second = true;
+        m_image_info.image_gain.second = true;
+        m_image_info.image_exposure.second = true;
+        m_image_info.image_width.second = true;
+        m_image_info.image_heigth.second = true;
+        m_image_info.image_xstart.second = true;
+        m_image_info.image_ystart.second = true;
+        m_image_info.image_title.second = true;
+        m_image_info.image_buffer.second = true;
 }

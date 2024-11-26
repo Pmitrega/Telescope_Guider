@@ -75,6 +75,9 @@ public:
 private:
     bool checkForUARTUpdate();
     bool waitForUART();
+    void handleCameraSettChangeReq();
+    void requestImageTransimssion();
+    void requestCameraInfoTransmision();
     CameraController m_cam_controller;
 	MqttClientWrapper m_mqtt_client;
     stepperCommunicator m_step_com;

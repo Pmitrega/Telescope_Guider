@@ -108,7 +108,7 @@ MqttClientWrapper::~MqttClientWrapper(){
 int MqttClientWrapper::publishMessageNumber(std::string topic, float value){
     MQTTClient_message pubmsg = MQTTClient_message_initializer;
     char buff[100];
-    sprintf(buff, ".6f", value);
+    sprintf(buff, "%.6f", value);
     std::string payload = std::string(buff);
     pubmsg.payload = (void*)payload.c_str();
     pubmsg.payloadlen = payload.length();

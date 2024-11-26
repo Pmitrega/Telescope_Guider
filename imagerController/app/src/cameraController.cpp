@@ -166,11 +166,13 @@ bool CameraController::openCameraByProducerAndID(CameraProducer producer, uint16
             {
                 case CameraProducer::ASI:
                         if(ASIOpenCamera(camID) != ASI_SUCCESS){
+                            LOG_ERROR("Failed to open camera \r\n")
                             ret = CAM_CTRL_FAIL;
                             break;
                         }
                         if(ASIInitCamera(camID) != ASI_SUCCESS){
                             ret = CAM_CTRL_FAIL;
+                            LOG_ERROR("Failed to init camera \r\n")
                             break;
                         }
                         ret = CAM_CTRL_SUCCESS;
@@ -200,6 +202,7 @@ bool CameraController::openCameraByProducerAndID(CameraProducer producer, uint16
 }
 
 int CameraController::scanForCameras(){
+    m_camera_list = {};
     int detected_camera_numb = 0;
     detected_camera_numb += scanForASI();
     detected_camera_numb += scanForSVBONY();
@@ -373,7 +376,7 @@ bool CameraController::takeAnImage(){
     {
     case ASI:
         {
-        LOG_INFO("Starting exopsure \r\n");
+        //LOG_INFO("Starting exopsure \r\n");
         if(startExposure() == CAM_CTRL_FAIL){
             return CAM_CTRL_FAIL;
         }
@@ -385,9 +388,9 @@ bool CameraController::takeAnImage(){
                 return CAM_CTRL_FAIL;
             }
         }
-        LOG_INFO("Exposure finished\r\n");
+        //LOG_INFO("Exposure finished\r\n");
         if(exp_status == ASI_EXP_SUCCESS){
-            LOG_INFO("Buffer size %d\r\n", m_image_buffer_size);
+            //LOG_INFO("Buffer size %d\r\n", m_image_buffer_size);
             auto asi_ret = ASIGetDataAfterExp(m_connected_camera->cameraID, (uint8_t*)m_image_buffer.get(), m_image_buffer_size);
             if(asi_ret == ASI_SUCCESS){
                 ret = CAM_CTRL_SUCCESS;
@@ -398,6 +401,74 @@ bool CameraController::takeAnImage(){
         }
         break;
         }
+    case SVBONY:
+        break;
+    default:
+        break;
+    }
+    return ret;
+}
+
+
+bool CameraController::startVideoCapture(){
+    bool ret = CAM_CTRL_FAIL;
+    switch (m_connected_camera->cameraProducer)
+    {
+    case ASI:{
+            int rc = 0;
+            if((rc = ASIStartVideoCapture(m_connected_camera->cameraID))!= ASI_SUCCESS){
+                LOG_ERROR("Can't start video capture %d\r\n", rc)
+                break;
+            }
+            else{
+                ret = CAM_CTRL_SUCCESS;
+            }
+        }
+        break;
+    case SVBONY:
+        break;
+    default:
+        break;
+    }
+    return ret;
+}
+
+bool CameraController::stopVideoCapture(){
+    bool ret = CAM_CTRL_FAIL;
+    switch (m_connected_camera->cameraProducer)
+    {
+    case ASI:
+        if(ASIStopVideoCapture(m_connected_camera->cameraID)!= ASI_SUCCESS){
+            LOG_ERROR("Can't stop video capture\r\n")
+            break;
+        }
+        else{
+            ret = CAM_CTRL_SUCCESS;
+        }
+        break;
+    case SVBONY:
+        break;
+    default:
+        break;
+    }
+    return ret;
+}
+
+bool CameraController::tryGetVideoData(){
+    bool ret = CAM_CTRL_FAIL;
+    switch (m_connected_camera->cameraProducer)
+    {
+    case ASI:{
+        int expo =  getExposure_us()/1000;
+            if(ASIGetVideoData(m_connected_camera->cameraID, (uint8_t*)m_image_buffer.get(), m_image_buffer_size, expo*2 + 500)){
+                LOG_ERROR("Can't get camera data\r\n")
+                break;
+            }
+            else{
+                ret = CAM_CTRL_SUCCESS;
+            }
+        }
+        break;
     case SVBONY:
         break;
     default:
@@ -520,4 +591,18 @@ int CameraController::getGain(){
         break;
     }
     return ret;
+}
+
+
+void CameraController::tryReconnectCamera(const CameraInfo& cam_info){
+    scanForCameras();
+    while(m_camera_list.size() < 1){
+        LOG_INFO("Waiting for camera ... \r\n");
+        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+        scanForCameras();
+    }
+    if(m_camera_list[0] == cam_info){
+        openCameraByProducerAndID(cam_info.cameraProducer, 0U);
+        setImageType(IMG_RAW16);
+    }
 }

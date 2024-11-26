@@ -32,11 +32,11 @@ typedef enum IMG_TYPE{
 	IMG_END = -1
 }IMG_TYPE;
 
-enum CameraProducer{
+typedef enum CameraProducer{
     ASI = 0,
     SVBONY,
     NUMBER_OF_CAMERA_PRODUCERS
-};
+}CameraProducer;
 
 struct CameraInfo{
     uint16_t cameraID;
@@ -46,6 +46,11 @@ struct CameraInfo{
     bool isColor;
     double PixelSize; //the pixel size of the camera, unit is um. such like 5.6um
     bool controlTypeAviable[CameraControlTypes::NUMBER_OF_CONTROLL_TYPES];
+    bool operator == (const CameraInfo &Ref) const 
+    {
+        return  (this->cameraProducer == Ref.cameraProducer) && (this->cameraWidth == Ref.cameraWidth) &&
+                (this->cameraHeigth == Ref.cameraHeigth) && (this->PixelSize == Ref.PixelSize) && (this->isColor == Ref.isColor);
+    }
 };
 
 struct CameraROIInfo{
@@ -126,6 +131,23 @@ class CameraController{
          * @brief Stops exposure
          */
         int getExposure_us();
+        /**
+         * @brief Waits for camera to be present
+         */
+        void tryReconnectCamera(const CameraInfo& cam_info);
+        /**
+         * @brief starts Video capture, need to wait for scan for exposure end
+         * to recieve data
+         */ 
+        bool startVideoCapture();
+        /**
+         * @brief stops Video capture
+         */ 
+        bool stopVideoCapture();
+        /**
+         * @brief try getting video data;
+         */ 
+        bool tryGetVideoData();
     protected:
         /**
          * Helper function scanning for each camera producer.
