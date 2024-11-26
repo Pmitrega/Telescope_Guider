@@ -169,10 +169,12 @@ void GuiderWorker::handleCamera(){
     m_cam_controller.scanForCameras();
 
     auto camera_list = m_cam_controller.getCameraList();
-	std::cout<< camera_list.size() << std::endl;
-	for(auto it = camera_list.cbegin(); it < camera_list.cend(); it++ ){
-		std::cout<< (*it) << std::endl;
-	}
+	while(camera_list.size() < 1){
+        LOG_INFO("Waiting for camera ... \r\n");
+        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+        camera_list = m_cam_controller.getCameraList();
+    }
+    
 	m_cam_controller.openCameraByProducerAndID(ASI, 0U);
 	m_cam_controller.setCameraExposure_us(std::stoi(m_camera_settings.exposure.first) * 1000);
 	m_cam_controller.setCameraGain(std::stoi(m_camera_settings.gain.first));
@@ -232,7 +234,6 @@ void GuiderWorker::handleCamera(){
         m_image_info.image_title.second = true;
         m_image_info.image_buffer.second = true;
         m_image_info.image_buffer.first = m_cam_controller.getBuffer().get();
-
         m_image_info.image_gain.second = true;
         m_image_info.image_exposure.second = true;
         m_image_info.image_width.second = true;
@@ -250,7 +251,6 @@ void GuiderWorker::handleCamera(){
 
 
 GuiderWorker::GuiderWorker(){
-    m_step_com.connectSerial("/dev/ttyUSB0");
 }
 
 bool GuiderWorker::checkForUARTUpdate(){
@@ -300,23 +300,66 @@ bool GuiderWorker::checkForUARTUpdate(){
     return has_updated;
 }
 
+
+bool GuiderWorker::waitForUART(){
+    bool uart_ok = false;
+    while(!uart_ok){
+        try{
+            m_step_com.connectSerial("/dev/ttyUSB0");
+            uart_ok = true;
+        }
+        catch(...)
+        {
+            LOG_INFO("Can't connect to /dev/ttyUSB0, waiting ...\r\n");
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+    }
+    return uart_ok;
+}
+
 void GuiderWorker::handleUARTRequests(){
+    waitForUART();
+    stepperCommunicator::Status stat = stepperCommunicator::SERIAL_OK;
     while(true){
-		m_step_com.reqBattVolt();
+		stat = m_step_com.reqBattVolt();
+        if(stat == stepperCommunicator::SERIAL_ERROR){
+            waitForUART();
+        }
 		std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    	m_step_com.reqBuck1Volt();
+    	stat = m_step_com.reqBuck1Volt();
+        if(stat == stepperCommunicator::SERIAL_ERROR){
+            waitForUART();
+        }
 		std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    	m_step_com.reqBuck2Volt();
+    	stat = m_step_com.reqBuck2Volt();
+        if(stat == stepperCommunicator::SERIAL_ERROR){
+            waitForUART();
+        }
 		std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    	m_step_com.reqM1C1Current();
+    	stat = m_step_com.reqM1C1Current();
+        if(stat == stepperCommunicator::SERIAL_ERROR){
+            waitForUART();
+        }
 		std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    	m_step_com.reqM1C2Current();
+    	stat = m_step_com.reqM1C2Current();
+        if(stat == stepperCommunicator::SERIAL_ERROR){
+            waitForUART();
+        }
 		std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    	m_step_com.reqM2C1Current();
+    	stat = m_step_com.reqM2C1Current();
+        if(stat == stepperCommunicator::SERIAL_ERROR){
+            waitForUART();
+        }
 		std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    	m_step_com.reqM2C2Current();
+    	stat = m_step_com.reqM2C2Current();
+        if(stat == stepperCommunicator::SERIAL_ERROR){
+            waitForUART();
+        }
 		std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    	m_step_com.reqBattCurrent();
+    	stat = m_step_com.reqBattCurrent();
+        if(stat == stepperCommunicator::SERIAL_ERROR){
+            waitForUART();
+        }
 		std::this_thread::sleep_for(std::chrono::milliseconds(50));
 	}
 }

@@ -126,53 +126,101 @@ void stepperCommunicator::asyncMessageHandler(const boost::system::error_code& e
 
 
 stepperCommunicator::Status stepperCommunicator::reqBattVolt(){
+    auto ret = SERIAL_OK;
     com_transmission_mutex.lock();
-    m_serial_port.write_some(boost::asio::buffer("-V0\r\n"));
+    try{
+        m_serial_port.write_some(boost::asio::buffer("-V0\r\n"));
+    }
+    catch(...){
+        ret = SERIAL_ERROR;
+    }
     com_transmission_mutex.unlock();
-    return SERIAL_OK;
+    return ret;
 }
 
 stepperCommunicator::Status stepperCommunicator::reqBuck1Volt(){
+    auto ret = SERIAL_OK;
     com_transmission_mutex.lock();
-    m_serial_port.write_some(boost::asio::buffer("-V1\r\n"));
+    try{
+        m_serial_port.write_some(boost::asio::buffer("-V1\r\n"));
+    }
+    catch(...){
+        ret = SERIAL_ERROR;
+    }
     com_transmission_mutex.unlock();
-    return SERIAL_OK;
+    return ret;
 }
 stepperCommunicator::Status stepperCommunicator::reqBuck2Volt(){
+    auto ret = SERIAL_OK;
     com_transmission_mutex.lock();
-    m_serial_port.write_some(boost::asio::buffer("-V2\r\n"));
+    try{
+        m_serial_port.write_some(boost::asio::buffer("-V2\r\n"));
+    }
+    catch(...){
+        ret = SERIAL_ERROR;
+    }
     com_transmission_mutex.unlock();
-    return SERIAL_OK;
+    return ret;
 }
 stepperCommunicator::Status stepperCommunicator::reqM1C1Current(){
+    auto ret = SERIAL_OK;
     com_transmission_mutex.lock();
-    m_serial_port.write_some(boost::asio::buffer("-C0\r\n"));
+    try{
+        m_serial_port.write_some(boost::asio::buffer("-C0\r\n"));
+    }
+    catch(...){
+        ret = SERIAL_ERROR;
+    }
     com_transmission_mutex.unlock();
-    return SERIAL_OK;
+    return ret;
 }
 stepperCommunicator::Status stepperCommunicator::reqM1C2Current(){
+    auto ret = SERIAL_OK;
     com_transmission_mutex.lock();
-    m_serial_port.write_some(boost::asio::buffer("-C1\r\n"));
+    try{
+        m_serial_port.write_some(boost::asio::buffer("-C1\r\n"));
+    }
+    catch(...){
+        ret = SERIAL_ERROR;
+    }
     com_transmission_mutex.unlock();
-    return SERIAL_OK;
+    return ret;
 }
 stepperCommunicator::Status stepperCommunicator::reqM2C1Current(){
+    auto ret = SERIAL_OK;
     com_transmission_mutex.lock();
-    m_serial_port.write_some(boost::asio::buffer("-C2\r\n"));
+    try{
+        m_serial_port.write_some(boost::asio::buffer("-C2\r\n"));
+    }
+    catch(...){
+        ret = SERIAL_ERROR;
+    }
     com_transmission_mutex.unlock();
-    return SERIAL_OK;
+    return ret;
 }
 stepperCommunicator::Status stepperCommunicator::reqM2C2Current(){
+    auto ret = SERIAL_OK;
     com_transmission_mutex.lock();
-    m_serial_port.write_some(boost::asio::buffer("-C3\r\n"));
+    try{
+        m_serial_port.write_some(boost::asio::buffer("-C3\r\n"));
+    }
+    catch(...){
+        ret = SERIAL_ERROR;
+    }
     com_transmission_mutex.unlock();
-    return SERIAL_OK;
+    return ret;
 }
 stepperCommunicator::Status stepperCommunicator::reqBattCurrent(){
+    auto ret = SERIAL_OK;
     com_transmission_mutex.lock();
-    m_serial_port.write_some(boost::asio::buffer("-C4\r\n"));
+    try{
+        m_serial_port.write_some(boost::asio::buffer("-C4\r\n"));
+    }
+    catch(...){
+        ret = SERIAL_ERROR;
+    }
     com_transmission_mutex.unlock();
-    return SERIAL_OK;
+    return ret;
 }
 
 

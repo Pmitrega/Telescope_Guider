@@ -81,7 +81,6 @@ class CameraController{
          *         when setting gain failed it returns -1
          */
         int setCameraGain(int gain);
-
         /**
          * @brief set image tape
          */
@@ -118,12 +117,15 @@ class CameraController{
          * @brief Stops exposure
          */
         bool stopExposure();
-        /**
-         * @brief Calls camera API to get exposure time in us
-         * returns -1 if can't read exposure value.
-         */
-        int getExposuretTime_us();
 
+        /**
+         * @brief Stops exposure
+         */
+        int getGain();
+        /**
+         * @brief Stops exposure
+         */
+        int getExposure_us();
     protected:
         /**
          * Helper function scanning for each camera producer.

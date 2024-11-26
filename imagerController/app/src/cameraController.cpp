@@ -237,6 +237,7 @@ int CameraController::setCameraExposure_us(int exposure){
     return ret;
 }
 
+
 int CameraController::setCameraGain(int gain){
     int ret = -1;
     if(m_connected_camera != nullptr){
@@ -299,7 +300,7 @@ std::pair<uint16_t, uint16_t> CameraController::getImageSizeASI(){
 }
 
 void CameraController::runContionousCapture(uint16_t ms_betw_frames){
-    int read_exposure = getExposuretTime_us();
+    int read_exposure = getExposure_us();
     if(read_exposure == -1){
         LOG_ERROR("Couldn't start countinous capture! \r\n");
         return;
@@ -468,7 +469,7 @@ bool CameraController::stopExposure(){
 }
 
 
-int CameraController::getExposuretTime_us(){
+int CameraController::getExposure_us(){
     int ret = -1;
     switch (m_connected_camera->cameraProducer)
     {
@@ -480,7 +481,34 @@ int CameraController::getExposuretTime_us(){
             ret = read_exposure;
         }
         else{
-            LOG_ERROR("Couldn't read camera exposuer \r\n");
+            LOG_ERROR("Couldn't read camera exposure \r\n");
+        }
+        }
+        break;
+    case SVBONY:
+        {
+        }
+        break;
+    default:
+        break;
+    }
+    return ret;
+}
+
+
+int CameraController::getGain(){
+    int ret = -1;
+    switch (m_connected_camera->cameraProducer)
+    {
+    case ASI:
+        {
+        long read_gain;
+        ASI_BOOL is_auto;
+        if(ASIGetControlValue(m_connected_camera->cameraID, ASI_GAIN, &read_gain, &is_auto) == ASI_SUCCESS){
+            ret = read_gain;
+        }
+        else{
+            LOG_ERROR("Couldn't read camera gain \r\n");
         }
         }
         break;
