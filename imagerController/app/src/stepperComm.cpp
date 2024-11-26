@@ -7,7 +7,6 @@
 #include <boost/shared_ptr.hpp>
 #include <logger.hpp>
 #include <iostream>
-#include <format>
 #include <vector>
 #include <thread>
 #include <fstream>
@@ -86,7 +85,9 @@ stepperCommunicator::Status stepperCommunicator::setAutoMode(){
 stepperCommunicator::Status stepperCommunicator::setRaSpeed(int msecPerSec){
     if(m_serial_port.is_open() == true){
         LOG_INFO("Setting Ra\r\n");
-        std::string message = std::format("-R{}\r\n", msecPerSec);
+        char buff[100];
+        sprintf(buff, "-R%d\r\n", msecPerSec);
+        std::string message = std::string(buff);
         std::cout <<message << std::endl;
         com_transmission_mutex.lock();
         m_serial_port.write_some(boost::asio::buffer(message));
@@ -100,7 +101,9 @@ stepperCommunicator::Status stepperCommunicator::setRaSpeed(int msecPerSec){
 }
 stepperCommunicator::Status stepperCommunicator::setDecSpeed(int msecPerSec){
     if(m_serial_port.is_open() == true){
-        std::string message = std::format("-D{}\r\n", msecPerSec);
+        char buff[100];
+        sprintf(buff, "-D%d\r\n", msecPerSec);
+        std::string message = std::string(buff);
         std::cout <<message << std::endl;
         com_transmission_mutex.lock();
         m_serial_port.write_some(boost::asio::buffer(message));
@@ -126,53 +129,101 @@ void stepperCommunicator::asyncMessageHandler(const boost::system::error_code& e
 
 
 stepperCommunicator::Status stepperCommunicator::reqBattVolt(){
+    auto ret = SERIAL_OK;
     com_transmission_mutex.lock();
-    m_serial_port.write_some(boost::asio::buffer("-V0\r\n"));
+    try{
+        m_serial_port.write_some(boost::asio::buffer("-V0\r\n"));
+    }
+    catch(...){
+        ret = SERIAL_ERROR;
+    }
     com_transmission_mutex.unlock();
-    return SERIAL_OK;
+    return ret;
 }
 
 stepperCommunicator::Status stepperCommunicator::reqBuck1Volt(){
+    auto ret = SERIAL_OK;
     com_transmission_mutex.lock();
-    m_serial_port.write_some(boost::asio::buffer("-V1\r\n"));
+    try{
+        m_serial_port.write_some(boost::asio::buffer("-V1\r\n"));
+    }
+    catch(...){
+        ret = SERIAL_ERROR;
+    }
     com_transmission_mutex.unlock();
-    return SERIAL_OK;
+    return ret;
 }
 stepperCommunicator::Status stepperCommunicator::reqBuck2Volt(){
+    auto ret = SERIAL_OK;
     com_transmission_mutex.lock();
-    m_serial_port.write_some(boost::asio::buffer("-V2\r\n"));
+    try{
+        m_serial_port.write_some(boost::asio::buffer("-V2\r\n"));
+    }
+    catch(...){
+        ret = SERIAL_ERROR;
+    }
     com_transmission_mutex.unlock();
-    return SERIAL_OK;
+    return ret;
 }
 stepperCommunicator::Status stepperCommunicator::reqM1C1Current(){
+    auto ret = SERIAL_OK;
     com_transmission_mutex.lock();
-    m_serial_port.write_some(boost::asio::buffer("-C0\r\n"));
+    try{
+        m_serial_port.write_some(boost::asio::buffer("-C0\r\n"));
+    }
+    catch(...){
+        ret = SERIAL_ERROR;
+    }
     com_transmission_mutex.unlock();
-    return SERIAL_OK;
+    return ret;
 }
 stepperCommunicator::Status stepperCommunicator::reqM1C2Current(){
+    auto ret = SERIAL_OK;
     com_transmission_mutex.lock();
-    m_serial_port.write_some(boost::asio::buffer("-C1\r\n"));
+    try{
+        m_serial_port.write_some(boost::asio::buffer("-C1\r\n"));
+    }
+    catch(...){
+        ret = SERIAL_ERROR;
+    }
     com_transmission_mutex.unlock();
-    return SERIAL_OK;
+    return ret;
 }
 stepperCommunicator::Status stepperCommunicator::reqM2C1Current(){
+    auto ret = SERIAL_OK;
     com_transmission_mutex.lock();
-    m_serial_port.write_some(boost::asio::buffer("-C2\r\n"));
+    try{
+        m_serial_port.write_some(boost::asio::buffer("-C2\r\n"));
+    }
+    catch(...){
+        ret = SERIAL_ERROR;
+    }
     com_transmission_mutex.unlock();
-    return SERIAL_OK;
+    return ret;
 }
 stepperCommunicator::Status stepperCommunicator::reqM2C2Current(){
+    auto ret = SERIAL_OK;
     com_transmission_mutex.lock();
-    m_serial_port.write_some(boost::asio::buffer("-C3\r\n"));
+    try{
+        m_serial_port.write_some(boost::asio::buffer("-C3\r\n"));
+    }
+    catch(...){
+        ret = SERIAL_ERROR;
+    }
     com_transmission_mutex.unlock();
-    return SERIAL_OK;
+    return ret;
 }
 stepperCommunicator::Status stepperCommunicator::reqBattCurrent(){
+    auto ret = SERIAL_OK;
     com_transmission_mutex.lock();
-    m_serial_port.write_some(boost::asio::buffer("-C4\r\n"));
+    try{
+        m_serial_port.write_some(boost::asio::buffer("-C4\r\n"));
+    }
+    catch(...){
+        ret = SERIAL_ERROR;
+    }
     com_transmission_mutex.unlock();
-    return SERIAL_OK;
+    return ret;
 }
 
 
