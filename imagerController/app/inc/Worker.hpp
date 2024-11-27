@@ -85,4 +85,6 @@ private:
     stepperControllerMotorsInfo m_motor_info;
     imageInfo m_image_info;
     cameraSettings m_camera_settings;
+    bool m_send_jpg = false;
+    bool m_jpg_ready = false;
 };
