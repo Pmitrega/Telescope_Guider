@@ -3,11 +3,20 @@
 #include <Worker.hpp>
 
 
+void saveImage(uint8_t* buffer, uint32_t width, uint32_t heigth);
+
 void GuiderWorker::handleMQTTTransmission(){
     int not_updated_count = 0;
     const int not_updated_timeout = 200;
+    const int hearthbeat_timeout = 200;
+    int hearthbeat_timer = 0;
     while(1){
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        if(hearthbeat_timer%hearthbeat_timeout == 0){
+            hearthbeat_timer = 0;
+            m_mqtt_client.publishMessageString("guider/status", "alive");
+        }
+        hearthbeat_timer +=1;
         if(checkForUARTUpdate() == false){
             not_updated_count +=1;
         }
@@ -91,10 +100,26 @@ void GuiderWorker::handleMQTTTransmission(){
             m_image_info.image_capture_time.second = false;
 		    m_mqtt_client.publishMessageString("images/raw/capture_time", m_image_info.image_capture_time.first);
         }
-        if(m_image_info.image_buffer.second == true && m_image_info.image_buffer.first != nullptr){
+        if(m_image_info.image_buffer.second == true && m_image_info.image_buffer.first != nullptr && !m_send_jpg){
             LOG_INFO("transmiting %s\r\n", m_image_info.image_title.first.c_str());
             m_image_info.image_buffer.second = false;
 		    m_mqtt_client.publishMessageImageRaw("images/raw", (char*)m_image_info.image_buffer.first, 1280*960*2);
+        }
+        if(m_send_jpg && m_jpg_ready){
+            LOG_INFO("transmiting %s\r\n", m_image_info.image_title.first.c_str());
+            m_jpg_ready = false;
+            std::ifstream file("/tmp/compressed.jpg", std::ios::binary | std::ios::ate);
+            std::streamsize size = file.tellg();
+            file.seekg(0, std::ios::beg);
+            std::vector<char> buffer(size);
+            if (file.read(buffer.data(), size))
+            {
+                m_mqtt_client.publishMessageImageRaw("images/jpg", buffer.data(), size);
+            }
+            else{
+                LOG_ERROR("Couldn't read compressed.jpg\r\n");
+            }
+            
         }
 
     }
@@ -157,6 +182,12 @@ void GuiderWorker::handleMQTTRecieve(){
                     m_step_com.setManualMode();
                 }
             }
+           if(mqtt_message.topic == "images/jpg/enable"){
+                if(mqtt_message.payload[0] == '1')
+                    m_send_jpg = true;
+                else
+                    m_send_jpg = false;
+            }
         }
     }
 }
@@ -177,7 +208,7 @@ void GuiderWorker::handleCamera(){
     }
     auto current_camera = camera_list[0];
 	m_cam_controller.openCameraByProducerAndID(current_camera.cameraProducer, 0U);
-	m_cam_controller.setCameraExposure_us(std::stoi(m_camera_settings.exposure.first) * 1000);
+    m_cam_controller.setCameraExposure_us(std::stoi(m_camera_settings.exposure.first) * 1000);
 	m_cam_controller.setCameraGain(std::stoi(m_camera_settings.gain.first));
 	m_cam_controller.setImageType(IMG_RAW16);
     m_image_info.image_width.first = "1280";
@@ -193,10 +224,13 @@ void GuiderWorker::handleCamera(){
 	int ms_betw_frames = std::stoi(m_camera_settings.interval.first);
     m_cam_controller.startVideoCapture();
     while(true){
-        auto capture_start_time =  std::chrono::system_clock::now();
+
 		auto t = std::time(nullptr);
 		if(CAM_CTRL_FAIL == m_cam_controller.tryGetVideoData()){
             m_cam_controller.tryReconnectCamera(current_camera);
+            m_cam_controller.setCameraExposure_us(std::stoi(m_camera_settings.exposure.first) * 1000);
+	        m_cam_controller.setCameraGain(std::stoi(m_camera_settings.gain.first));
+            m_cam_controller.startVideoCapture();
 			continue;
 		}
         handleCameraSettChangeReq();
@@ -214,8 +248,15 @@ void GuiderWorker::handleCamera(){
         m_image_info.image_title.first = filename;
         m_image_info.image_buffer.first = m_cam_controller.getBuffer().get();
         requestImageTransimssion();
+        auto capture_start_time =  std::chrono::system_clock::now();
+        if(m_send_jpg){
+        saveImage(m_image_info.image_buffer.first, 1280, 960);
+        m_jpg_ready = true;
+        }
 		auto capture_end_time =  std::chrono::system_clock::now();
         std::chrono::duration<float> elapesed_time = capture_end_time - capture_start_time;
+        int execution_time = (ms_betw_frames) - static_cast<int>(1000*elapesed_time.count());
+		// LOG_INFO("execution time: %d ms\r\n", execution_time)
         // int sleep_time = (ms_betw_frames) - static_cast<int>(1000*elapesed_time.count());
 		// LOG_INFO("sleep time: %d ms\r\n", sleep_time)
         // std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
@@ -369,4 +410,13 @@ void GuiderWorker::requestImageTransimssion(){
         m_image_info.image_ystart.second = true;
         m_image_info.image_title.second = true;
         m_image_info.image_buffer.second = true;
+}
+
+
+void saveImage(uint8_t* buffer, uint32_t width, uint32_t heigth)
+{
+    cv::Mat image(heigth, width, CV_16U, reinterpret_cast<uint16_t*>(buffer));
+    image = image/256;
+    cv::imwrite ("/tmp/compressed.jpg", image);
+
 }
