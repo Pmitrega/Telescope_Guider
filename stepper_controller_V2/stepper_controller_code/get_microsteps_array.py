@@ -9,7 +9,7 @@ def make_c_array(input_arr, name = "") -> str:
         output_string += el_in_str
         output_string += ','
         if(not i%16):
-            output_string += '\n'
+            output_string += '\n' + ' ' * 42
         i = i+1
     output_string = output_string[:-2] + "};"
     if name != "":
@@ -20,6 +20,8 @@ def make_c_array(input_arr, name = "") -> str:
 if __name__ == "__main__":
     microsteps = input("How many microsteps?")
     microsteps = int(microsteps)
+    amplitude = input("How big amplitude? 0-1000")
+    amplitude = int(amplitude)
     PWM1_arr = []
     PWM2_arr = []
     PWM3_arr = []
@@ -27,9 +29,9 @@ if __name__ == "__main__":
 
     for i in range(microsteps):
         angle = i/microsteps * 2*math.pi
-        PWM1_arr.append(int(1000*math.sin(angle)))
+        PWM1_arr.append(int(amplitude*math.sin(angle)))
         PWM2_arr.append(0)
-        PWM3_arr.append(int(1000*math.cos(angle)))
+        PWM3_arr.append(int(amplitude*math.cos(angle)))
         PWM4_arr.append(0)
     for i in range(len(PWM1_arr)):
         if PWM1_arr[i] >= 0:
