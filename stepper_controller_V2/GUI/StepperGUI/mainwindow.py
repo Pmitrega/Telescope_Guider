@@ -40,6 +40,9 @@ class MainWindow(QMainWindow):
         self.update_image_timer.timeout.connect(self.updateImageTimeout)
         self.update_image_timer.start(100)
         self.data_rec_thread = None
+        self.guider_status = "not alive"
+        self.guider_dead_judge = 0
+        self.enable_compression = False
         self.image_info = {
             "title": "UNKNOWN",
             "capture_time": "UNKNOWN",
@@ -109,8 +112,13 @@ class MainWindow(QMainWindow):
             client.subscribe("#")
         # The callback for when a PUBLISH message is received from the server.
         def on_message(client, userdata, msg):
-
-            if msg.topic == "sensors/battV":
+            if msg.topic == "guider/status":
+                if msg.payload.decode("utf-8") == "alive":
+                    self.guider_status = "alive"
+                    self.guider_dead_judge = 0
+                    print("its  alive")
+                    self.ui.label_38.setPixmap(QPixmap(u"graphics/led_green.png"))
+            elif msg.topic == "sensors/battV":
                 self.sensors_info["battV"] = float(msg.payload.decode("utf-8"))
                 self.updateSensorReadings()
             elif msg.topic == "sensors/buck1V":
@@ -140,7 +148,12 @@ class MainWindow(QMainWindow):
                 auto_ctrl = self.ui.checkBox_3.isChecked()
                 self.telescope_controller.genNewImage(Image, 2000, auto_ctrl)
                 tracked_star = self.telescope_controller.getTrackedStar()
-                displayed_img = Image/256
+                print(np.max(Image))
+                displayed_img = Image
+                #displayed_img = displayed_img
+                displayed_img = displayed_img / 2 ** 8
+                print(np.max(displayed_img))
+                print(np.min(displayed_img))
                 displayed_img = cv2.cvtColor(displayed_img.astype(np.uint8), cv2.COLOR_GRAY2RGB)
 
                 if tracked_star is not None:
@@ -152,6 +165,11 @@ class MainWindow(QMainWindow):
                 cv2.imwrite('output.png', displayed_img)
                 if self.ui.checkBox_4.isChecked():
                     cv2.imwrite("./saved/" + self.image_info["title"]+".png", Image)
+                self.new_image = True
+                print("recieved new")
+            elif msg.topic == "images/jpg":
+                f = open('output.jpg', "wb")
+                f.write(msg.payload)
                 self.new_image = True
             elif msg.topic == "images/raw/title":
                 self.image_info["title"] = msg.payload.decode("utf-8")
@@ -180,8 +198,8 @@ class MainWindow(QMainWindow):
         self.mqtt_client.username = "stepper"
         print("connecting MQTT to address " + address)
         self.mqtt_client.connect(address, 1883, 60)
-        self.ui.radioButton.setChecked(True)
         print("succesfully connected MQTT" + address)
+        self.ui.label_37.setPixmap(QPixmap(u"graphics/led_green.png"))
         self.data_rec_thread = threading.Thread(target=self.mqtt_client.loop_forever)
         self.data_rec_thread.start()
         # Blocking call that processes network traffic, dispatches callbacks and
@@ -292,6 +310,11 @@ class MainWindow(QMainWindow):
         self.iter = self.iter + 1
 
     def updateImageTimeout(self):
+        self.guider_dead_judge = self.guider_dead_judge + 1
+        if self.guider_dead_judge > 200:
+            self.guider_status = "not alive"
+            self.ui.label_38.setPixmap(QPixmap(u"graphics/led_red.png"))
+            self.guider_dead_judge = 0
         if self.new_image:
             self.ui.textBrowser_im_title.setText(self.image_info["title"])
             self.ui.textBrowser_im_capt.setText(self.image_info["capture_time"])
@@ -302,7 +325,10 @@ class MainWindow(QMainWindow):
             self.ui.textBrowser_roi_heigh.setText(self.image_info["ROIheigth"])
             self.ui.textBrowser_roi_start_x.setText(self.image_info["ROIstart_x"])
             self.ui.textBrowser_roi_start_y.setText(self.image_info["ROIstart_y"])
-            self.ui.label_10.setPixmap(QPixmap(u"output.png"))
+            if self.enable_compression:
+                self.ui.label_10.setPixmap(QPixmap(u"output.jpg"))
+            else:
+                self.ui.label_10.setPixmap(QPixmap(u"output.png"))
             self.new_image = False
 
     def goManualCoils(self):
@@ -344,6 +370,13 @@ class MainWindow(QMainWindow):
     def select_clicked_star(self):
         print("Selecting star")
 
+    def enableCompressing(self, be_enabled):
+        if be_enabled:
+            self.mqtt_client.publish("images/jpg/enable", "1")
+            self.enable_compression = True
+        else:
+            self.mqtt_client.publish("images/jpg/enable", "0")
+            self.enable_compression = False
 
 
 if __name__ == "__main__":
