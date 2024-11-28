@@ -5,6 +5,7 @@ import os
 import serial as ser
 import asyncio
 import time
+import view_transfrom
 import json
 import cv2
 import paho.mqtt.client as mqtt
@@ -110,6 +111,7 @@ class MainWindow(QMainWindow):
             # Subscribing in on_connect() means that if we lose the connection and
             # reconnect then subscriptions will be renewed.
             client.subscribe("#")
+            # client.subscribe("sensors/#")
         # The callback for when a PUBLISH message is received from the server.
         def on_message(client, userdata, msg):
             if msg.topic == "guider/status":
@@ -148,14 +150,10 @@ class MainWindow(QMainWindow):
                 auto_ctrl = self.ui.checkBox_3.isChecked()
                 self.telescope_controller.genNewImage(Image, 2000, auto_ctrl)
                 tracked_star = self.telescope_controller.getTrackedStar()
-                print(np.max(Image))
                 displayed_img = Image
-                #displayed_img = displayed_img
                 displayed_img = displayed_img / 2 ** 8
-                print(np.max(displayed_img))
-                print(np.min(displayed_img))
+                displayed_img = view_transfrom.transformImage(displayed_img.astype(np.uint8), self.ui.comboBox_transform.currentText())
                 displayed_img = cv2.cvtColor(displayed_img.astype(np.uint8), cv2.COLOR_GRAY2RGB)
-
                 if tracked_star is not None:
                     cv2.circle(displayed_img,(int(tracked_star.x_cent), int(tracked_star.y_cent)), int(math.sqrt(tracked_star.brightness/2)), (0,0,255), 3)
                 ra_vect = self.telescope_controller.telescope_ra_vect
@@ -166,7 +164,6 @@ class MainWindow(QMainWindow):
                 if self.ui.checkBox_4.isChecked():
                     cv2.imwrite("./saved/" + self.image_info["title"]+".png", Image)
                 self.new_image = True
-                print("recieved new")
             elif msg.topic == "images/jpg":
                 f = open('output.jpg', "wb")
                 f.write(msg.payload)
@@ -352,13 +349,13 @@ class MainWindow(QMainWindow):
 
     def setDecSpeed(self, val):
         # if(val >10 or val < -10):
-        print(f"Setting Dec control to {val}")
+        # print(f"Setting Dec control to {val}")
         self.mqtt_client.publish("motors/dec", str(val))
             # cmd = "-D" + str(val) + "\r\n"
             # self.conn_handler.write(cmd.encode())
     def setRaSpeed(self, val):
         # if (val > 10 or val < -10):
-        print(f"Setting Ra control to {val}")
+        # print(f"Setting Ra control to {val}")
         self.mqtt_client.publish("motors/ra", str(val))
             # cmd = "-R" + str(val) + "\r\n"
             # self.conn_handler.write(cmd.encode())
