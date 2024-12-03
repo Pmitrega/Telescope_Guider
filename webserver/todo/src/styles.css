@@ -1,0 +1,33 @@
+.item-a {
+    grid-area: header;
+  }
+.item-histo {
+    grid-area: histogram;
+  }
+.item-preview{
+    grid-area: preview;
+  }
+.item-options {
+    grid-area: sidebar;
+  }
+.item-d {
+    grid-area: footer;
+  }
+
+.img-preview {
+    width: 960px;
+    height: 640px;
+  }
+  
+.container {
+    background-color: #2b2424;
+    color: white;
+    display: grid;
+    grid-template-columns: 25% 25% 25% 25%;
+    grid-template-rows: 15% 35% 35% 15%;
+    grid-template-areas: 
+      "header header header header"
+      "preview preview histogram sidebar"
+      "preview preview main sidebar"
+      "footer footer footer footer";
+  }

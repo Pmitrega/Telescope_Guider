@@ -62,7 +62,7 @@ class TelescopeController:
                     self.setDecSpeed(1000)
                 elif self.run_dec_ident_iter == 1:
                     pass
-                elif self.run_dec_ident_iter == 4:
+                elif self.run_dec_ident_iter == 16:
                     ident_dec = (self.last_error[0] - err[0], self.last_error[1] - err[1])
                     amp = math.sqrt(ident_dec[0]**2 + ident_dec[1]**2)
                     self.diff_amp = amp
@@ -79,7 +79,7 @@ class TelescopeController:
                     self.setRaSpeed(1000)
                 elif self.run_ra_ident_iter == 1:
                     pass
-                elif self.run_ra_ident_iter == 4:
+                elif self.run_ra_ident_iter == 10:
                     ident_dec = (self.last_error[0] - err[0], self.last_error[1] - err[1])
                     amp = math.sqrt(ident_dec[0]**2 + ident_dec[1]**2)
                     cos_ident = amp/self.diff_amp
@@ -120,8 +120,8 @@ class TelescopeController:
             ra_control = 1500
         elif ra_control < -1500:
             ra_control = -1500
-        print("ra ctrl:",-int(ra_control))
-        print("dec ctrl:",-int(dec_control))
+        # print("ra ctrl:",-int(ra_control))
+        # print("dec ctrl:",-int(dec_control))
         ra_control = - ra_control
         dec_control = - dec_control
         if enabled:
