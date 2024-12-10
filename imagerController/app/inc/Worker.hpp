@@ -39,6 +39,7 @@ struct imageInfo{
     std::pair<std::string, bool> image_exposure = {"", false};
     std::pair<std::string, bool> image_capture_time = {"", false};
     std::pair<std::string, bool> image_gain = {"", false};
+    std::pair<std::string, bool> capture_interval = {"", false};
 };
 
 

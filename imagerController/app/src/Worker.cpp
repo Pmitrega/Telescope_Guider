@@ -96,6 +96,10 @@ void GuiderWorker::handleMQTTTransmission(){
             m_image_info.image_title.second = false;
 		    m_mqtt_client.publishMessageString("images/raw/title", m_image_info.image_title.first);
         }
+        if(m_image_info.capture_interval.second == true){
+            m_image_info.capture_interval.second = false;
+		    m_mqtt_client.publishMessageString("images/raw/interval", m_image_info.capture_interval.first);
+        }
         if(m_image_info.image_capture_time.second == true){
             m_image_info.image_capture_time.second = false;
 		    m_mqtt_client.publishMessageString("images/raw/capture_time", m_image_info.image_capture_time.first);
@@ -150,12 +154,6 @@ void GuiderWorker::handleMQTTRecieve(){
                     m_camera_settings.interval.second = true;
                 }
             }
-           if(mqtt_message.topic == "camera/interval"){
-                if(m_camera_settings.interval.first != mqtt_message.payload){
-                    m_camera_settings.interval.first = mqtt_message.payload;
-                    m_camera_settings.interval.second = true;
-                }
-            }
            if(mqtt_message.topic == "motors/ra"){
                 if(m_motor_info.ra_speed.first != mqtt_message.payload){
                     m_motor_info.ra_speed.first = mqtt_message.payload;
@@ -171,7 +169,6 @@ void GuiderWorker::handleMQTTRecieve(){
                 }
             }
             if(mqtt_message.topic == "motors/enable"){
-                LOG_INFO("enabling %c", mqtt_message.payload[0]);
                 if(mqtt_message.payload[0] == '1'){
                     m_step_com.enableMotors(true);
                 }
@@ -226,7 +223,7 @@ void GuiderWorker::handleCamera(){
     m_image_info.image_ystart.first = "0";
     m_image_info.image_exposure.first = m_camera_settings.exposure.first;
     m_image_info.image_gain.first = m_camera_settings.gain.first;
-    m_camera_settings.interval.first = m_camera_settings.interval.first;
+    m_image_info.capture_interval.first = m_camera_settings.interval.first;
     /*TO BE UPDATED WITH PROPER API */
 	uint8_t buffer[1280*960*2];
 	int  i = 0;
@@ -405,6 +402,11 @@ void GuiderWorker::handleCameraSettChangeReq(){
         m_image_info.image_gain.first = m_camera_settings.gain.first;
         m_cam_controller.setCameraGain(std::stoi(m_camera_settings.gain.first));
     }
+    if(m_camera_settings.interval.second == true){
+        m_camera_settings.interval.second = false;
+        LOG_INFO("Updating interval to %s \r\n", m_camera_settings.interval.first.c_str());
+        m_image_info.capture_interval.first = m_camera_settings.interval.first;
+    }
 }
 
 
@@ -421,6 +423,7 @@ void GuiderWorker::requestImageTransimssion(){
         m_image_info.image_xstart.second = true;
         m_image_info.image_ystart.second = true;
         m_image_info.image_title.second = true;
+        m_image_info.capture_interval.second = true;
         m_image_info.image_buffer.second = true;
 }
 
