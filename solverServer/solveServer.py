@@ -8,7 +8,7 @@ topic = "solver/solution"
 client_id = f'solver'
 username = 'stepper'
 password = 'stepper'
-sec_per_pixel = 6.25
+sec_per_pixel = 6.35
 solver = None
 
 def connect_mqtt():
@@ -80,32 +80,58 @@ def on_message(client, userdata, msg):
         print("solving field ...")
         stars = msg.payload.decode("utf-8")
         stars = json.loads(stars)
+        print(stars)
         if sec_per_pixel is not None:
             solution = solver.solve(
                 stars=stars,
                 size_hint=astrometry.SizeHint(
-                            lower_arcsec_per_pixel=sec_per_pixel - 0.25,
-                            upper_arcsec_per_pixel=sec_per_pixel + 0.25,
+                            lower_arcsec_per_pixel=sec_per_pixel - 0.1,
+                            upper_arcsec_per_pixel=sec_per_pixel + 0.1,
                 ),
-                position_hint=None,
-                solution_parameters=astrometry.SolutionParameters())
+                    position_hint=None,
+                solution_parameters=astrometry.SolutionParameters(
+                    positional_noise_pixels= 1.0,
+                    output_logodds_threshold = math.log(1e7),
+                    tune_up_logodds_threshold = math.log(1e4),
+                    distractor_ratio = 0.1
+                ))
         else:
             solution = solver.solve(
-                stars=stars_no_bright,
+                stars=stars,
                 size_hint=astrometry.SizeHint(
-                            lower_arcsec_per_pixel=sec_per_pixel - 0.25,
-                            upper_arcsec_per_pixel=sec_per_pixel + 0.25,
+                            lower_arcsec_per_pixel=sec_per_pixel - 0.5,
+                            upper_arcsec_per_pixel=sec_per_pixel + 0.5,
                 ),
-                position_hint=None,
-                solution_parameters=astrometry.SolutionParameters())
+                    position_hint=astrometry.PositionHint(
+                    ra_deg=100.0,
+                    dec_deg=69.0,
+                    radius_deg=5.0,
+                ),
+                solution_parameters=astrometry.SolutionParameters(
+                    positional_noise_pixels=2.0,
+                    minimum_quad_size_pixels = 100,
+                    distractor_ratio = 0.1
+
+                ))
         if solution.has_match():
             print(f"{solution.best_match().center_ra_deg=}")
             print(f"{solution.best_match().center_dec_deg=}")
             print(f"{solution.best_match().scale_arcsec_per_pixel=}")
+            M1 = solution.best_match().wcs_fields["CD1_1"][0]
+            M3 = solution.best_match().wcs_fields["CD2_1"][0]
+            # print(solution.best_match().wcs_fields["CD1_1"])
+            # print(solution.best_match().wcs_fields["CD1_2"])
+            # print(solution.best_match().wcs_fields["CD2_1"])
+            # print(solution.best_match().wcs_fields["CD2_2"])
+            print(M1)
+            print(M3)
+            rot = round(abs(math.atan2(M1, M3) * 180/math.pi) + 270, 2)%360
+            print("Rotation: ", rot)
             client.publish("solver/ra_deg", str(solution.best_match().center_ra_deg))
             client.publish("solver/ra_hms", deg_to_hms(solution.best_match().center_ra_deg))
             client.publish("solver/dec_deg", str(solution.best_match().center_dec_deg))
             client.publish("solver/dec_dms", deg_to_dms(solution.best_match().center_dec_deg))
+            client.publish("solver/rotation", str(round(rot, 4)))
         else:
             print(f"solution not found")
     if msg.topic == "solver/sec_per_pixel":
@@ -115,10 +141,12 @@ def on_message(client, userdata, msg):
 
 
 if __name__ == "__main__":
+    print("Preparing solver ...")
     solver = astrometry.Solver(
-    	astrometry.series_5200.index_files(
+    	astrometry.series_4100.index_files(
         cache_directory="astrometry_cache",
-        scales={6}))
+        scales={8}))
+    print("Solver prepared ...")
     client = connect_mqtt()
 
     client.loop_forever()
