@@ -25,4 +25,6 @@ void startMotorAutoMode();
 void startMotorManualMode();
 uint8_t getMotorMode();
 
+void shutdownMotors();
+void startMotors();
 #endif
