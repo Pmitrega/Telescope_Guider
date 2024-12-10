@@ -1,11 +1,9 @@
 # This Python file uses the following encoding: utf-8
 import math
 import sys
-import os
 import serial as ser
-import asyncio
-import time
-import view_transfrom
+from src import view_transfrom, telescope_control
+import src.star_detection as star_detec
 import json
 import cv2
 import paho.mqtt.client as mqtt
@@ -13,13 +11,8 @@ import numpy as np
 import threading
 from PySide6.QtWidgets import QApplication, QMainWindow
 from PySide6.QtCore import QTimer
-from PySide6.QtCharts import QChart
-from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-    QFont, QFontDatabase, QGradient, QIcon,
-    QImage, QKeySequence, QLinearGradient, QPainter,
-    QPalette, QPixmap, QRadialGradient, QTransform)
+from PySide6.QtGui import (QPixmap)
 
-import telescope_control
 # Important:
 # You need to run the following command to generate the ui_form.py file
 #     pyside6-uic form.ui -o ui_form.py, or
@@ -56,9 +49,9 @@ class MainWindow(QMainWindow):
             "ROIstart_y": "UNKNOWN"
         }
         self.sensors_info = {
-            "battV":    0.0,
-            "buck1V":   0.0,
-            "buck2V":   0.0,
+            "battV": 0.0,
+            "buck1V": 0.0,
+            "buck2V": 0.0,
             "M1C1curr": 0.0,
             "M1C2curr": 0.0,
             "M2C1curr": 0.0,
@@ -69,6 +62,8 @@ class MainWindow(QMainWindow):
         self.new_image = True
         self.mqtt_client = None
         self.telescope_controller = telescope_control.TelescopeController(self.setRaSpeed, self.setDecSpeed)
+        self.star_locs = []
+
     def connectTarget(self):
         if self.ui.checkBox_ws.isChecked():
             self.connectMQTT()
@@ -96,29 +91,34 @@ class MainWindow(QMainWindow):
                 curr_c4 = int(rec_line[2:-1])
                 self.ui.lcdNumber_8.display(curr_c4 / 1000)
         '''
-        self.ui.lcdNumber_7.display(self.sensors_info["battV"]/1000)
-        self.ui.lcdNumber_buck1.display(self.sensors_info["buck1V"]/1000)
-        self.ui.lcdNumber_buck2.display(self.sensors_info["buck2V"]/1000)
-        self.ui.lcdNumber.display(self.sensors_info["M1C1curr"]/1000)
-        self.ui.lcdNumber_2.display(self.sensors_info["M1C2curr"]/1000)
-        self.ui.lcdNumber_3.display(self.sensors_info["M2C1curr"]/1000)
-        self.ui.lcdNumber_4.display(self.sensors_info["M2C2curr"]/1000)
-        self.ui.lcdNumber_8.display(self.sensors_info["battcurr"]/1000)
+        self.ui.lcdNumber_7.display(self.sensors_info["battV"] / 1000)
+        self.ui.lcdNumber_buck1.display(self.sensors_info["buck1V"] / 1000)
+        self.ui.lcdNumber_buck2.display(self.sensors_info["buck2V"] / 1000)
+        self.ui.lcdNumber.display(self.sensors_info["M1C1curr"] / 1000)
+        self.ui.lcdNumber_2.display(self.sensors_info["M1C2curr"] / 1000)
+        self.ui.lcdNumber_3.display(self.sensors_info["M2C1curr"] / 1000)
+        self.ui.lcdNumber_4.display(self.sensors_info["M2C2curr"] / 1000)
+        self.ui.lcdNumber_8.display(self.sensors_info["battcurr"] / 1000)
+
     def connectMQTT(self):
         address = self.ui.mqtt_address.toPlainText()
+
         def on_connect(client, userdata, flags, reason_code, properties):
             print(f"Connected with result code {reason_code}")
             # Subscribing in on_connect() means that if we lose the connection and
             # reconnect then subscriptions will be renewed.
             client.subscribe("#")
+            client.publish("images/jpg/enable", "1")
+            self.enable_compression = True
             # client.subscribe("sensors/#")
+
         # The callback for when a PUBLISH message is received from the server.
         def on_message(client, userdata, msg):
             if msg.topic == "guider/status":
                 if msg.payload.decode("utf-8") == "alive":
                     self.guider_status = "alive"
                     self.guider_dead_judge = 0
-                    print("its  alive")
+                    # print("its  alive")
                     self.ui.label_38.setPixmap(QPixmap(u"graphics/led_green.png"))
             elif msg.topic == "sensors/battV":
                 self.sensors_info["battV"] = float(msg.payload.decode("utf-8"))
@@ -145,28 +145,49 @@ class MainWindow(QMainWindow):
                 self.sensors_info["battcurr"] = float(msg.payload.decode("utf-8"))
                 self.updateSensorReadings()
             elif msg.topic == "images/raw":
+
                 deserialized_bytes = np.frombuffer(msg.payload, dtype=np.uint16)
-                Image =  np.reshape(deserialized_bytes, newshape=(960, 1280))
+                Image = np.reshape(deserialized_bytes, newshape=(960, 1280))
                 auto_ctrl = self.ui.checkBox_3.isChecked()
                 self.telescope_controller.genNewImage(Image, 2000, auto_ctrl)
-                tracked_star = self.telescope_controller.getTrackedStar()
+
+
                 displayed_img = Image
                 displayed_img = displayed_img / 2 ** 8
-                displayed_img = view_transfrom.transformImage(displayed_img.astype(np.uint8), self.ui.comboBox_transform.currentText())
-                displayed_img = cv2.cvtColor(displayed_img.astype(np.uint8), cv2.COLOR_GRAY2RGB)
-                if tracked_star is not None:
-                    cv2.circle(displayed_img,(int(tracked_star.x_cent), int(tracked_star.y_cent)), int(math.sqrt(tracked_star.brightness/2)), (0,0,255), 3)
-                ra_vect = self.telescope_controller.telescope_ra_vect
-                dec_vect = self.telescope_controller.telescope_dec_vect
-                cv2.arrowedLine(displayed_img, (100,100), (100 + int(ra_vect[0] * 50), 100 + int(ra_vect[1] * 50)),(255,0,0), 3)
-                cv2.arrowedLine(displayed_img, (100, 100), (100 + int(dec_vect[0] * 50), 100 + int(dec_vect[1] * 50)), (0, 255, 0),3)
+                bin_im, self.star_locs = star_detec.segmentation(displayed_img.astype(np.uint8))
+
+                displayed_img = view_transfrom.transformImage(displayed_img.astype(np.uint8),
+                                                              self.ui.comboBox_transform.currentText())
+                displayed_img = self.telescope_controller.drawArrowsOnImage(displayed_img)
+
+
+
+                if self.ui.checkBox_show_all.isChecked():
+                    self.telescope_controller.showAllStars(displayed_img)
+                self.telescope_controller.showTrackedStar(displayed_img)
                 cv2.imwrite('output.png', displayed_img)
                 if self.ui.checkBox_4.isChecked():
-                    cv2.imwrite("./saved/" + self.image_info["title"]+".png", Image)
+                    cv2.imwrite("./saved/" + self.image_info["title"] + ".png", Image)
                 self.new_image = True
             elif msg.topic == "images/jpg":
-                f = open('output.jpg', "wb")
+                f = open('tmp.jpg', "wb")
                 f.write(msg.payload)
+                displayed_img = cv2.imread('tmp.jpg', cv2.IMREAD_GRAYSCALE)
+                auto_ctrl = self.ui.checkBox_3.isChecked()
+                if displayed_img is None:
+                    "Can't read image ..."
+                    return
+                self.telescope_controller.genNewImage(displayed_img.astype(np.uint16)*2**8, 2000, auto_ctrl)
+                bin_im, self.star_locs = star_detec.segmentation(displayed_img.astype(np.uint8))
+                displayed_img = view_transfrom.transformImage(displayed_img.astype(np.uint8),
+                                                              self.ui.comboBox_transform.currentText())
+                displayed_img = self.telescope_controller.drawArrowsOnImage(displayed_img)
+                if self.ui.checkBox_show_all.isChecked():
+                    self.telescope_controller.showAllStars(displayed_img)
+                self.telescope_controller.showTrackedStar(displayed_img)
+                if self.ui.checkBox_4.isChecked():
+                    cv2.imwrite("./saved/" + self.image_info["title"] + ".jpg", displayed_img)
+                cv2.imwrite('output.jpg', displayed_img)
                 self.new_image = True
             elif msg.topic == "images/raw/title":
                 self.image_info["title"] = msg.payload.decode("utf-8")
@@ -186,7 +207,24 @@ class MainWindow(QMainWindow):
                 self.image_info["ROIstart_x"] = msg.payload.decode("utf-8")
             elif msg.topic == "images/raw/ROIstart_y":
                 self.image_info["ROIstart_y"] = msg.payload.decode("utf-8")
-
+            elif msg.topic == "solver/ra_deg":
+                print(float(msg.payload.decode("utf-8")))
+                self.telescope_controller.ra_deg = float(msg.payload.decode("utf-8"))
+            elif msg.topic == "solver/dec_deg":
+                print(float(msg.payload.decode("utf-8")))
+                self.telescope_controller.dec_deg = float(msg.payload.decode("utf-8"))
+            elif msg.topic == "solver/ra_hms":
+                loc = json.loads(msg.payload.decode("utf-8"))
+                print("ddd", loc)
+                self.ui.lineEdit_2.setText(str(loc[0]) + 'h ' + str(loc[1]) + "m " + str(loc[2]) + "s")
+            elif msg.topic == "solver/dec_dms":
+                loc = json.loads(msg.payload.decode("utf-8"))
+                self.ui.lineEdit.setText(str(loc[0]) + u'\N{DEGREE SIGN} ' + str(loc[1]) + "' " + str(loc[2]) + "\"")
+            elif msg.topic == "solver/rotation":
+                rot = float(msg.payload.decode("utf-8")) - 90
+                self.ui.lineEdit_3.setText(str(round(rot, 2)) + u'\N{DEGREE SIGN} ')
+                self.telescope_controller.sky_dec_vect = (math.cos(float(rot) * math.pi / 180), math.sin(float(rot) * math.pi / 180))
+                self.telescope_controller.sky_ra_vect = (-math.sin(float(rot) * math.pi / 180), math.cos(float(rot) * math.pi / 180))
 
         self.mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
         self.mqtt_client.on_connect = on_connect
@@ -215,7 +253,7 @@ class MainWindow(QMainWindow):
         if self.conn_handler is None:
             COM_PORT = self.ui.textEdit.toPlainText()
             try:
-                self.conn_handler = ser.Serial(port=COM_PORT,baudrate=115200)
+                self.conn_handler = ser.Serial(port=COM_PORT, baudrate=115200)
                 self.conn_handler.timeout = 0.03
             except:
                 print("Can't open " + COM_PORT)
@@ -237,7 +275,7 @@ class MainWindow(QMainWindow):
             return
         else:
             m_send = False
-            match self.iter%2:
+            match self.iter % 2:
                 case 0:
                     request = {"request_type": "batt_volt"}
                     self.ws_handler.send(json.dumps(request))
@@ -251,16 +289,15 @@ class MainWindow(QMainWindow):
                 message = self.ws_handler.recv()
                 data_received = json.loads(message)
                 if data_received["response_type"] == "batt_volt":
-                        self.ui.lcdNumber_7.display(float(data_received["content"]))
+                    self.ui.lcdNumber_7.display(float(data_received["content"]))
                 elif data_received["response_type"] == "coils_curr":
-                    self.ui.lcdNumber.display(data_received["content"][0]/1000)
-                    self.ui.lcdNumber_2.display(data_received["content"][1]/1000)
-                    self.ui.lcdNumber_3.display(data_received["content"][2]/1000)
-                    self.ui.lcdNumber_4.display(data_received["content"][3]/1000)
-
+                    self.ui.lcdNumber.display(data_received["content"][0] / 1000)
+                    self.ui.lcdNumber_2.display(data_received["content"][1] / 1000)
+                    self.ui.lcdNumber_3.display(data_received["content"][2] / 1000)
+                    self.ui.lcdNumber_4.display(data_received["content"][3] / 1000)
 
     def txTimerTimout(self):
-        match self.iter%10:
+        match self.iter % 10:
             case 0:
                 self.conn_handler.write(b'-V0\r\n')
             case 1:
@@ -284,7 +321,7 @@ class MainWindow(QMainWindow):
         match arg:
             case "B0":
                 batt_volt = int(rec_line[2:-1])
-                self.ui.lcdNumber_7.display(batt_volt/1000)
+                self.ui.lcdNumber_7.display(batt_volt / 1000)
             case "C0":
                 curr_c0 = int(rec_line[2:-1])
                 self.ui.lcdNumber.display(curr_c0 / 1000)
@@ -331,10 +368,12 @@ class MainWindow(QMainWindow):
     def goManualCoils(self):
         self.mqtt_client.publish("motors/mode", "MANUAL")
         # self.conn_handler.write(b'-M\r\n')
+
     def setCoil0(self, val):
         cmd = "-u" + str(val) + "\r\n"
         print(cmd)
         self.conn_handler.write(cmd.encode())
+
     def setCoil1(self, val):
         cmd = "-i" + str(val) + "\r\n"
         self.conn_handler.write(cmd.encode())
@@ -351,14 +390,15 @@ class MainWindow(QMainWindow):
         # if(val >10 or val < -10):
         # print(f"Setting Dec control to {val}")
         self.mqtt_client.publish("motors/dec", str(val))
-            # cmd = "-D" + str(val) + "\r\n"
-            # self.conn_handler.write(cmd.encode())
+        # cmd = "-D" + str(val) + "\r\n"
+        # self.conn_handler.write(cmd.encode())
+
     def setRaSpeed(self, val):
         # if (val > 10 or val < -10):
         # print(f"Setting Ra control to {val}")
         self.mqtt_client.publish("motors/ra", str(val))
-            # cmd = "-R" + str(val) + "\r\n"
-            # self.conn_handler.write(cmd.encode())
+        # cmd = "-R" + str(val) + "\r\n"
+        # self.conn_handler.write(cmd.encode())
 
     def goManualSpeed(self):
         self.mqtt_client.publish("motors/mode", "AUTO")
@@ -366,6 +406,21 @@ class MainWindow(QMainWindow):
 
     def select_clicked_star(self):
         print("Selecting star")
+
+    def localizeField(self):
+        print(self.star_locs)
+        if len(self.star_locs) >= 0:
+            star_detec.requestStarsLocation(self.star_locs, self.mqtt_client)
+
+    def testLocalizeField(self):
+        star_detec.testRequestStarsLocation(self.mqtt_client)
+    def startIdentification(self):
+        self.telescope_controller.run_ident = True
+        self.telescope_controller.run_dec_ident = True
+        self.telescope_controller.run_dec_ident_iter = 0
+        self.telescope_controller.run_ra_ident_iter = 0
+        self.telescope_controller.run_ra_ident = False
+
 
     def enableCompressing(self, be_enabled):
         if be_enabled:
@@ -381,7 +436,3 @@ if __name__ == "__main__":
     widget = MainWindow()
     widget.show()
     sys.exit(app.exec())
-
-
-
-

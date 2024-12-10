@@ -3,7 +3,6 @@ import cv2
 
 
 def transformImage(image: np.ndarray, transform_type: str):
-    print("Transforming")
     if transform_type == "NO_TRANS":
         return image
     if transform_type == "NO_BG_SQRT":
