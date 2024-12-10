@@ -2,6 +2,7 @@
 #include "motor_controller.h"
 #include "power_manager.h"
 #include "adc.h"
+#include <stdlib.h>
 
 uint8_t log_buffer[LOG_BUFFER_SIZE];
 uint8_t uart_recieve_buff[1];
@@ -125,6 +126,14 @@ int CmdProcessor(uint8_t* Buf, uint32_t *Len){
     else if(Buf[0] =='-'&& Buf[1] == 'Y'){
         LOG_INFO("MR: %d %d %d %d\r\n", (int)(getM1C1Res()*1000), (int)(getM1C2Res()*1000), (int)(getM2C1Res()*1000), (int)(getM2C2Res()*1000));
     }
+    else if(Buf[0] =='-'&& Buf[1] == 'S'){
+        if (*Len > 2 && Buf[2] == '0'){
+          shutdownMotors();
+        }
+        else if(*Len > 2 && Buf[2] == '1'){
+          startMotors();
+        }
+    }
     else if(Buf[0] =='-'&& (Buf[1] == 'u' || Buf[1] == 'i' || Buf[1] == 'o' || Buf[1] == 'p')){
         uint8_t num_buff[MAX_NUM_ARG_LENGTH] = {0};
         uint8_t indx = 2;
@@ -180,7 +189,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
         uart_CMD[cmd_idx] = uart_recieve_buff[0];
         cmd_idx +=1;
     }
-    else if(cmd_idx >=2 && uart_recieve_buff[0] == '\n' || uart_recieve_buff[0] == '\r' || uart_recieve_buff[0] == '#'){
+    else if((cmd_idx >=2 && (uart_recieve_buff[0] == '\n')) || uart_recieve_buff[0] == '\r' || uart_recieve_buff[0] == '#'){
         cmd_idx = cmd_idx;
         CmdProcessor(uart_CMD, &cmd_idx);
         cmd_idx = 0;

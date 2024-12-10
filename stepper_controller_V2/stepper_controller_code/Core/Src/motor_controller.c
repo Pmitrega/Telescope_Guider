@@ -54,6 +54,8 @@ static uint8_t is_ra_running = 0;
 
 static NUMBER_OF_MICROSTEPS microsteps = MICROSTEPS_16;
 
+static int motors_enabled = 1;
+
 extern uint32_t SystemCoreClock;
 
 void initializeMotors(){
@@ -118,6 +120,27 @@ void stopMotorDec(){
 }
 
 void shutdownMotors(){
+    motors_enabled = 0;
+    HAL_TIM_Base_Stop_IT(&htim6);
+    is_ra_running = 0;
+    HAL_TIM_Base_Stop_IT(&htim7);
+    is_dec_running = 0;
+    setCoilM1C1(0);
+    setCoilM1C2(0);
+    setCoilM2C1(0);
+    setCoilM2C1(0);
+}
+
+void startMotors(){
+    motors_enabled = 1;
+    HAL_TIM_Base_Start_IT(&htim6);
+    is_ra_running = 0;
+    HAL_TIM_Base_Start_IT(&htim7);
+    is_dec_running = 0;
+    setCoilM1C1(0);
+    setCoilM1C2(0);
+    setCoilM2C1(0);
+    setCoilM2C1(0);
 }
 
 int getStepsRa(){
@@ -175,6 +198,9 @@ void setCoilM2C2(int val){
 
 /*Requested speed in Full_steps per minute for Ra motor*/
 void setRaMotorSpeed(volatile int requested_speed){
+    if(motors_enabled == 0){
+        return;
+    }
     if(is_ra_running == 0 && requested_speed !=0){
         startMotorRa();
     }
@@ -201,6 +227,9 @@ void setRaMotorSpeed(volatile int requested_speed){
 
 /*Requested speed in Full_steps per minute for Dec motor*/
 void setDecMotorSpeed(int requested_speed){
+    if(motors_enabled == 0){
+        return;
+    }
     if(is_dec_running == 0 && requested_speed !=0){
         startMotorDec();
     }
