@@ -170,6 +170,15 @@ void GuiderWorker::handleMQTTRecieve(){
                     m_motor_info.dec_speed.second = true;
                 }
             }
+            if(mqtt_message.topic == "motors/enable"){
+                LOG_INFO("enabling %c", mqtt_message.payload[0]);
+                if(mqtt_message.payload[0] == '1'){
+                    m_step_com.enableMotors(true);
+                }
+                else if(mqtt_message.payload[0] == '0'){
+                    m_step_com.enableMotors(false);
+                }
+            }
            if(mqtt_message.topic == "motors/mode"){
                 if(mqtt_message.payload == "AUTO"){
                     m_motor_info.mode.first = "AUTO";

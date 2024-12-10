@@ -226,6 +226,14 @@ stepperCommunicator::Status stepperCommunicator::reqBattCurrent(){
     return ret;
 }
 
+void stepperCommunicator::enableMotors(bool enabled){
+    if(enabled == true){
+        m_serial_port.write_some(boost::asio::buffer("-S1\r\n"));
+    }
+    else{
+        m_serial_port.write_some(boost::asio::buffer("-S0\r\n"));
+    }
+}
 
 void stepperCommunicator::messageParser(std::string message){
     std::string pre_parsed = "";
@@ -355,3 +363,5 @@ void stepperCommunicator::messageParser(std::string message){
         }
     }
 }
+
+

@@ -34,6 +34,7 @@ public:
     float readBattCurrent();
     void messageParser(std::string message);
     void asyncMessageHandler(const boost::system::error_code& error, std::size_t bytes_transferred);
+    void enableMotors(bool enabled);
 private:
     float m_batt_volt = 0;
     float m_buck1_volt = 0;
