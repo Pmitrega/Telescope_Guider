@@ -221,10 +221,12 @@ void GuiderWorker::handleCamera(){
     /*TO BE UPDATED WITH PROPER API */
 	uint8_t buffer[1280*960*2];
 	int  i = 0;
-	int ms_betw_frames = std::stoi(m_camera_settings.interval.first);
     m_cam_controller.startVideoCapture();
     while(true){
-
+        int ms_betw_frames = std::stoi(m_camera_settings.interval.first);
+        if(ms_betw_frames < 100){
+            ms_betw_frames = 100;
+        }
 		auto t = std::time(nullptr);
 		if(CAM_CTRL_FAIL == m_cam_controller.tryGetVideoData()){
             m_cam_controller.tryReconnectCamera(current_camera);
@@ -256,10 +258,11 @@ void GuiderWorker::handleCamera(){
 		auto capture_end_time =  std::chrono::system_clock::now();
         std::chrono::duration<float> elapesed_time = capture_end_time - capture_start_time;
         int execution_time = (ms_betw_frames) - static_cast<int>(1000*elapesed_time.count());
-		// LOG_INFO("execution time: %d ms\r\n", execution_time)
-        // int sleep_time = (ms_betw_frames) - static_cast<int>(1000*elapesed_time.count());
-		// LOG_INFO("sleep time: %d ms\r\n", sleep_time)
-        // std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
+        if(ms_betw_frames > std::stoi(m_camera_settings.exposure.first)){
+            int sleep_time = (ms_betw_frames) - static_cast<int>(1000*elapesed_time.count());
+            // LOG_INFO("sleep time: %d ms\r\n", sleep_time)
+            std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
+        }
 		i++;
 	}
 }
