@@ -37,6 +37,15 @@ typedef struct BATTERY_STATE_BOUNDARIES{
     uint16_t higher_boundary;
 }BATTERY_STATE_BOUNDARIES;
 
+typedef struct MOTORS_STATUS{
+    uint8_t m1c1;
+    uint8_t m1c2;
+    uint8_t m2c1;
+    uint8_t m2c2;
+}MOTORS_STATUS;
+
+MOTORS_STATUS motor_status = {1U, 1U, 1U, 1U};
+
 static const BATTERY_STATE_BOUNDARIES battery_level_boundaries[4]  = {
                                                                     {12500U, 15000U},
                                                                     {11810U, 12500U + BATT_STATE_HIST},
@@ -46,6 +55,10 @@ static const BATTERY_STATE_BOUNDARIES battery_level_boundaries[4]  = {
 
 static const uint16_t buck_proper_voltage[2]  = {7000, 10500};
 
+
+extern TIM_HandleTypeDef htim4;
+extern TIM_HandleTypeDef htim2;
+extern TIM_HandleTypeDef htim3;
 /*Power manager task will be run every 250ms*/
 
 /*STATIC FUNCTION DECLARATION*/
@@ -173,7 +186,7 @@ void checkBuckIntegrity(uint16_t buck1_voltage_mV, uint16_t buck2_voltage_mV){
         }
     }
 
-    if(CHECK_BUCK1_PIN_STATUS() == BUCK_ENABLE){
+    if(CHECK_BUCK2_PIN_STATUS() == BUCK_ENABLE){
         if(buck2_voltage_mV > buck_proper_voltage[1] || buck2_voltage_mV < buck_proper_voltage[0]){
             buck2_error_debounce +=1;
         }
@@ -211,4 +224,72 @@ void SetBuck2(BUCK_POWER pwr_status){
     HAL_GPIO_WritePin(BUCK2_EN_GPIO_Port, BUCK2_EN_Pin, (int)pwr_status);
 }
 
+#define MOTOR_MONITOR_DEBOUNCE_CNT 30
+void motorMonitor(){
+    static int M1C1_debounce = 0;
+    static int M1C2_debounce = 0;
+    static int M2C1_debounce = 0;
+    static int M2C2_debounce = 0;
+    int M1C1_curr = getCurrentM1C1mA();
+    int M1C2_curr = getCurrentM1C2mA();
+    int M2C1_curr = getCurrentM2C1mA();
+    int M2C2_curr = getCurrentM2C2mA();
+    int M1C1_ctrl = htim2.Instance->CCR1 - htim2.Instance->CCR2;
+    int M1C2_ctrl = htim2.Instance->CCR3 - htim2.Instance->CCR4;
+    int M2C1_ctrl = htim3.Instance->CCR1 - htim3.Instance->CCR2;
+    int M2C2_ctrl = htim3.Instance->CCR3 - htim3.Instance->CCR4;
+
+    if(M1C1_ctrl < 0) M1C1_ctrl = -M1C1_ctrl;
+    if(M1C2_ctrl < 0) M1C2_ctrl = -M1C2_ctrl;
+    if(M2C1_ctrl < 0) M2C1_ctrl = -M2C1_ctrl;
+    if(M2C2_ctrl < 0) M2C2_ctrl = -M2C2_ctrl;
+    /*If power to motors is enabled perform motor status check*/
+    if(CHECK_BUCK1_PIN_STATUS() == BUCK_ENABLE && CHECK_BUCK2_PIN_STATUS() == BUCK_ENABLE){
+        if(M1C1_ctrl  > 200 && M1C1_curr < 50){
+            M1C1_debounce +=1;
+            if(M1C1_debounce > MOTOR_MONITOR_DEBOUNCE_CNT){
+                M1C1_debounce = 0;
+                motor_status.m1c1 = 0U;
+                LOG_INFO("M1C1 no current\r\n");
+            }
+        }
+        else{
+            M1C1_debounce = 0;
+        }
+        if(M1C2_ctrl  > 200 && M1C2_curr < 50){
+            M1C2_debounce +=1;
+            if(M1C2_debounce > MOTOR_MONITOR_DEBOUNCE_CNT){
+                M1C2_debounce = 0;
+                motor_status.m1c2 = 0U;    
+                LOG_INFO("M1C2 no current\r\n");
+            }
+        }
+        else{
+            M1C2_debounce = 0;
+        }
+        if(M2C1_ctrl  > 200 && M2C1_curr < 50){
+            M2C1_debounce +=1;
+            if(M2C1_debounce > MOTOR_MONITOR_DEBOUNCE_CNT){
+                M2C1_debounce = 0;
+                motor_status.m2c1 = 0U;
+                LOG_INFO("M2C1 no current\r\n");
+            }
+        }
+        else{
+            M2C1_debounce = 0;
+        }
+        if(M2C2_ctrl  > 200 && M2C2_curr < 50){
+            M2C2_debounce +=1;
+            if(M2C2_debounce > MOTOR_MONITOR_DEBOUNCE_CNT){
+                M2C2_debounce = 0;
+                motor_status.m2c2 = 0U;
+                LOG_INFO("M2C2 no current\r\n");
+            }
+        }
+        else{
+            M2C2_debounce = 0;
+        }
+
+    }
+}
 
