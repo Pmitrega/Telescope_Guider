@@ -128,7 +128,7 @@ void shutdownMotors(){
     setCoilM1C1(0);
     setCoilM1C2(0);
     setCoilM2C1(0);
-    setCoilM2C1(0);
+    setCoilM2C2(0);
 }
 
 void startMotors(){
@@ -140,7 +140,7 @@ void startMotors(){
     setCoilM1C1(0);
     setCoilM1C2(0);
     setCoilM2C1(0);
-    setCoilM2C1(0);
+    setCoilM2C2(0);
 }
 
 int getStepsRa(){
