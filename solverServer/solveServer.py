@@ -8,7 +8,7 @@ topic = "solver/solution"
 client_id = f'solver'
 username = 'stepper'
 password = 'stepper'
-sec_per_pixel = 6.35
+sec_per_pixel = 6.35/2
 solver = None
 
 def connect_mqtt():
@@ -82,11 +82,12 @@ def on_message(client, userdata, msg):
         stars = json.loads(stars)
         print(stars)
         if sec_per_pixel is not None:
+            print(sec_per_pixel)
             solution = solver.solve(
                 stars=stars,
                 size_hint=astrometry.SizeHint(
-                            lower_arcsec_per_pixel=sec_per_pixel - 0.1,
-                            upper_arcsec_per_pixel=sec_per_pixel + 0.1,
+                            lower_arcsec_per_pixel=sec_per_pixel - 1,
+                            upper_arcsec_per_pixel=sec_per_pixel + 1,
                 ),
                     position_hint=None,
                 solution_parameters=astrometry.SolutionParameters(
