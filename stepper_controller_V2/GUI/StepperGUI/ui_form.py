@@ -17,9 +17,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QFrame,
     QLCDNumber, QLabel, QLineEdit, QMainWindow,
-    QMenuBar, QProgressBar, QPushButton, QSizePolicy,
-    QSlider, QSpinBox, QStatusBar, QTabWidget,
-    QTextBrowser, QTextEdit, QWidget)
+    QMenuBar, QProgressBar, QPushButton, QRadioButton,
+    QSizePolicy, QSlider, QSpinBox, QStatusBar,
+    QTabWidget, QTextBrowser, QTextEdit, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -173,7 +173,11 @@ class Ui_MainWindow(object):
         self.horizontalSlider_5.setGeometry(QRect(490, 50, 461, 22))
         self.horizontalSlider_5.setMinimum(-5000)
         self.horizontalSlider_5.setMaximum(5000)
+        self.horizontalSlider_5.setSingleStep(100)
+        self.horizontalSlider_5.setPageStep(100)
         self.horizontalSlider_5.setOrientation(Qt.Orientation.Horizontal)
+        self.horizontalSlider_5.setInvertedAppearance(False)
+        self.horizontalSlider_5.setTickInterval(20)
         self.checkBox = QCheckBox(self.centralwidget)
         self.checkBox.setObjectName(u"checkBox")
         self.checkBox.setEnabled(False)
@@ -198,7 +202,10 @@ class Ui_MainWindow(object):
         self.horizontalSlider_6.setGeometry(QRect(490, 110, 461, 22))
         self.horizontalSlider_6.setMinimum(-5000)
         self.horizontalSlider_6.setMaximum(5000)
+        self.horizontalSlider_6.setSingleStep(100)
+        self.horizontalSlider_6.setPageStep(100)
         self.horizontalSlider_6.setOrientation(Qt.Orientation.Horizontal)
+        self.horizontalSlider_6.setTickInterval(20)
         self.progressBar = QProgressBar(self.centralwidget)
         self.progressBar.setObjectName(u"progressBar")
         self.progressBar.setGeometry(QRect(1290, 30, 151, 41))
@@ -544,10 +551,10 @@ class Ui_MainWindow(object):
         self.textBrowser_cam_gain.setGeometry(QRect(1210, 460, 281, 41))
         self.textBrowser_cam_expo = QTextBrowser(self.centralwidget)
         self.textBrowser_cam_expo.setObjectName(u"textBrowser_cam_expo")
-        self.textBrowser_cam_expo.setGeometry(QRect(1210, 530, 281, 41))
+        self.textBrowser_cam_expo.setGeometry(QRect(1210, 530, 131, 41))
         self.label_18 = QLabel(self.centralwidget)
         self.label_18.setObjectName(u"label_18")
-        self.label_18.setGeometry(QRect(1210, 500, 211, 31))
+        self.label_18.setGeometry(QRect(1210, 500, 131, 31))
         self.label_18.setFont(font2)
         self.label_19 = QLabel(self.centralwidget)
         self.label_19.setObjectName(u"label_19")
@@ -1309,6 +1316,29 @@ class Ui_MainWindow(object):
         self.checkBox_show_all = QCheckBox(self.centralwidget)
         self.checkBox_show_all.setObjectName(u"checkBox_show_all")
         self.checkBox_show_all.setGeometry(QRect(850, 190, 151, 21))
+        self.radioButton = QRadioButton(self.centralwidget)
+        self.radioButton.setObjectName(u"radioButton")
+        self.radioButton.setGeometry(QRect(170, 80, 121, 20))
+        self.textBrowser_cap_inter = QTextBrowser(self.centralwidget)
+        self.textBrowser_cap_inter.setObjectName(u"textBrowser_cap_inter")
+        self.textBrowser_cap_inter.setGeometry(QRect(1350, 530, 131, 41))
+        self.label_44 = QLabel(self.centralwidget)
+        self.label_44.setObjectName(u"label_44")
+        self.label_44.setGeometry(QRect(1350, 500, 131, 31))
+        self.label_44.setFont(font2)
+        self.radioButton_log = QRadioButton(self.centralwidget)
+        self.radioButton_log.setObjectName(u"radioButton_log")
+        self.radioButton_log.setGeometry(QRect(170, 100, 121, 20))
+        self.radioButton_log.setAutoExclusive(False)
+        self.pushButton_keep = QPushButton(self.centralwidget)
+        self.pushButton_keep.setObjectName(u"pushButton_keep")
+        self.pushButton_keep.setGeometry(QRect(410, 150, 151, 31))
+        palette16 = QPalette()
+        palette16.setBrush(QPalette.Active, QPalette.Text, brush6)
+        palette16.setBrush(QPalette.Active, QPalette.ButtonText, brush6)
+        palette16.setBrush(QPalette.Inactive, QPalette.Text, brush6)
+        palette16.setBrush(QPalette.Inactive, QPalette.ButtonText, brush6)
+        self.pushButton_keep.setPalette(palette16)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
@@ -1325,8 +1355,8 @@ class Ui_MainWindow(object):
         self.checkBox_2.toggled.connect(self.checkBox_3.setDisabled)
         self.checkBox_3.toggled.connect(self.checkBox_2.setDisabled)
         self.checkBox_3.toggled.connect(self.checkBox.setDisabled)
-        self.horizontalSlider_5.sliderMoved.connect(self.spinBox.setValue)
-        self.horizontalSlider_6.sliderMoved.connect(self.spinBox_2.setValue)
+        self.horizontalSlider_5.valueChanged.connect(self.spinBox.setValue)
+        self.horizontalSlider_6.valueChanged.connect(self.spinBox_2.setValue)
         self.spinBox.valueChanged.connect(self.horizontalSlider_5.setValue)
         self.spinBox_2.valueChanged.connect(self.horizontalSlider_6.setValue)
         self.pushButton.clicked.connect(MainWindow.connectTarget)
@@ -1359,6 +1389,8 @@ class Ui_MainWindow(object):
         self.pushButton_3.pressed.connect(MainWindow.localizeField)
         self.pushButton_4.pressed.connect(MainWindow.testLocalizeField)
         self.pushButton_6.clicked.connect(MainWindow.startIdentification)
+        self.radioButton.toggled.connect(MainWindow.startMotors)
+        self.pushButton_keep.clicked.connect(MainWindow.keepCurrLoc)
 
         QMetaObject.connectSlotsByName(MainWindow)
     # setupUi
@@ -1581,5 +1613,17 @@ class Ui_MainWindow(object):
         self.label_43.setText(QCoreApplication.translate("MainWindow", u"Sky Ra", None))
         self.pushButton_6.setText(QCoreApplication.translate("MainWindow", u"Identify", None))
         self.checkBox_show_all.setText(QCoreApplication.translate("MainWindow", u"Show all detected", None))
+        self.radioButton.setText(QCoreApplication.translate("MainWindow", u"Enable motors", None))
+        self.textBrowser_cap_inter.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"hr { height: 1px; border-width: 0; }\n"
+"li.unchecked::marker { content: \"\\2610\"; }\n"
+"li.checked::marker { content: \"\\2612\"; }\n"
+"</style></head><body style=\" font-family:'Segoe UI'; font-size:12pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">UNKNOWN</p></body></html>", None))
+        self.label_44.setText(QCoreApplication.translate("MainWindow", u"Interval", None))
+        self.radioButton_log.setText(QCoreApplication.translate("MainWindow", u"Log control", None))
+        self.pushButton_keep.setText(QCoreApplication.translate("MainWindow", u"Keep current Loc", None))
     # retranslateUi
 

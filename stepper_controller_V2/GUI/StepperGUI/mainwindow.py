@@ -32,7 +32,7 @@ class MainWindow(QMainWindow):
         self.rx_timer.timeout.connect(self.txTimerTimout)
         self.update_image_timer = QTimer()
         self.update_image_timer.timeout.connect(self.updateImageTimeout)
-        self.update_image_timer.start(100)
+        self.update_image_timer.start(10)
         self.data_rec_thread = None
         self.guider_status = "not alive"
         self.guider_dead_judge = 0
@@ -43,6 +43,7 @@ class MainWindow(QMainWindow):
             "camera_model": "UNKNOWN",
             "gain": "UNKNOWN",
             "exposure_time": "UNKNOWN",
+            "interval": "UNKNOWN",
             "ROIwidth": "UNKNOWN",
             "ROIheigth": "UNKNOWN",
             "ROIstart_x": "UNKNOWN",
@@ -110,6 +111,7 @@ class MainWindow(QMainWindow):
             client.subscribe("#")
             client.publish("images/jpg/enable", "1")
             self.enable_compression = True
+            self.startMotors(True)
             # client.subscribe("sensors/#")
 
         # The callback for when a PUBLISH message is received from the server.
@@ -142,15 +144,15 @@ class MainWindow(QMainWindow):
                 self.sensors_info["M2C2curr"] = float(msg.payload.decode("utf-8"))
                 self.updateSensorReadings()
             elif msg.topic == "sensors/battcurr":
+                print("getting batt current")
                 self.sensors_info["battcurr"] = float(msg.payload.decode("utf-8"))
                 self.updateSensorReadings()
             elif msg.topic == "images/raw":
-
+                self.telescope_controller.log_info_en = self.ui.radioButton_log.isChecked()
                 deserialized_bytes = np.frombuffer(msg.payload, dtype=np.uint16)
                 Image = np.reshape(deserialized_bytes, newshape=(960, 1280))
                 auto_ctrl = self.ui.checkBox_3.isChecked()
                 self.telescope_controller.genNewImage(Image, 2000, auto_ctrl)
-
 
                 displayed_img = Image
                 displayed_img = displayed_img / 2 ** 8
@@ -160,8 +162,6 @@ class MainWindow(QMainWindow):
                                                               self.ui.comboBox_transform.currentText())
                 displayed_img = self.telescope_controller.drawArrowsOnImage(displayed_img)
 
-
-
                 if self.ui.checkBox_show_all.isChecked():
                     self.telescope_controller.showAllStars(displayed_img)
                 self.telescope_controller.showTrackedStar(displayed_img)
@@ -170,6 +170,7 @@ class MainWindow(QMainWindow):
                     cv2.imwrite("./saved/" + self.image_info["title"] + ".png", Image)
                 self.new_image = True
             elif msg.topic == "images/jpg":
+                self.telescope_controller.log_info_en = self.ui.radioButton_log.isChecked()
                 f = open('tmp.jpg', "wb")
                 f.write(msg.payload)
                 displayed_img = cv2.imread('tmp.jpg', cv2.IMREAD_GRAYSCALE)
@@ -177,7 +178,7 @@ class MainWindow(QMainWindow):
                 if displayed_img is None:
                     "Can't read image ..."
                     return
-                self.telescope_controller.genNewImage(displayed_img.astype(np.uint16)*2**8, 2000, auto_ctrl)
+                self.telescope_controller.genNewImage(displayed_img.astype(np.uint16) * 2 ** 8, 2000, auto_ctrl)
                 bin_im, self.star_locs = star_detec.segmentation(displayed_img.astype(np.uint8))
                 displayed_img = view_transfrom.transformImage(displayed_img.astype(np.uint8),
                                                               self.ui.comboBox_transform.currentText())
@@ -197,6 +198,8 @@ class MainWindow(QMainWindow):
                 self.image_info["exposure_time"] = msg.payload.decode("utf-8")
             elif msg.topic == "images/raw/gain":
                 self.image_info["gain"] = msg.payload.decode("utf-8")
+            elif msg.topic == "images/raw/interval":
+                self.image_info["interval"] = msg.payload.decode("utf-8")
             elif msg.topic == "images/raw/cameraType":
                 self.image_info["camera_model"] = msg.payload.decode("utf-8")
             elif msg.topic == "images/raw/ROIwidth":
@@ -223,8 +226,10 @@ class MainWindow(QMainWindow):
             elif msg.topic == "solver/rotation":
                 rot = float(msg.payload.decode("utf-8")) - 90
                 self.ui.lineEdit_3.setText(str(round(rot, 2)) + u'\N{DEGREE SIGN} ')
-                self.telescope_controller.sky_dec_vect = (math.cos(float(rot) * math.pi / 180), math.sin(float(rot) * math.pi / 180))
-                self.telescope_controller.sky_ra_vect = (-math.sin(float(rot) * math.pi / 180), math.cos(float(rot) * math.pi / 180))
+                self.telescope_controller.sky_dec_vect = (
+                    math.cos(float(rot) * math.pi / 180), math.sin(float(rot) * math.pi / 180))
+                self.telescope_controller.sky_ra_vect = (
+                    -math.sin(float(rot) * math.pi / 180), math.cos(float(rot) * math.pi / 180))
 
         self.mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
         self.mqtt_client.on_connect = on_connect
@@ -354,6 +359,7 @@ class MainWindow(QMainWindow):
             self.ui.textBrowser_im_capt.setText(self.image_info["capture_time"])
             self.ui.textBrowser_cam_model.setText(self.image_info["camera_model"])
             self.ui.textBrowser_cam_gain.setText(self.image_info["gain"])
+            self.ui.textBrowser_cap_inter.setText(self.image_info["interval"])
             self.ui.textBrowser_cam_expo.setText(self.image_info["exposure_time"])
             self.ui.textBrowser_roi_width.setText(self.image_info["ROIwidth"])
             self.ui.textBrowser_roi_heigh.setText(self.image_info["ROIheigth"])
@@ -368,6 +374,8 @@ class MainWindow(QMainWindow):
     def goManualCoils(self):
         self.mqtt_client.publish("motors/mode", "MANUAL")
         # self.conn_handler.write(b'-M\r\n')
+    def keepCurrLoc(self):
+        self.telescope_controller.go_to_loc = self.telescope_controller.reference_star_current
 
     def setCoil0(self, val):
         cmd = "-u" + str(val) + "\r\n"
@@ -393,6 +401,13 @@ class MainWindow(QMainWindow):
         # cmd = "-D" + str(val) + "\r\n"
         # self.conn_handler.write(cmd.encode())
 
+    def startMotors(self, start=True):
+        print("enabling ", start)
+        if start:
+            self.mqtt_client.publish("motors/enable", "1")
+        else:
+            self.mqtt_client.publish("motors/enable", "0")
+
     def setRaSpeed(self, val):
         # if (val > 10 or val < -10):
         # print(f"Setting Ra control to {val}")
@@ -414,13 +429,13 @@ class MainWindow(QMainWindow):
 
     def testLocalizeField(self):
         star_detec.testRequestStarsLocation(self.mqtt_client)
+
     def startIdentification(self):
         self.telescope_controller.run_ident = True
         self.telescope_controller.run_dec_ident = True
         self.telescope_controller.run_dec_ident_iter = 0
         self.telescope_controller.run_ra_ident_iter = 0
         self.telescope_controller.run_ra_ident = False
-
 
     def enableCompressing(self, be_enabled):
         if be_enabled:

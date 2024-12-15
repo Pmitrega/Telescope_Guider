@@ -4,6 +4,16 @@ import cv2
 import numpy as np
 import astropy
 import src.star_detection as star_detection
+import csv
+
+STEPS_TO_SECS = 0.104166666666667  # Steps to seconds for both motors.
+
+
+def TelescopeToSkyTransform(tel_dec, angle_diff, c_sky_dec, c_sky_ra, e_sky_dec, e_sky_ra):
+    if tel_dec == c_sky_dec and angle_diff == 0:
+        return [e_sky_ra - c_sky_ra, e_sky_dec - c_sky_dec]
+    else:
+        return [0, 0]
 
 
 class starCentroid:
@@ -60,6 +70,15 @@ class TelescopeController:
         self.run_ident = False
         self.dec_deg = float('nan')
         self.ra_deg = float('nan')
+        self.log_info_en = False
+
+    def log_info(self, dec_speed, ra_speed, iterval):
+        x = self.reference_star_current.x_cent
+        y = self.reference_star_current.y_cent
+        with open('ctrl_logs.csv', 'a', newline='') as csvfile:
+            writer = csv.writer(csvfile, delimiter=' ',
+                                quotechar='|', quoting=csv.QUOTE_MINIMAL)
+            writer.writerow([x, y, dec_speed, ra_speed, iterval])
 
     def genNewImage(self, image: np.ndarray, time_interval: int, auto_control: bool):
         self.new_image = True
@@ -70,7 +89,9 @@ class TelescopeController:
             self.runIdent()
         if self.reference_star_current is not None:
             err = self.getErrorToRefStar(self.go_to_loc)
-            self.setControl(err[0], err[1], auto_control)
+            speeds = self.setControl(err[0], err[1], auto_control)
+            if self.log_info_en:
+                self.log_info(speeds[0], speeds[1], time_interval)
 
     def runIdent(self):
         if self.reference_star_current is not None and self.reference_star_initial is not None:
@@ -143,7 +164,7 @@ class TelescopeController:
             self.setRaSpeed(ra_control)
             self.setDecSpeed(dec_control)
 
-        return sol
+        return [ra_control, dec_control]
 
     def drawArrowsOnImage(self, Image: np.ndarray):
         ra_vect = self.telescope_ra_vect
@@ -215,7 +236,6 @@ class TelescopeController:
         if found_reference is False:
             self.find_new_reference_star(self.last_star_centroids)
         if self.reference_star_current is not None and self.reference_star_initial is not None:
-
             error = self.getErrorToRefStarPix(self.go_to_loc)
             print(error)
             # f = open("error.csv", "a")
