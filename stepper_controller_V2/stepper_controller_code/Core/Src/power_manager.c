@@ -213,6 +213,7 @@ void updatePowerManager(){
     checkBatteryLevel(battery_voltage_mV);
     checkBuckIntegrity(buck1_voltage_mV, buck2_voltage_mV);
     handleState(battery_level);
+    motorMonitor();
 }
 
 
@@ -224,7 +225,7 @@ void SetBuck2(BUCK_POWER pwr_status){
     HAL_GPIO_WritePin(BUCK2_EN_GPIO_Port, BUCK2_EN_Pin, (int)pwr_status);
 }
 
-#define MOTOR_MONITOR_DEBOUNCE_CNT 30
+#define MOTOR_MONITOR_DEBOUNCE_CNT 5
 void motorMonitor(){
     static int M1C1_debounce = 0;
     static int M1C2_debounce = 0;
@@ -245,7 +246,7 @@ void motorMonitor(){
     if(M2C2_ctrl < 0) M2C2_ctrl = -M2C2_ctrl;
     /*If power to motors is enabled perform motor status check*/
     if(CHECK_BUCK1_PIN_STATUS() == BUCK_ENABLE && CHECK_BUCK2_PIN_STATUS() == BUCK_ENABLE){
-        if(M1C1_ctrl  > 200 && M1C1_curr < 50){
+        if(M1C1_ctrl  > 300 && M1C1_curr < 50){
             M1C1_debounce +=1;
             if(M1C1_debounce > MOTOR_MONITOR_DEBOUNCE_CNT){
                 M1C1_debounce = 0;
@@ -253,21 +254,29 @@ void motorMonitor(){
                 LOG_INFO("M1C1 no current\r\n");
             }
         }
-        else{
+        else if(M1C1_ctrl  > 300 && M1C1_curr > 50){
             M1C1_debounce = 0;
+            if(motor_status.m1c1 == 0U){
+                motor_status.m1c1 = 1U;
+                LOG_INFO("M1C1 back ok\r\n");
+            }
         }
-        if(M1C2_ctrl  > 200 && M1C2_curr < 50){
+        if(M1C2_ctrl  > 300 && M1C2_curr < 50){
             M1C2_debounce +=1;
             if(M1C2_debounce > MOTOR_MONITOR_DEBOUNCE_CNT){
                 M1C2_debounce = 0;
-                motor_status.m1c2 = 0U;    
+                motor_status.m1c2 = 0U;
                 LOG_INFO("M1C2 no current\r\n");
             }
         }
-        else{
+        else if(M1C2_ctrl  > 300 && M1C2_curr > 50){
             M1C2_debounce = 0;
+            if(motor_status.m1c2 == 0U){
+                motor_status.m1c2 = 1U;
+                LOG_INFO("M1C2 back ok\r\n");
+            }
         }
-        if(M2C1_ctrl  > 200 && M2C1_curr < 50){
+        if(M2C1_ctrl  > 300 && M2C1_curr < 50){
             M2C1_debounce +=1;
             if(M2C1_debounce > MOTOR_MONITOR_DEBOUNCE_CNT){
                 M2C1_debounce = 0;
@@ -275,10 +284,14 @@ void motorMonitor(){
                 LOG_INFO("M2C1 no current\r\n");
             }
         }
-        else{
+        else if(M2C1_ctrl  > 300 && M2C1_curr > 50){
             M2C1_debounce = 0;
+            if(motor_status.m2c1 == 0U){
+                motor_status.m2c1 = 1U;
+                LOG_INFO("M2C1 back ok\r\n");
+            }
         }
-        if(M2C2_ctrl  > 200 && M2C2_curr < 50){
+        if(M2C2_ctrl  > 300 && M2C2_curr < 50){
             M2C2_debounce +=1;
             if(M2C2_debounce > MOTOR_MONITOR_DEBOUNCE_CNT){
                 M2C2_debounce = 0;
@@ -286,8 +299,12 @@ void motorMonitor(){
                 LOG_INFO("M2C2 no current\r\n");
             }
         }
-        else{
+        else if(M2C2_ctrl  > 300 && M2C2_curr > 50){
             M2C2_debounce = 0;
+            if(motor_status.m2c2 == 0U){
+                motor_status.m2c2 = 1U;
+                LOG_INFO("M2C2 back ok\r\n");
+            }
         }
 
     }

@@ -6,6 +6,7 @@
 
 #define MOTOR_AUTO_MODE     (0U)
 #define MOTOR_MANUAL_MODE   (1U)
+#define MOTOR_STEPS_MODE   (2U)
 
 
 const uint16_t PWM1_microsteps_array[] = {1000 ,932  ,864  ,797  ,733  ,671  ,612  ,556  ,506  ,459  ,418  ,383  ,354  ,331  ,314  ,304  ,
@@ -49,6 +50,12 @@ static int DecDir = 1;
 static int fullStepsRa = 0;
 static int fullStepsDec = 0;
 
+static int requestedDecSteps = 0;
+static int requestedRaSteps = 0;
+
+static int requestedDecStepsSpeed = 1500;
+static int requestedRaStepsSpeed = 3000;
+
 static uint8_t is_dec_running = 0;
 static uint8_t is_ra_running = 0;
 
@@ -81,6 +88,40 @@ void startMotorAutoMode(){
     is_dec_running = 1;
     is_ra_running = 1;
 }
+
+void startStepsAutoMode(){
+    /*Start Ra motor timer*/
+    HAL_TIM_Base_Start_IT(&htim6);
+    /*Start Dec motor timer*/
+    HAL_TIM_Base_Start_IT(&htim7);
+    motor_mode = MOTOR_STEPS_MODE;
+    requestedDecSteps = fullStepsDec;
+    requestedRaSteps = fullStepsRa;
+    is_dec_running = 1;
+    is_ra_running = 1;
+}
+
+void moveDecSteps(int steps){
+    requestedDecSteps = requestedDecSteps + steps;
+    if(requestedDecSteps > fullStepsDec){
+        setDecMotorSpeed(requestedDecStepsSpeed);
+    }
+    else{
+        setDecMotorSpeed(-requestedDecStepsSpeed);
+    }
+}
+
+void moveRaSteps(int steps){
+    requestedRaSteps = requestedRaSteps + steps;
+    if(requestedRaSteps > fullStepsRa){
+        setRaMotorSpeed(requestedRaStepsSpeed);
+    }
+    else{
+        setRaMotorSpeed(-requestedRaStepsSpeed);
+    }
+}
+
+
 void startMotorManualMode(){
     HAL_TIM_Base_Stop_IT(&htim6);
     HAL_TIM_Base_Stop_IT(&htim7);
@@ -255,13 +296,16 @@ void setDecMotorSpeed(int requested_speed){
 
 void updateRaPWM(){
     static int counter;
-    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, PWM1_microsteps_array[counter]);
-    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, PWM2_microsteps_array[counter]);
-    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, PWM3_microsteps_array[counter]);
-    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_4, PWM4_microsteps_array[counter]);
-    counter += (int)microsteps*RaDir;
 
-    htim8.Instance->CCR2 = PWM1_microsteps_array[counter];
+    if(motor_mode == MOTOR_AUTO_MODE || (motor_mode == MOTOR_STEPS_MODE && requestedRaSteps != fullStepsRa)){
+        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, PWM1_microsteps_array[counter]);
+        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, PWM2_microsteps_array[counter]);
+        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, PWM3_microsteps_array[counter]);
+        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_4, PWM4_microsteps_array[counter]);
+        counter += (int)microsteps*RaDir;
+        /*setting LED*/
+        htim8.Instance->CCR2 = PWM1_microsteps_array[counter];
+    }
 
     if(counter >= 64){
         counter = 0;
@@ -275,17 +319,16 @@ void updateRaPWM(){
 
 void updateDecPWM(){
     static int counter;
-    __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, PWM1_microsteps_array[counter]);
-    __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, PWM2_microsteps_array[counter]);
-    __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_3, PWM3_microsteps_array[counter]);
-    __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_4, PWM4_microsteps_array[counter]);
-    counter += (int)microsteps*DecDir;
 
-    htim8.Instance->CCR1 = PWM1_microsteps_array[counter];
-    //   osDelay(10);
-    // }
-    // for(uint16_t i = 0; i < LED_BRIGHTNESS; i++){
-    //   htim8.Instance->CCR2 = LED_BRIGHTNESS * 10U - i * 10U - 8U;
+    if(motor_mode == MOTOR_AUTO_MODE || (motor_mode == MOTOR_STEPS_MODE && requestedDecSteps != fullStepsDec)){
+        __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, PWM1_microsteps_array[counter]);
+        __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, PWM2_microsteps_array[counter]);
+        __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_3, PWM3_microsteps_array[counter]);
+        __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_4, PWM4_microsteps_array[counter]);
+        counter += (int)microsteps*DecDir;
+        /*setting LED*/
+        htim8.Instance->CCR1 = PWM1_microsteps_array[counter];
+    }
     if(counter >= 64){
         counter = 0;
         fullStepsDec +=1;

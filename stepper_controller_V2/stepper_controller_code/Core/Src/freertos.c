@@ -191,8 +191,10 @@ void StartDefaultTask(void *argument)
   initializeMotors();
   estimateResistance();
   startMotorAutoMode();
-  setDecMotorSpeed(-100);
-  setRaMotorSpeed(-14);
+  // startStepsAutoMode();
+  // moveRaSteps(54000);
+  setDecMotorSpeed(0);
+  setRaMotorSpeed(0);
   const uint16_t LED_BRIGHTNESS = 30;
 
   /* Infinite loop */

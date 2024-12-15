@@ -24,7 +24,7 @@
 #include "FreeRTOS.h"
 #define RAW_TO_mA(raw)            ((int)((float)raw * 0.67f))
 #define BUCK_TO_BATT_CURR(buck)   ((float)buck * 0.75f)
-#define STANDBY_CURRENT           77 /*mA*/
+#define STANDBY_CURRENT           77 + 370 /*mA*/
 
 
 #define FILTER_COEFF 0.05

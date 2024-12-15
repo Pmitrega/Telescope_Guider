@@ -25,9 +25,14 @@ int CmdProcessor(uint8_t* Buf, uint32_t *Len){
                       "  -P[x]   - batt percentage\r\n"
                       "  -R[x]   - x is speed [fullsteps/minute] of Ra\r\n"
                       "  -D[x]   - x is speed [fullsteps/minute] of Dec\r\n"
+                      "  -r[x]   - move ra motor by x steps\r\n"
+                      "  -d[x]   - move dec motor by x steps\r\n"
                       "  -A[x]   - go speed mode\r\n"
                       "  -M[x]   - go manual control of coils\r\n"
-                      "  -u,i,o,p[x]   - raw ctrl coil1/2/3/4\r\n");
+                      "  -u,i,o,p[x]   - raw ctrl coil1/2/3/4\r\n"
+                      "  -S[x]   - x=1/0 start/shutdown motors\r\n"
+                      "  -Y      - resistance of coils motors\r\n"
+                      );
     }
     else if(Buf[0] =='-'&& Buf[1] == 'R'){
         uint8_t num_buff[MAX_NUM_ARG_LENGTH];
@@ -51,7 +56,18 @@ int CmdProcessor(uint8_t* Buf, uint32_t *Len){
         int numb = atoi(num_buff);
         setDecMotorSpeed(numb);
       }
-    else if(Buf[0] =='-'&& Buf[1] == 'R'){
+    else if(Buf[0] =='-'&& Buf[1] == 'r'){
+        uint8_t num_buff[MAX_NUM_ARG_LENGTH];
+        uint8_t indx = 2;
+        while(Buf[indx] &&  indx < *Len){
+          num_buff[indx - 2] = Buf[indx];
+          indx +=1;
+        }
+        num_buff[indx - 2] = '\0';
+        int numb = atoi(num_buff);
+        moveRaSteps(num_buff);
+      }
+    else if(Buf[0] =='-'&& Buf[1] == 'd'){
         uint8_t num_buff[MAX_NUM_ARG_LENGTH];
         uint8_t indx = 2;
         while(Buf[indx] && indx < *Len){
@@ -60,7 +76,7 @@ int CmdProcessor(uint8_t* Buf, uint32_t *Len){
         }
         num_buff[indx - 2] = '\0';
         int numb = atoi(num_buff);
-        setRaMotorSpeed(numb);
+        moveDecSteps(num_buff);
       }
     else if(Buf[0] =='-'&& Buf[1] == 'V'){
         uint8_t num_buff[MAX_NUM_ARG_LENGTH];
@@ -106,22 +122,33 @@ int CmdProcessor(uint8_t* Buf, uint32_t *Len){
             LOG_INFO("C3 %d\r\n", getCurrentM2C2mA());
         }
         else if(numb == 4){
-            LOG_INFO("BC %d\r\n",getEstimatedBattCurrmA());
+            LOG_INFO("C4 %d\r\n",getEstimatedBattCurrmA());
         }
       }
     else if(Buf[0] =='-'&& Buf[1] == 'A'){
-      uint8_t mode = getMotorMode();
-      if(mode == MOTOR_MANUAL_MODE){
-        startMotorAutoMode();
-        LOG_INFO("ENTERING AUTO MODE\r\n");
-      }
+        uint8_t mode = getMotorMode();
+        uint8_t num_buff[MAX_NUM_ARG_LENGTH];
+        uint8_t indx = 2;
+        while(Buf[indx] && indx < *Len){
+          num_buff[indx - 2] = Buf[indx];
+          indx +=1;
+        }
+        num_buff[indx - 2] = '\0';
+        int numb = atoi(num_buff);
+
+        if(numb == 0){
+          startMotorAutoMode();
+          LOG_INFO("ENTERING AUTO MODE\r\n");
+        }
+        if(numb == 1){
+          startStepsAutoMode();
+          LOG_INFO("ENTERING STEPS MODE\r\n");
+        }
       }
     else if(Buf[0] =='-'&& Buf[1] == 'M'){
       uint8_t mode = getMotorMode();
-      if(mode == MOTOR_AUTO_MODE){
-        startMotorManualMode();
-        LOG_INFO("ENTERING MANUAL MODE\r\n");
-      }
+      startMotorManualMode();
+      LOG_INFO("ENTERING MANUAL MODE\r\n");
       }
     else if(Buf[0] =='-'&& Buf[1] == 'Y'){
         LOG_INFO("MR: %d %d %d %d\r\n", (int)(getM1C1Res()*1000), (int)(getM1C2Res()*1000), (int)(getM2C1Res()*1000), (int)(getM2C2Res()*1000));

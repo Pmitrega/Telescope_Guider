@@ -31,7 +31,7 @@ void SetBuck2(BUCK_POWER pwr_status);
 BATTERY_STATUS getBatteryStatus();
 BUCK_FAULT_STATUS getBuck1Status();
 BUCK_FAULT_STATUS getBuck2Status();
-
+void motorMonitor();
 
 
 

@@ -25,6 +25,11 @@ void startMotorAutoMode();
 void startMotorManualMode();
 uint8_t getMotorMode();
 
+
+void startStepsAutoMode();
+void moveDecSteps(int steps);
+void moveRaSteps(int steps);
+
 void shutdownMotors();
 void startMotors();
 #endif
