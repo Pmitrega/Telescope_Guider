@@ -1,0 +1,7 @@
+{
+    "files": [
+        "mainwindow.py",
+        "form.ui",
+        "src/mqtt_handler.py"
+    ]
+}
