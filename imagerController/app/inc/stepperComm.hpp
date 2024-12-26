@@ -14,6 +14,9 @@ public:
     void connectSerial(const std::string serial_port);
     Status setManualMode();
     Status setAutoMode();
+    Status setAutoStepsMode();
+    Status makeRaSteps(int steps);
+    Status makeDecSteps(int steps);
     Status setRaSpeed(int msecPerSec);
     Status setDecSpeed(int msecPerSec);
     Status reqBattVolt();

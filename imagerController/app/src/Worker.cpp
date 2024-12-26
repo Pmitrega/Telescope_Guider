@@ -226,6 +226,7 @@ void GuiderWorker::handleCamera(){
     m_image_info.capture_interval.first = m_camera_settings.interval.first;
     /*TO BE UPDATED WITH PROPER API */
 	uint8_t buffer[1280*960*2];
+    auto last_send_time = std::chrono::system_clock::now();
 	int  i = 0;
     m_cam_controller.startVideoCapture();
     while(true){
@@ -234,6 +235,7 @@ void GuiderWorker::handleCamera(){
             ms_betw_frames = 100;
         }
 		auto t = std::time(nullptr);
+        auto capture_start_time =  std::chrono::system_clock::now();
 		if(CAM_CTRL_FAIL == m_cam_controller.tryGetVideoData()){
             m_cam_controller.tryReconnectCamera(current_camera);
             m_cam_controller.setCameraExposure_us(std::stoi(m_camera_settings.exposure.first) * 1000);
@@ -242,34 +244,45 @@ void GuiderWorker::handleCamera(){
 			continue;
 		}
         handleCameraSettChangeReq();
-		std::string filename;
-		if(i < 10){
-			filename = std::string("image0") + std::to_string(i) + ".raw";
-		}
-		else{
-			filename = std::string("image") + std::to_string(i) + ".raw";
-		}
-		auto tm = *std::localtime(&t);
-		std::ostringstream oss;
-		oss << std::put_time(&tm, "%d-%m-%Y %H-%M-%S");
-        m_image_info.image_capture_time.first = oss.str();
-        m_image_info.image_title.first = filename;
-        m_image_info.image_buffer.first = m_cam_controller.getBuffer().get();
-        requestImageTransimssion();
-        auto capture_start_time =  std::chrono::system_clock::now();
-        if(m_send_jpg){
-        saveImage(m_image_info.image_buffer.first, 1280, 960);
-        m_jpg_ready = true;
-        }
+		
+        
+
 		auto capture_end_time =  std::chrono::system_clock::now();
-        std::chrono::duration<float> elapesed_time = capture_end_time - capture_start_time;
-        int execution_time = (ms_betw_frames) - static_cast<int>(1000*elapesed_time.count());
-        if(ms_betw_frames > std::stoi(m_camera_settings.exposure.first)){
-            int sleep_time = (ms_betw_frames) - static_cast<int>(1000*elapesed_time.count());
-            // LOG_INFO("sleep time: %d ms\r\n", sleep_time)
-            std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
+        // std::chrono::duration<float> elapesed_time = capture_end_time - capture_start_time;
+        // int execution_time = (ms_betw_frames) - static_cast<int>(1000*elapesed_time.count());
+        
+        int wait_time = ms_betw_frames;
+        std::chrono::duration<float> time_elapsed =std::chrono::system_clock::now()  - last_send_time;
+        if(std::stoi(m_camera_settings.exposure.first) > 100){
+            wait_time -= 10;   
         }
-		i++;
+        LOG_INFO("elapsed %d, wait time: %d\r\n", static_cast<int>(1000*time_elapsed.count()), wait_time);
+        if(static_cast<int>(1000*time_elapsed.count()) >= wait_time){
+            std::string filename;
+            if(i < 10){
+                filename = std::string("image0") + std::to_string(i) + ".raw";
+            }
+            else{
+                filename = std::string("image") + std::to_string(i) + ".raw";
+            }
+            auto tm = *std::localtime(&t);
+            std::ostringstream oss;
+            oss << std::put_time(&tm, "%d-%m-%Y %H-%M-%S");
+            m_image_info.image_capture_time.first = oss.str();
+            m_image_info.image_title.first = filename;
+            m_image_info.image_buffer.first = m_cam_controller.getBuffer().get();
+            requestImageTransimssion();
+            if(m_send_jpg){
+                saveImage(m_image_info.image_buffer.first, 1280, 960);
+                m_jpg_ready = true;
+            }
+            last_send_time = std::chrono::system_clock::now();
+            // int sleep_time = (ms_betw_frames) - static_cast<int>(1000*elapesed_time.count());
+            // // LOG_INFO("sleep time: %d ms\r\n", sleep_time)
+            // std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
+            i++;
+        }
+		
 	}
 }
 

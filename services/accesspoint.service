@@ -1,0 +1,12 @@
+Description=guider accesspoint# Meta data about the application
+After=network.target
+
+[Service]
+ExecStartPre=/bin/sleep 30
+ExecStart=sudo nmcli d wifi hotspot ifname wlan0 ssid "Guider" password heweliusz
+RemainAfterExit=true
+Type=oneshot
+
+[Install]
+WantedBy=multi-user.target
+

@@ -72,7 +72,21 @@ stepperCommunicator::Status stepperCommunicator::setAutoMode(){
     if(m_serial_port.is_open() == true){
         LOG_INFO("Setting auto\r\n");
         com_transmission_mutex.lock();
-        m_serial_port.write_some(boost::asio::buffer("-A\r\n"));
+        m_serial_port.write_some(boost::asio::buffer("-A0\r\n"));
+        com_transmission_mutex.unlock();
+        return SERIAL_OK;
+    }
+    else{
+        LOG_ERROR("Port is not opened, can't write\r\n");
+        return SERIAL_ERROR;
+    }
+}
+
+stepperCommunicator::Status stepperCommunicator::setAutoStepsMode(){
+    if(m_serial_port.is_open() == true){
+        LOG_INFO("Setting auto stepps\r\n");
+        com_transmission_mutex.lock();
+        m_serial_port.write_some(boost::asio::buffer("-A1\r\n"));
         com_transmission_mutex.unlock();
         return SERIAL_OK;
     }

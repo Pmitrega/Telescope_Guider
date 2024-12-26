@@ -1,0 +1,11 @@
+[Unit]
+Description=guider application# Meta data about the application
+After=network.target
+
+[Service]
+ExecStart=/home/guider/Project/Telescope_Guider/imagerController/build/app/ImagerController
+Restart=always #restart the application when it crashes
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
