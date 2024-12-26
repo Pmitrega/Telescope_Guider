@@ -65,9 +65,9 @@ class TelescopeController:
         self.telescope_dec_angle = 70
         self.go_to_loc = starCentroid(0, 960 / 2, 1280 / 2)
         self.mode = "IDEN_TEL_RA"
-        self.run_ra_ident = True
+        self.run_ra_ident = False
         self.run_ra_ident_iter = 0
-        self.run_dec_ident = True
+        self.run_dec_ident = False
         self.run_dec_ident_iter = 0
         self.last_error = (0, 0)
         self.run_ident = False
@@ -76,6 +76,10 @@ class TelescopeController:
         self.log_info_en = False
         self.adaptive_thre = -15
         self.curr_ctrl = [0, 0]
+        self.error_x_int = 0
+        self.error_y_int = 0
+        self.controls_ra = []
+        self.controls_dec = []
 
     def log_info(self, dec_speed, ra_speed, iterval):
         x = self.reference_star_current.x_cent
@@ -107,30 +111,36 @@ class TelescopeController:
                 elif self.run_dec_ident_iter == 1:
                     pass
                 elif self.run_dec_ident_iter == 4:
-                    ident_dec = (self.last_error[0] - err[0], self.last_error[1] - err[1])
-                    amp = math.sqrt(ident_dec[0] ** 2 + ident_dec[1] ** 2)
-                    self.diff_amp = amp
-                    self.telescope_dec_vect = (-ident_dec[0] / amp, -ident_dec[1] / amp)
-                    self.telescope_ra_vect = (-ident_dec[1] / amp, ident_dec[0] / amp)
-                    self.setDecSpeed(0)
-                    self.run_dec_ident = False
+                    try:
+                        ident_dec = (self.last_error[0] - err[0], self.last_error[1] - err[1])
+                        amp = math.sqrt(ident_dec[0] ** 2 + ident_dec[1] ** 2)
+                        self.diff_amp = amp
+                        self.telescope_dec_vect = (-ident_dec[0] / amp, -ident_dec[1] / amp)
+                        #self.telescope_ra_vect = (-ident_dec[1] / amp, ident_dec[0] / amp)
+                        self.run_dec_ident = False
+                        self.setDecSpeed(0)
+                    except:
+                        print("faied identtification")
+                        self.setDecSpeed(0)
                 self.run_dec_ident_iter += 1
                 self.last_error = err[:]
                 return
 
             if self.run_ra_ident:
+                err = self.getErrorToRefStar(self.go_to_loc)
                 if self.run_ra_ident_iter == 0:
                     self.setRaSpeed(1000)
                 elif self.run_ra_ident_iter == 1:
                     pass
                 elif self.run_ra_ident_iter == 4:
-                    ident_dec = (self.last_error[0] - err[0], self.last_error[1] - err[1])
-                    amp = math.sqrt(ident_dec[0] ** 2 + ident_dec[1] ** 2)
+                    ident_ra = (self.last_error[0] - err[0], self.last_error[1] - err[1])
+                    amp = math.sqrt(ident_ra[0] ** 2 + ident_ra[1] ** 2)
                     cos_ident = amp / self.diff_amp
                     self.setRaSpeed(0)
                     if cos_ident < 1:
                         self.telescope_dec_angle = math.acos(cos_ident) * 180 / math.pi
                         print("identified  angle:", cos_ident)
+                    self.telescope_ra_vect = (-ident_ra[0] / amp, -ident_ra[1] / amp)
                     self.run_ra_ident = False
                     self.run_ident = False
                 self.run_ra_ident_iter += 1
@@ -138,7 +148,22 @@ class TelescopeController:
                 return
 
     def setControl(self, error_x, error_y, enabled: bool):
-        K_gain = 3
+        self.error_x_int += error_x
+        self.error_y_int += error_y
+        if self.error_y_int > 250:
+            self.error_y_int = 250
+        elif self.error_y_int <-250:
+            self.error_y_int = -250
+    
+        if self.error_x_int > 250:
+            self.error_x_int = 250
+        elif self.error_x_int <-250:
+            self.error_x_int = -250
+        
+        K_gain = 0.7
+        I_gain = 0.0001
+        tot_x = error_x * K_gain + self.error_x_int * I_gain
+        tot_y = error_y * K_gain + self.error_y_int * I_gain
         Pg = math.cos(self.telescope_dec_angle / 180 * math.pi)
         dec_x = self.telescope_dec_vect[0]
         dec_y = self.telescope_dec_vect[1]
@@ -146,9 +171,9 @@ class TelescopeController:
         ra_y = self.telescope_ra_vect[1]
         A = np.array([[dec_x, ra_x * Pg],
                       [dec_y, ra_y * Pg]])
-        B = np.array([error_x, error_y])
+        B = np.array([tot_x, tot_y])
         sol = np.linalg.solve(A, B)
-        sol = sol / np.linalg.norm(sol) * (error_x ** 2 + error_y ** 2) ** (1 / 2) * K_gain
+        #sol = sol / np.linalg.norm(sol) #* (tot_x ** 2 + tot_y ** 2) ** (1 / 2) * K_gain
 
         dec_control = sol[0]
         ra_control = sol[1]
@@ -163,11 +188,18 @@ class TelescopeController:
             ra_control = -1500
         # print("ra ctrl:",-int(ra_control))
         # print("dec ctrl:",-int(dec_control))
+        
         ra_control = - ra_control
         dec_control = - dec_control
         if enabled:
             self.setRaSpeed(ra_control)
             self.setDecSpeed(dec_control)
+            self.controls_dec.append(dec_control)
+            self.controls_ra.append(ra_control)
+            if len(self.controls_ra) > 100:
+                print("dec avr: ", np.average(self.controls_dec[-100:]))
+                print("ra avr: ", np.average(self.controls_ra[-100:]))
+            
         self.curr_ctrl = [ra_control, dec_control]
         return [ra_control, dec_control]
 
@@ -214,8 +246,9 @@ class TelescopeController:
         if found_reference is False:
             self.find_new_reference_star(self.last_star_centroids)
         if self.reference_star_current is not None and self.reference_star_initial is not None:
-            error = self.getErrorToRefStarPix(self.go_to_loc)
-            print(error)
+            if self.reference_star_current is not None:
+                error = self.getErrorToRefStarPix(self.go_to_loc)
+                print(error)
             # f = open("error.csv", "a")
             # f.write(f"{error[0]},{error[1]}\n")
             # f.close()

@@ -42,6 +42,8 @@ class MainWindow(QMainWindow):
         self.timer_mqtt_status.timeout.connect(self.checkMqttStatus)
         self.timer_mqtt_status.start(1000)
         self.control_mode = "MANUAL_SPEED"
+        self.ui.spinBox_setExposure.setRange(1, 10000)
+        self.ui.pushButton_3.clicked.connect(self.keepCurrentLoc)
 
     def setDisplayedImage(self, img: np.ndarray):
         transformed = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
@@ -116,9 +118,10 @@ class MainWindow(QMainWindow):
             transformed = cv2.rotate(self.mqtt_handler.image, cv2.ROTATE_90_CLOCKWISE)
             run_auto = self.ui.radioButton_auto_speed.isChecked() and self.ui.checkBox_startGuiding.isChecked()
             self.telescope_controller.genNewImage(transformed, 1000, run_auto)
-            err = self.telescope_controller.getErrorToRefStar(self.telescope_controller.go_to_loc)
-            self.addErrorX(err[0])
-            self.addErrorY(err[1])
+            if self.telescope_controller.reference_star_current is not None:
+                err = self.telescope_controller.getErrorToRefStar(self.telescope_controller.go_to_loc)
+                self.addErrorX(err[0])
+                self.addErrorY(err[1])
             if run_auto:
                 self.addCtrlRa(self.telescope_controller.curr_ctrl[0])
                 self.addCtrlDec(self.telescope_controller.curr_ctrl[1])
@@ -194,7 +197,10 @@ class MainWindow(QMainWindow):
         self.telescope_controller.run_dec_ident = True
         self.telescope_controller.run_dec_ident_iter = 0
         self.telescope_controller.run_ra_ident_iter = 0
-        self.telescope_controller.run_ra_ident = False
+        self.telescope_controller.run_ra_ident = True
+    
+    def keepCurrentLoc(self):
+        self.telescope_controller.go_to_loc = self.telescope_controller.reference_star_current
 
 
 if __name__ == "__main__":

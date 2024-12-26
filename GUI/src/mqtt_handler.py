@@ -56,6 +56,8 @@ class MqttHandler:
                 math.cos(float(rot) * math.pi / 180), math.sin(float(rot) * math.pi / 180))
             self.sky_ra_vect = (
                 -math.sin(float(rot) * math.pi / 180), math.cos(float(rot) * math.pi / 180))
+        elif msg.topic == "sensors/battV":
+            self.ui.lcdNumber_batt_volt.display(float(msg.payload.decode("utf-8")))
     def setupCamera(self, exposure: int, gain: int, interval: int):
         self.mqtt_client.publish("camera/exposure", exposure)
         self.mqtt_client.publish("camera/interval", interval)
@@ -73,11 +75,9 @@ class MqttHandler:
 
     def setRaSpeed(self, speed: int):
         self.mqtt_client.publish("motors/ra", str(speed))
-        pass
 
     def setDecSpeed(self, speed: int):
         self.mqtt_client.publish("motors/dec", str(speed))
-        pass
 
     def setupClient(self):
         self.mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
