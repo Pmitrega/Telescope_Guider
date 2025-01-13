@@ -58,6 +58,11 @@
              </property>
              <item>
               <property name="text">
+               <string>10.42.0.1</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
                <string>192.168.1.101</string>
               </property>
              </item>
@@ -625,7 +630,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidget_2">
        <property name="currentIndex">
-        <number>2</number>
+        <number>1</number>
        </property>
        <property name="usesScrollButtons">
         <bool>true</bool>
@@ -822,10 +827,10 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_9">
             <item>
-             <widget class="QLCDNumber" name="lcdNumber"/>
+             <widget class="QLCDNumber" name="lcdNumber_buck1"/>
             </item>
             <item>
-             <widget class="QLCDNumber" name="lcdNumber_3"/>
+             <widget class="QLCDNumber" name="lcdNumber_buck2"/>
             </item>
            </layout>
           </item>
@@ -908,7 +913,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLCDNumber" name="lcdNumber_5"/>
+             <widget class="QLCDNumber" name="lcdNumber_M1C1"/>
             </item>
            </layout>
           </item>
@@ -967,7 +972,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLCDNumber" name="lcdNumber_6"/>
+             <widget class="QLCDNumber" name="lcdNumber_M1C2"/>
             </item>
            </layout>
           </item>
@@ -1026,7 +1031,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLCDNumber" name="lcdNumber_8"/>
+             <widget class="QLCDNumber" name="lcdNumber_M2C1"/>
             </item>
            </layout>
           </item>
@@ -1085,7 +1090,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLCDNumber" name="lcdNumber_7"/>
+             <widget class="QLCDNumber" name="lcdNumber_M2C2"/>
             </item>
            </layout>
           </item>
@@ -1134,7 +1139,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLCDNumber" name="lcdNumber_13">
+             <widget class="QLCDNumber" name="lcdNumber_M1C1_R">
               <property name="smallDecimalPoint">
                <bool>false</bool>
               </property>
@@ -1156,7 +1161,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLCDNumber" name="lcdNumber_14">
+             <widget class="QLCDNumber" name="lcdNumber_M1C2_R">
               <property name="smallDecimalPoint">
                <bool>false</bool>
               </property>
@@ -1183,12 +1188,12 @@
                </font>
               </property>
               <property name="text">
-               <string>M1C1</string>
+               <string>M2C1</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QLCDNumber" name="lcdNumber_12">
+             <widget class="QLCDNumber" name="lcdNumber_M2C1_R">
               <property name="smallDecimalPoint">
                <bool>false</bool>
               </property>
@@ -1205,12 +1210,12 @@
                </font>
               </property>
               <property name="text">
-               <string>M1C2</string>
+               <string>M2C2</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QLCDNumber" name="lcdNumber_11">
+             <widget class="QLCDNumber" name="lcdNumber_M2C2_R">
               <property name="smallDecimalPoint">
                <bool>false</bool>
               </property>

@@ -50,6 +50,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_19.setObjectName(u"verticalLayout_19")
         self.comboBox_address = QComboBox(self.verticalLayoutWidget)
         self.comboBox_address.addItem("")
+        self.comboBox_address.addItem("")
         self.comboBox_address.setObjectName(u"comboBox_address")
         self.comboBox_address.setEditable(True)
 
@@ -478,15 +479,15 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_9 = QHBoxLayout()
         self.horizontalLayout_9.setObjectName(u"horizontalLayout_9")
-        self.lcdNumber = QLCDNumber(self.verticalLayoutWidget_16)
-        self.lcdNumber.setObjectName(u"lcdNumber")
+        self.lcdNumber_buck1 = QLCDNumber(self.verticalLayoutWidget_16)
+        self.lcdNumber_buck1.setObjectName(u"lcdNumber_buck1")
 
-        self.horizontalLayout_9.addWidget(self.lcdNumber)
+        self.horizontalLayout_9.addWidget(self.lcdNumber_buck1)
 
-        self.lcdNumber_3 = QLCDNumber(self.verticalLayoutWidget_16)
-        self.lcdNumber_3.setObjectName(u"lcdNumber_3")
+        self.lcdNumber_buck2 = QLCDNumber(self.verticalLayoutWidget_16)
+        self.lcdNumber_buck2.setObjectName(u"lcdNumber_buck2")
 
-        self.horizontalLayout_9.addWidget(self.lcdNumber_3)
+        self.horizontalLayout_9.addWidget(self.lcdNumber_buck2)
 
 
         self.verticalLayout_18.addLayout(self.horizontalLayout_9)
@@ -525,10 +526,10 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_13.addWidget(self.label_31)
 
-        self.lcdNumber_5 = QLCDNumber(self.verticalLayoutWidget_15)
-        self.lcdNumber_5.setObjectName(u"lcdNumber_5")
+        self.lcdNumber_M1C1 = QLCDNumber(self.verticalLayoutWidget_15)
+        self.lcdNumber_M1C1.setObjectName(u"lcdNumber_M1C1")
 
-        self.horizontalLayout_13.addWidget(self.lcdNumber_5)
+        self.horizontalLayout_13.addWidget(self.lcdNumber_M1C1)
 
 
         self.verticalLayout_17.addLayout(self.horizontalLayout_13)
@@ -553,10 +554,10 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_14.addWidget(self.label_34)
 
-        self.lcdNumber_6 = QLCDNumber(self.verticalLayoutWidget_15)
-        self.lcdNumber_6.setObjectName(u"lcdNumber_6")
+        self.lcdNumber_M1C2 = QLCDNumber(self.verticalLayoutWidget_15)
+        self.lcdNumber_M1C2.setObjectName(u"lcdNumber_M1C2")
 
-        self.horizontalLayout_14.addWidget(self.lcdNumber_6)
+        self.horizontalLayout_14.addWidget(self.lcdNumber_M1C2)
 
 
         self.verticalLayout_17.addLayout(self.horizontalLayout_14)
@@ -581,10 +582,10 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_16.addWidget(self.label_32)
 
-        self.lcdNumber_8 = QLCDNumber(self.verticalLayoutWidget_15)
-        self.lcdNumber_8.setObjectName(u"lcdNumber_8")
+        self.lcdNumber_M2C1 = QLCDNumber(self.verticalLayoutWidget_15)
+        self.lcdNumber_M2C1.setObjectName(u"lcdNumber_M2C1")
 
-        self.horizontalLayout_16.addWidget(self.lcdNumber_8)
+        self.horizontalLayout_16.addWidget(self.lcdNumber_M2C1)
 
 
         self.verticalLayout_17.addLayout(self.horizontalLayout_16)
@@ -609,10 +610,10 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_15.addWidget(self.label_38)
 
-        self.lcdNumber_7 = QLCDNumber(self.verticalLayoutWidget_15)
-        self.lcdNumber_7.setObjectName(u"lcdNumber_7")
+        self.lcdNumber_M2C2 = QLCDNumber(self.verticalLayoutWidget_15)
+        self.lcdNumber_M2C2.setObjectName(u"lcdNumber_M2C2")
 
-        self.horizontalLayout_15.addWidget(self.lcdNumber_7)
+        self.horizontalLayout_15.addWidget(self.lcdNumber_M2C2)
 
 
         self.verticalLayout_17.addLayout(self.horizontalLayout_15)
@@ -638,12 +639,12 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_20.addWidget(self.label_24)
 
-        self.lcdNumber_13 = QLCDNumber(self.verticalLayoutWidget_20)
-        self.lcdNumber_13.setObjectName(u"lcdNumber_13")
-        self.lcdNumber_13.setSmallDecimalPoint(False)
-        self.lcdNumber_13.setDigitCount(3)
+        self.lcdNumber_M1C1_R = QLCDNumber(self.verticalLayoutWidget_20)
+        self.lcdNumber_M1C1_R.setObjectName(u"lcdNumber_M1C1_R")
+        self.lcdNumber_M1C1_R.setSmallDecimalPoint(False)
+        self.lcdNumber_M1C1_R.setDigitCount(3)
 
-        self.horizontalLayout_20.addWidget(self.lcdNumber_13)
+        self.horizontalLayout_20.addWidget(self.lcdNumber_M1C1_R)
 
         self.label_28 = QLabel(self.verticalLayoutWidget_20)
         self.label_28.setObjectName(u"label_28")
@@ -651,12 +652,12 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_20.addWidget(self.label_28)
 
-        self.lcdNumber_14 = QLCDNumber(self.verticalLayoutWidget_20)
-        self.lcdNumber_14.setObjectName(u"lcdNumber_14")
-        self.lcdNumber_14.setSmallDecimalPoint(False)
-        self.lcdNumber_14.setDigitCount(3)
+        self.lcdNumber_M1C2_R = QLCDNumber(self.verticalLayoutWidget_20)
+        self.lcdNumber_M1C2_R.setObjectName(u"lcdNumber_M1C2_R")
+        self.lcdNumber_M1C2_R.setSmallDecimalPoint(False)
+        self.lcdNumber_M1C2_R.setDigitCount(3)
 
-        self.horizontalLayout_20.addWidget(self.lcdNumber_14)
+        self.horizontalLayout_20.addWidget(self.lcdNumber_M1C2_R)
 
 
         self.verticalLayout_22.addLayout(self.horizontalLayout_20)
@@ -670,12 +671,12 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_19.addWidget(self.label_22)
 
-        self.lcdNumber_12 = QLCDNumber(self.verticalLayoutWidget_20)
-        self.lcdNumber_12.setObjectName(u"lcdNumber_12")
-        self.lcdNumber_12.setSmallDecimalPoint(False)
-        self.lcdNumber_12.setDigitCount(3)
+        self.lcdNumber_M2C1_R = QLCDNumber(self.verticalLayoutWidget_20)
+        self.lcdNumber_M2C1_R.setObjectName(u"lcdNumber_M2C1_R")
+        self.lcdNumber_M2C1_R.setSmallDecimalPoint(False)
+        self.lcdNumber_M2C1_R.setDigitCount(3)
 
-        self.horizontalLayout_19.addWidget(self.lcdNumber_12)
+        self.horizontalLayout_19.addWidget(self.lcdNumber_M2C1_R)
 
         self.label_23 = QLabel(self.verticalLayoutWidget_20)
         self.label_23.setObjectName(u"label_23")
@@ -683,12 +684,12 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_19.addWidget(self.label_23)
 
-        self.lcdNumber_11 = QLCDNumber(self.verticalLayoutWidget_20)
-        self.lcdNumber_11.setObjectName(u"lcdNumber_11")
-        self.lcdNumber_11.setSmallDecimalPoint(False)
-        self.lcdNumber_11.setDigitCount(3)
+        self.lcdNumber_M2C2_R = QLCDNumber(self.verticalLayoutWidget_20)
+        self.lcdNumber_M2C2_R.setObjectName(u"lcdNumber_M2C2_R")
+        self.lcdNumber_M2C2_R.setSmallDecimalPoint(False)
+        self.lcdNumber_M2C2_R.setDigitCount(3)
 
-        self.horizontalLayout_19.addWidget(self.lcdNumber_11)
+        self.horizontalLayout_19.addWidget(self.lcdNumber_M2C2_R)
 
 
         self.verticalLayout_22.addLayout(self.horizontalLayout_19)
@@ -1453,7 +1454,7 @@ class Ui_MainWindow(object):
         self.spinBox_DecSpeed.valueChanged.connect(MainWindow.setDecSpeed)
 
         self.tabWidget.setCurrentIndex(1)
-        self.tabWidget_2.setCurrentIndex(2)
+        self.tabWidget_2.setCurrentIndex(1)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -1461,7 +1462,8 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
-        self.comboBox_address.setItemText(0, QCoreApplication.translate("MainWindow", u"192.168.1.101", None))
+        self.comboBox_address.setItemText(0, QCoreApplication.translate("MainWindow", u"10.42.0.1", None))
+        self.comboBox_address.setItemText(1, QCoreApplication.translate("MainWindow", u"192.168.1.101", None))
 
         self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Connect", None))
         self.label_20.setText(QCoreApplication.translate("MainWindow", u"Broker", None))
@@ -1512,8 +1514,8 @@ class Ui_MainWindow(object):
         self.label_29.setText(QCoreApplication.translate("MainWindow", u"Resistance[Ohm]", None))
         self.label_24.setText(QCoreApplication.translate("MainWindow", u"M1C1", None))
         self.label_28.setText(QCoreApplication.translate("MainWindow", u"M1C2", None))
-        self.label_22.setText(QCoreApplication.translate("MainWindow", u"M1C1", None))
-        self.label_23.setText(QCoreApplication.translate("MainWindow", u"M1C2", None))
+        self.label_22.setText(QCoreApplication.translate("MainWindow", u"M2C1", None))
+        self.label_23.setText(QCoreApplication.translate("MainWindow", u"M2C2", None))
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.tab_5), QCoreApplication.translate("MainWindow", u"Motors", None))
         self.pushButton_find_location.setText(QCoreApplication.translate("MainWindow", u"Find location", None))
         self.label_42.setText(QCoreApplication.translate("MainWindow", u"Sky patch info", None))
