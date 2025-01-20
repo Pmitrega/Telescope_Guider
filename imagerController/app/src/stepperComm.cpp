@@ -30,6 +30,12 @@ float stepperCommunicator::readM1C2Current(){return m_M1C2_curr;};
 float stepperCommunicator::readM2C1Current(){return m_M2C1_curr;};
 float stepperCommunicator::readM2C2Current(){return m_M2C2_curr;};
 float stepperCommunicator::readBattCurrent(){return m_batt_curr;};
+
+float stepperCommunicator::readM1C1Res(){return m_M1C1_R;};
+float stepperCommunicator::readM1C2Res(){return m_M1C2_R;};
+float stepperCommunicator::readM2C1Res(){return m_M2C1_R;};
+float stepperCommunicator::readM2C2Res(){return m_M2C2_R;};
+
 void dupaHandler(const boost::system::error_code& error, std::size_t bytes_transferred);
 void stepperCommunicator::connectSerial(const std::string serial_port){
     m_serial_port.open(serial_port);
@@ -240,6 +246,58 @@ stepperCommunicator::Status stepperCommunicator::reqBattCurrent(){
     return ret;
 }
 
+stepperCommunicator::Status stepperCommunicator::reqM1C1Res(){
+    auto ret = SERIAL_OK;
+    com_transmission_mutex.lock();
+    try{
+        m_serial_port.write_some(boost::asio::buffer("-Z0\r\n"));
+    }
+    catch(...){
+        ret = SERIAL_ERROR;
+    }
+    com_transmission_mutex.unlock();
+    return ret;
+}
+
+stepperCommunicator::Status stepperCommunicator::reqM1C2Res(){
+    auto ret = SERIAL_OK;
+    com_transmission_mutex.lock();
+    try{
+        m_serial_port.write_some(boost::asio::buffer("-Z1\r\n"));
+    }
+    catch(...){
+        ret = SERIAL_ERROR;
+    }
+    com_transmission_mutex.unlock();
+    return ret;
+}
+
+stepperCommunicator::Status stepperCommunicator::reqM2C1Res(){
+    auto ret = SERIAL_OK;
+    com_transmission_mutex.lock();
+    try{
+        m_serial_port.write_some(boost::asio::buffer("-Z2\r\n"));
+    }
+    catch(...){
+        ret = SERIAL_ERROR;
+    }
+    com_transmission_mutex.unlock();
+    return ret;
+}
+
+stepperCommunicator::Status stepperCommunicator::reqM2C2Res(){
+    auto ret = SERIAL_OK;
+    com_transmission_mutex.lock();
+    try{
+        m_serial_port.write_some(boost::asio::buffer("-Z3\r\n"));
+    }
+    catch(...){
+        ret = SERIAL_ERROR;
+    }
+    com_transmission_mutex.unlock();
+    return ret;
+}
+
 void stepperCommunicator::enableMotors(bool enabled){
     if(enabled == true){
         m_serial_port.write_some(boost::asio::buffer("-S1\r\n"));
@@ -369,6 +427,64 @@ void stepperCommunicator::messageParser(std::string message){
             }
             if(is_fine){
                 m_batt_curr = (float)std::stoi(pre_parsed.substr(3, pre_parsed.size()));
+                // std::cout << "recieved batt curr v: " << m_batt_curr<<std::endl;
+            }
+        }
+        else if(pre_parsed.substr(0, 2) == "R0"){
+            std::string number = "";
+            bool is_fine = true;
+            for(int i = 3; i < pre_parsed.size(); i++){
+                if(!IS_NUMBER(pre_parsed[i])){
+                    is_fine = false;
+                    break;
+                }
+            }
+            if(is_fine){
+                m_M1C1_R = (float)std::stoi(pre_parsed.substr(3, pre_parsed.size()));
+                // std::cout << "recieved batt curr v: " << m_batt_curr<<std::endl;
+            }
+        }
+        else if(pre_parsed.substr(0, 2) == "R1"){
+            std::string number = "";
+            bool is_fine = true;
+            for(int i = 3; i < pre_parsed.size(); i++){
+                if(!IS_NUMBER(pre_parsed[i])){
+                    is_fine = false;
+                    break;
+                }
+            }
+            if(is_fine){
+                m_M1C2_R = (float)std::stoi(pre_parsed.substr(3, pre_parsed.size()));
+                // std::cout << "recieved batt curr v: " << m_batt_curr<<std::endl;
+            }
+        }
+        else if(pre_parsed.substr(0, 2) == "R2"){
+            std::string number = "";
+            bool is_fine = true;
+            for(int i = 3; i < pre_parsed.size(); i++){
+                if(!IS_NUMBER(pre_parsed[i])){
+                    is_fine = false;
+                    break;
+                }
+            }
+            if(is_fine){
+                m_M2C1_R = (float)std::stoi(pre_parsed.substr(3, pre_parsed.size()));
+                // std::cout << "recieved batt curr v: " << m_batt_curr<<std::endl;
+            }
+        }
+        else if(pre_parsed.substr(0, 2) == "R3"){
+            
+            std::string number = "";
+            bool is_fine = true;
+            for(int i = 3; i < pre_parsed.size(); i++){
+                if(!IS_NUMBER(pre_parsed[i])){
+                    is_fine = false;
+                    break;
+                }
+            }
+            if(is_fine){
+                m_M2C2_R = (float)std::stoi(pre_parsed.substr(3, pre_parsed.size()));
+                LOG_WARNING("got R3 %f!\r\n", m_M2C2_R);
                 // std::cout << "recieved batt curr v: " << m_batt_curr<<std::endl;
             }
         }

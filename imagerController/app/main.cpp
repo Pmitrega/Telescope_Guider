@@ -149,6 +149,15 @@ void testStepperControllerComm(){
 		std::this_thread::sleep_for(std::chrono::milliseconds(50));
     	step_com.reqBattCurrent();
 		std::this_thread::sleep_for(std::chrono::milliseconds(50));
+		step_com.reqM1C1Res();
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));
+		step_com.reqM1C2Res();
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));
+		step_com.reqM2C1Res();
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));
+		step_com.reqM2C2Res();
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));
+		
 	}
 
 	std::this_thread::sleep_for(std::chrono::milliseconds(10000));

@@ -52,6 +52,10 @@ struct stepperControllerSensors{
     stepperSensorInfo M2C1Current = {0, true};
     stepperSensorInfo M2C2Current = {0, true};
     stepperSensorInfo BattCurren = {0, true};
+    stepperSensorInfo M1C1Res = {0, true};
+    stepperSensorInfo M1C2Res = {0, true};
+    stepperSensorInfo M2C1Res = {0, true};
+    stepperSensorInfo M2C2Res = {0, true};
 };
 
 

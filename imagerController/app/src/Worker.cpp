@@ -52,6 +52,25 @@ void GuiderWorker::handleMQTTTransmission(){
             m_stepper_sensors.M2C2Current.has_updated = false;
             m_mqtt_client.publishMessageNumber("sensors/M2C2curr", m_stepper_sensors.M2C2Current.value);
         }
+
+        if(m_stepper_sensors.M1C1Res.has_updated == true){
+            m_stepper_sensors.M1C1Res.has_updated = false;
+            m_mqtt_client.publishMessageNumber("sensors/M1C1_R", m_stepper_sensors.M1C1Res.value);
+        }
+        if(m_stepper_sensors.M1C2Res.has_updated == true){
+            m_stepper_sensors.M1C2Res.has_updated = false;
+            m_mqtt_client.publishMessageNumber("sensors/M1C2_R", m_stepper_sensors.M1C2Res.value);
+        }
+        if(m_stepper_sensors.M2C1Res.has_updated == true){
+            m_stepper_sensors.M2C1Res.has_updated = false;
+            m_mqtt_client.publishMessageNumber("sensors/M2C1_R", m_stepper_sensors.M2C1Res.value);
+        }
+        if(m_stepper_sensors.M2C2Res.has_updated == true){
+            LOG_INFO("Sending motor res m2c2 %f \r\n", m_stepper_sensors.M2C2Res.value)
+            m_stepper_sensors.M2C2Res.has_updated = false;
+            m_mqtt_client.publishMessageNumber("sensors/M2C2_R", m_stepper_sensors.M2C2Res.value);
+        }
+
         if(m_stepper_sensors.BattCurren.has_updated == true){
             m_stepper_sensors.BattCurren.has_updated = false;
             m_mqtt_client.publishMessageNumber("sensors/battcurr", m_stepper_sensors.BattCurren.value);
@@ -333,6 +352,28 @@ bool GuiderWorker::checkForUARTUpdate(){
         has_updated = true;
     }
 
+    if(m_step_com.readM1C1Res() !=  m_stepper_sensors.M1C1Res.value){
+        m_stepper_sensors.M1C1Res.value = m_step_com.readM1C1Res();
+        m_stepper_sensors.M1C1Res.has_updated = true;
+        has_updated = true;
+    }
+    if(m_step_com.readM1C2Res() !=  m_stepper_sensors.M1C2Res.value){
+        m_stepper_sensors.M1C2Res.value = m_step_com.readM1C2Res();
+        m_stepper_sensors.M1C2Res.has_updated = true;
+        has_updated = true;
+    }
+    if(m_step_com.readM2C1Res() !=  m_stepper_sensors.M2C1Res.value){
+        m_stepper_sensors.M2C1Res.value = m_step_com.readM2C1Res();
+        m_stepper_sensors.M2C1Res.has_updated = true;
+        has_updated = true;
+    }
+    if(m_step_com.readM2C2Res() !=  m_stepper_sensors.M2C2Res.value){
+        LOG_INFO("Reading M2C2Res %f \r\n", m_stepper_sensors.M2C2Res.value);
+        m_stepper_sensors.M2C2Res.value = m_step_com.readM2C2Res();
+        m_stepper_sensors.M2C2Res.has_updated = true;
+        has_updated = true;
+    }
+
     
     return has_updated;
 }
@@ -392,11 +433,33 @@ void GuiderWorker::handleUARTRequests(){
         if(stat == stepperCommunicator::SERIAL_ERROR){
             waitForUART();
         }
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    	stat = m_step_com.reqM1C1Res();
+        if(stat == stepperCommunicator::SERIAL_ERROR){
+            waitForUART();
+        }
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    	stat = m_step_com.reqM1C2Res();
+        if(stat == stepperCommunicator::SERIAL_ERROR){
+            waitForUART();
+        }
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    	stat = m_step_com.reqM2C1Res();
+        if(stat == stepperCommunicator::SERIAL_ERROR){
+            waitForUART();
+        }
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    	stat = m_step_com.reqM2C2Res();
+        if(stat == stepperCommunicator::SERIAL_ERROR){
+            waitForUART();
+        }
 		std::this_thread::sleep_for(std::chrono::milliseconds(50));
     	stat = m_step_com.reqBattCurrent();
         if(stat == stepperCommunicator::SERIAL_ERROR){
             waitForUART();
         }
+
 		std::this_thread::sleep_for(std::chrono::milliseconds(50));
 	}
 }
