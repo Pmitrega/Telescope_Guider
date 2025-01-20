@@ -31,7 +31,7 @@ int CmdProcessor(uint8_t* Buf, uint32_t *Len){
                       "  -M[x]   - go manual control of coils\r\n"
                       "  -u,i,o,p[x]   - raw ctrl coil1/2/3/4\r\n"
                       "  -S[x]   - x=1/0 start/shutdown motors\r\n"
-                      "  -Y      - resistance of coils motors\r\n"
+                      "  -Y      - resistance of motors coils\r\n"
                       );
     }
     else if(Buf[0] =='-'&& Buf[1] == 'R'){
@@ -150,8 +150,27 @@ int CmdProcessor(uint8_t* Buf, uint32_t *Len){
       startMotorManualMode();
       LOG_INFO("ENTERING MANUAL MODE\r\n");
       }
-    else if(Buf[0] =='-'&& Buf[1] == 'Y'){
-        LOG_INFO("MR: %d %d %d %d\r\n", (int)(getM1C1Res()*1000), (int)(getM1C2Res()*1000), (int)(getM2C1Res()*1000), (int)(getM2C2Res()*1000));
+    else if(Buf[0] =='-'&& Buf[1] == 'Z'){
+        uint8_t num_buff[MAX_NUM_ARG_LENGTH];
+        uint8_t indx = 2;
+        while(Buf[indx] && indx < *Len){
+          num_buff[indx - 2] = Buf[indx];
+          indx +=1;
+        }
+        num_buff[indx - 2] = '\0';
+        int numb = atoi(num_buff);
+        if(numb == 0){
+            LOG_INFO("R0 %d\r\n", (int)(getM1C1Res()*1000));
+        }
+        else if(numb == 1){
+            LOG_INFO("R1 %d\r\n", (int)(getM1C2Res()*1000));
+        }
+        else if(numb == 2){
+            LOG_INFO("R2 %d\r\n", (int)(getM2C1Res()*1000));
+        }
+        else if(numb == 3){
+            LOG_INFO("R3 %d\r\n", (int)(getM2C2Res()*1000));
+        }
     }
     else if(Buf[0] =='-'&& Buf[1] == 'S'){
         if (*Len > 2 && Buf[2] == '0'){

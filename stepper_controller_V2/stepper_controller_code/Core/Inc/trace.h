@@ -2,7 +2,7 @@
 #include "main.h"
 
 #define UART_LOGING     1
-#define USB_LOGING      1
+#define USB_LOGING      0
 
 #define ENABLE_INFO         true
 #define LOG_BUFFER_SIZE     400

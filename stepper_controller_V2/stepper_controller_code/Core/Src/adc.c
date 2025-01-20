@@ -367,10 +367,10 @@ void estimateResistance(){
 
     volatile int start_current = getEstimatedBattCurrmA();
     osDelay(10);
-    setCoilM1C1(700);
-    setCoilM1C2(700);
-    setCoilM2C1(700);
-    setCoilM2C2(700);
+    setCoilM1C1(1000);
+    setCoilM1C2(1000);
+    setCoilM2C1(1000);
+    setCoilM2C2(1000);
     osDelay(2000);
 
 
