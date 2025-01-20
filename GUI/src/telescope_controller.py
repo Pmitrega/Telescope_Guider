@@ -275,6 +275,6 @@ if __name__ == "__main__":
         print(f"Setting Dec control to {val}")
 
 
-    controller = TelescopeController(setRaDummy, setDecDummy)
+    hler = TelescopeController(setRaDummy, setDecDummy)
     sol = controller.setControl(100, 0)
     print(sol)

@@ -62,22 +62,24 @@ class MqttHandler:
             self.ui.lcdNumber_buck1.display(float(msg.payload.decode("utf-8")))
         elif msg.topic == "sensors/buck2V":
             self.ui.lcdNumber_buck2.display(float(msg.payload.decode("utf-8")))
-        elif msg.topic == "sensors/M1C1":
+        elif msg.topic == "sensors/M1C1curr":
             self.ui.lcdNumber_M1C1.display(float(msg.payload.decode("utf-8")))
-        elif msg.topic == "sensors/M1C2":
+        elif msg.topic == "sensors/M1C2curr":
             self.ui.lcdNumber_M1C2.display(float(msg.payload.decode("utf-8")))
-        elif msg.topic == "sensors/M2C1":
+        elif msg.topic == "sensors/M2C1curr":
             self.ui.lcdNumber_M2C1.display(float(msg.payload.decode("utf-8")))
-        elif msg.topic == "sensors/M2C2":
+        elif msg.topic == "sensors/M2C2curr":
             self.ui.lcdNumber_M2C2.display(float(msg.payload.decode("utf-8")))
+        elif msg.topic == "sensors/battcurr":
+            self.ui.lcdNumber_batt_curr.display(float(msg.payload.decode("utf-8")))
         elif msg.topic == "sensors/M1C1_R":
-            self.ui.lcdNumber_M1C1.display(float(msg.payload.decode("utf-8")))
+            self.ui.lcdNumber_M1C1_R.display(float(msg.payload.decode("utf-8"))/1000)
         elif msg.topic == "sensors/M1C2_R":
-            self.ui.lcdNumber_M1C2.display(float(msg.payload.decode("utf-8")))
+            self.ui.lcdNumber_M1C2_R.display(float(msg.payload.decode("utf-8"))/1000)
         elif msg.topic == "sensors/M2C1_R":
-            self.ui.lcdNumber_M2C1.display(float(msg.payload.decode("utf-8")))
+            self.ui.lcdNumber_M2C1_R.display(float(msg.payload.decode("utf-8"))/1000)
         elif msg.topic == "sensors/M2C2_R":
-            self.ui.lcdNumber_M2C2.display(float(msg.payload.decode("utf-8")))
+            self.ui.lcdNumber_M2C2_R.display(float(msg.payload.decode("utf-8"))/1000)
 
     def setupCamera(self, exposure: int, gain: int, interval: int):
         self.mqtt_client.publish("camera/exposure", exposure)
