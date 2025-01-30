@@ -630,7 +630,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidget_2">
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <property name="usesScrollButtons">
         <bool>true</bool>
@@ -768,6 +768,24 @@
            </widget>
           </item>
          </layout>
+        </widget>
+        <widget class="QCheckBox" name="checkBox_save_raw">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>270</y>
+           <width>179</width>
+           <height>27</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Save Raw</string>
+         </property>
         </widget>
        </widget>
        <widget class="QWidget" name="tab_5">

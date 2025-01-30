@@ -448,6 +448,10 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_16.addWidget(self.checkBox_show_guiding_star)
 
+        self.checkBox_save_raw = QCheckBox(self.Mott)
+        self.checkBox_save_raw.setObjectName(u"checkBox_save_raw")
+        self.checkBox_save_raw.setGeometry(QRect(10, 270, 179, 27))
+        self.checkBox_save_raw.setFont(font2)
         self.tabWidget_2.addTab(self.Mott, "")
         self.tab_5 = QWidget()
         self.tab_5.setObjectName(u"tab_5")
@@ -1454,7 +1458,7 @@ class Ui_MainWindow(object):
         self.spinBox_DecSpeed.valueChanged.connect(MainWindow.setDecSpeed)
 
         self.tabWidget.setCurrentIndex(1)
-        self.tabWidget_2.setCurrentIndex(1)
+        self.tabWidget_2.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -1499,6 +1503,7 @@ class Ui_MainWindow(object):
         self.checkBox_show_all_detected.setText(QCoreApplication.translate("MainWindow", u"Show all detected stars", None))
         self.checkBox_show_sky_grid.setText(QCoreApplication.translate("MainWindow", u"Show Sky grid", None))
         self.checkBox_show_guiding_star.setText(QCoreApplication.translate("MainWindow", u"Show Guiding star", None))
+        self.checkBox_save_raw.setText(QCoreApplication.translate("MainWindow", u"Save Raw", None))
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.Mott), QCoreApplication.translate("MainWindow", u"Preview", None))
         self.label_5.setText(QCoreApplication.translate("MainWindow", u"Buck1 V", None))
         self.label_13.setText(QCoreApplication.translate("MainWindow", u"Buck2 V", None))

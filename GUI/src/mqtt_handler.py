@@ -26,6 +26,9 @@ class MqttHandler:
             deserialized_bytes = np.frombuffer(msg.payload, dtype=np.uint16)
             if deserialized_bytes.size != 0:
                 self.image = np.reshape(deserialized_bytes, newshape=(960, 1280))
+                if self.ui.checkBox_save_raw.isChecked():
+                    path = "./saved/" + self.ui.lineEdit_rec_title.text()+".png"
+                    cv2.imwrite(path, self.image)
                 self.image_ready = True
         elif msg.topic == "images/jpg":
             deserialized_bytes = np.frombuffer(msg.payload, dtype=np.uint8)
