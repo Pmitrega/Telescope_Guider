@@ -160,8 +160,8 @@ class TelescopeController:
         elif self.error_x_int <-250:
             self.error_x_int = -250
         
-        K_gain = 0.7
-        I_gain = 0.0001
+        K_gain = 0.3
+        I_gain = 0.0000
         tot_x = error_x * K_gain + self.error_x_int * I_gain
         tot_y = error_y * K_gain + self.error_y_int * I_gain
         Pg = math.cos(self.telescope_dec_angle / 180 * math.pi)
@@ -225,7 +225,7 @@ class TelescopeController:
         output = cv2.connectedComponentsWithStats(bin_im.astype(np.uint8))
         current_star_centroids = []
         for i in range(1, output[0]):
-            if output[2][i, cv2.CC_STAT_AREA] < 10000:
+            if output[2][i, cv2.CC_STAT_AREA] < 10000000:
                 new_star = starCentroid(output[2][i, cv2.CC_STAT_AREA], output[3][i][0], output[3][i][1])
                 current_star_centroids.append(new_star)
         found_reference = False

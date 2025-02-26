@@ -47,6 +47,17 @@ def drawGuiding(image: np.ndarray, guiding_star: starCentroid):
                    int(math.sqrt(guiding_star.brightness / 2)), (0, 0, 255), 3)
     return image
 
+def drawSetPoint(image: np.ndarray, setPoint: starCentroid):
+    print((int(setPoint.x_cent),int(setPoint.y_cent)))
+    p1 = (int(setPoint.y_cent), 0)
+    p2 = (int(setPoint.y_cent), image.shape[0])
+    cv2.line(image, p1 , p2 , (255,0,0),2)
+    p1 = (0, int(setPoint.x_cent))
+    p2 = (image.shape[1], int(setPoint.x_cent))
+    cv2.line(image, p1 , p2 , (255,0,0),2)
+    
+    return image
+
 
 def transformImage(ui: Ui_MainWindow, image: np.ndarray, tel_controller: TelescopeController) -> np.ndarray:
     transform_type = ui.comboBox_preview.currentText()
@@ -63,7 +74,12 @@ def transformImage(ui: Ui_MainWindow, image: np.ndarray, tel_controller: Telesco
         transformed_image = cv2.adaptiveThreshold(transformed_image, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
                                                   cv2.THRESH_BINARY, 399, tel_controller.adaptive_thre)
     if transform_type == opts[2]:
-        pass
+        bgrd = np.min(transformed_image)
+        transformed_image = transformed_image - bgrd
+        transformed_image =  np.sqrt(transformed_image)
+        transformed_image = transformed_image/transformed_image.max() * 255
+        print(transformed_image.max())
+        transformed_image = transformed_image.astype(np.uint8)
 
     transformed_image = cv2.cvtColor(transformed_image, cv2.COLOR_GRAY2RGB)
     if ui.checkBox_show_motor_coo.isChecked():
@@ -78,5 +94,7 @@ def transformImage(ui: Ui_MainWindow, image: np.ndarray, tel_controller: Telesco
 
     if ui.checkBox_show_guiding_star.isChecked():
         transformed_image = drawGuiding(transformed_image, tel_controller.reference_star_current)
+
+    transformed_image = drawSetPoint(transformed_image, tel_controller.go_to_loc)
 
     return transformed_image

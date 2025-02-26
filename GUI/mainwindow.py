@@ -19,7 +19,7 @@ from ui_form import Ui_MainWindow
 from src.telescope_controller import TelescopeController
 
 from src.preview import transformImage
-
+from src.logger import Logger
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -27,7 +27,8 @@ class MainWindow(QMainWindow):
         self.circ_center = [0, 0]
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.mqtt_handler = MqttHandler(self.ui)
+        self.logger = Logger()
+        self.mqtt_handler = MqttHandler(self.ui, self.logger)
         self.telescope_controller = TelescopeController(self.mqtt_handler.setRaSpeed, self.mqtt_handler.setDecSpeed)
         self.errors_x = []
         self.errors_y = []
@@ -157,7 +158,9 @@ class MainWindow(QMainWindow):
             x = int(event.position().toPoint().x() * x_rescale)
             y = int(event.position().toPoint().y() * y_rescale)
             self.circ_center = [y, x]
-
+            self.telescope_controller.go_to_loc.x_cent = x
+            self.telescope_controller.go_to_loc.y_cent = y
+            self.setDisplayedImage(self.mqtt_handler.image)
         self.ui.imageWidget.mousePressEvent = callback
 
     def checkMqttStatus(self):

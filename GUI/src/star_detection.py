@@ -10,7 +10,7 @@ def segmentation(im: np.ndarray, thr=-10):
     current_star_centroids = []
     for i in range(1, seg[0]):
         '''Exclude abnormaly large stars'''
-        if (4 < seg[2][i, cv2.CC_STAT_AREA] < 2500):
+        if (4 < seg[2][i, cv2.CC_STAT_AREA] < 25000000):
             new_star = [seg[2][i, cv2.CC_STAT_AREA], seg[3][i][0], seg[3][i][1], np.sqrt(seg[2][i, cv2.CC_STAT_AREA])]
             # print(new_star[3])
             current_star_centroids.append(new_star)

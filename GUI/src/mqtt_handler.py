@@ -6,16 +6,17 @@ import cv2
 import json
 import math
 from src.telescope_controller import TelescopeController
-
+from src.logger import Logger
 mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 
 
 class MqttHandler:
-    def __init__(self, ui: Ui_MainWindow):
+    def __init__(self, ui: Ui_MainWindow, logger: Logger):
         self.image = np.zeros((1280, 96), dtype=np.uint16)
         self.image_ready = False
         self.setupClient()
         self.ui = ui
+        self.logger = logger
         self.sky_rot = 0
         self.sky_dec_vect = [1,0]
         self.sky_ra_vect = [0,1]
@@ -100,9 +101,11 @@ class MqttHandler:
         client.subscribe("#")
 
     def setRaSpeed(self, speed: int):
+        self.logger.logRaCtrl(speed)
         self.mqtt_client.publish("motors/ra", str(speed))
 
     def setDecSpeed(self, speed: int):
+        self.logger.logDecCtrl(speed)
         self.mqtt_client.publish("motors/dec", str(speed))
 
     def setupClient(self):
