@@ -11,7 +11,15 @@ def segmentation(im: np.ndarray, thr=-10):
     for i in range(1, seg[0]):
         '''Exclude abnormaly large stars'''
         if (4 < seg[2][i, cv2.CC_STAT_AREA] < 25000000):
-            new_star = [seg[2][i, cv2.CC_STAT_AREA], seg[3][i][0], seg[3][i][1], np.sqrt(seg[2][i, cv2.CC_STAT_AREA])]
+            x_st = seg[2][i][cv2.CC_STAT_LEFT]
+            x_en = seg[2][i][cv2.CC_STAT_WIDTH] + seg[2][i][cv2.CC_STAT_LEFT]
+            y_st = seg[2][i][cv2.CC_STAT_TOP]
+            y_en = seg[2][i][cv2.CC_STAT_HEIGHT] + seg[2][i][cv2.CC_STAT_TOP]
+            center = calculateStarCentroid(im_filt, (x_st, x_en), (y_st, y_en), "COG")             
+            print("COG",center[0], center[1])  
+            print("bin_COG",seg[3][i][0], seg[3][i][1])  
+            new_star = [seg[2][i, cv2.CC_STAT_AREA], center[0], center[1], np.sqrt(seg[2][i, cv2.CC_STAT_AREA])]
+            #new_star = [seg[2][i, cv2.CC_STAT_AREA], seg[3][i][0], seg[3][i][1], np.sqrt(seg[2][i, cv2.CC_STAT_AREA])]
             # print(new_star[3])
             current_star_centroids.append(new_star)
             x_start = (int(new_star[1]) - int(new_star[3])) + 1
@@ -62,6 +70,28 @@ def testRequestStarsLocation(mqtt_client):
 
 def circularity_meassure(obj: np.ndarray, non_zero, cx, cy):
     return 1
+
+
+
+
+def calculateStarCentroid(image, x_range, y_range, method):
+    cent_x = int(0)
+    cent_y = int(0)
+    if method == "COG":
+        tot_brightness = 0
+        for i in range(x_range[0], x_range[1]):
+            for j in range(y_range[0], y_range[1]):
+                brightness = int(image[i,j])**4
+                cent_x = cent_x + brightness * i
+                cent_y = cent_y + brightness * j
+                tot_brightness = tot_brightness + brightness
+        cent_x = cent_x/tot_brightness
+        cent_y = cent_y/tot_brightness
+    if method == "WCOG":
+        raise NotImplemented("WCOG not implemented")
+    if method == "IWCOG":
+        raise NotImplemented("IWCOG not implemented")
+    return [cent_x, cent_y]
 
 
 if __name__ == "__main__":

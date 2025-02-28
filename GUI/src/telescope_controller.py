@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 import src.star_detection as star_detection
 import csv
+from src.logger import Logger
 
 STEPS_TO_SECS = 0.104166666666667  # Steps to seconds for both motors.
 
@@ -47,7 +48,8 @@ class starCentroid:
 
 
 class TelescopeController:
-    def __init__(self, set_ra_speed_func: Callable[[int], None], set_dec_speed_func: Callable[[int], None]):
+    def __init__(self, set_ra_speed_func: Callable[[int], None], set_dec_speed_func: Callable[[int], None], logger:Logger):
+        self.logger = logger
         self.image_buffer = None
         self.new_image = False
         self.setRaSpeed = set_ra_speed_func
@@ -64,6 +66,7 @@ class TelescopeController:
         self.sky_dec_vect = (0, 1)
         self.telescope_dec_angle = 70
         self.go_to_loc = starCentroid(0, 960 / 2, 1280 / 2)
+        self.setSetPoint(960/2, 1280/2)
         self.mode = "IDEN_TEL_RA"
         self.run_ra_ident = False
         self.run_ra_ident_iter = 0
@@ -98,6 +101,8 @@ class TelescopeController:
             self.runIdent()
         if self.reference_star_current is not None:
             err = self.getErrorToRefStar(self.go_to_loc)
+            self.logger.LogErrX(err[0])
+            self.logger.LogErrY(err[1])
             speeds = self.setControl(err[0], err[1], auto_control)
             if self.log_info_en:
                 self.log_info(speeds[0], speeds[1], time_interval)
@@ -264,7 +269,13 @@ class TelescopeController:
     def getTrackedStar(self) -> starCentroid:
         # return starCentroid(500,500,500)
         return self.reference_star_current
+    
+    def setSetPoint(self, sp_x, sp_y):
+        self.go_to_loc = starCentroid(0, sp_x, sp_y)
+        self.logger.LogSetPointX(sp_x)
+        self.logger.LogSetPointY(sp_y)
 
+        
 
 if __name__ == "__main__":
     def setRaDummy(val: int):
