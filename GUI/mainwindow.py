@@ -29,7 +29,7 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
         self.logger = Logger()
         self.mqtt_handler = MqttHandler(self.ui, self.logger)
-        self.telescope_controller = TelescopeController(self.mqtt_handler.setRaSpeed, self.mqtt_handler.setDecSpeed)
+        self.telescope_controller = TelescopeController(self.mqtt_handler.setRaSpeed, self.mqtt_handler.setDecSpeed, self.logger)
         self.errors_x = []
         self.errors_y = []
         self.ctrl_ra = []
@@ -121,6 +121,7 @@ class MainWindow(QMainWindow):
             self.telescope_controller.genNewImage(transformed, 1000, run_auto)
             if self.telescope_controller.reference_star_current is not None:
                 err = self.telescope_controller.getErrorToRefStar(self.telescope_controller.go_to_loc)
+                print("error: ", err)
                 self.addErrorX(err[0])
                 self.addErrorY(err[1])
             if run_auto:
@@ -153,13 +154,12 @@ class MainWindow(QMainWindow):
         def callback(event):
             x_rescale = 1280 / self.ui.imageWidget.width()
             y_rescale = 960 / self.ui.imageWidget.height()
-            print("clicked", event.position().toPoint().x() * x_rescale, " ",
-                  event.position().toPoint().y() * y_rescale)
+            # print("clicked", event.position().toPoint().x() * x_rescale, " ",
+            #       event.position().toPoint().y() * y_rescale)
             x = int(event.position().toPoint().x() * x_rescale)
             y = int(event.position().toPoint().y() * y_rescale)
             self.circ_center = [y, x]
-            self.telescope_controller.go_to_loc.x_cent = x
-            self.telescope_controller.go_to_loc.y_cent = y
+            self.telescope_controller.setSetPoint(y, x)
             self.setDisplayedImage(self.mqtt_handler.image)
         self.ui.imageWidget.mousePressEvent = callback
 
