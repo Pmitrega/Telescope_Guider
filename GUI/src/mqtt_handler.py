@@ -20,6 +20,7 @@ class MqttHandler:
         self.sky_rot = 0
         self.sky_dec_vect = [1,0]
         self.sky_ra_vect = [0,1]
+        self.localization_dec_ra_rot = [None, None, None]
 
 
     def on_message(self, client, userdata, msg):
@@ -49,9 +50,15 @@ class MqttHandler:
         elif msg.topic == "solver/ra_hms":
             loc = json.loads(msg.payload.decode("utf-8"))
             self.ui.lineEdit_sky_ra.setText(str(loc[0]) + 'h ' + str(loc[1]) + "m " + str(loc[2]) + "s")
+            self.localization_dec_ra_rot[1] = (loc[0] + loc[1]/60 + loc[2]/3600)*15
+            if self.localization_dec_ra_rot[0] is not None and self.localization_dec_ra_rot[2] is not None:
+                self.logger.LogFacingLoc(self.localization_dec_ra_rot[0], self.localization_dec_ra_rot[1], self.localization_dec_ra_rot[2], self.logger.loc_capt_time)
         elif msg.topic == "solver/dec_dms":
             loc = json.loads(msg.payload.decode("utf-8"))
             self.ui.lineEdit_sky_dec.setText(str(loc[0]) + u'\N{DEGREE SIGN} ' + str(loc[1]) + "' " + str(loc[2]) + "\"")
+            self.localization_dec_ra_rot[0] = (loc[0] + loc[1]/60 + loc[2]/3600)
+            if self.localization_dec_ra_rot[1] is not None and self.localization_dec_ra_rot[2] is not None:
+                self.logger.LogFacingLoc(self.localization_dec_ra_rot[0], self.localization_dec_ra_rot[1], self.localization_dec_ra_rot[2], self.logger.loc_capt_time)
         elif msg.topic == "solver/rotation":
             rot = float(msg.payload.decode("utf-8")) - 90
             self.ui.lineEdit_sky_rot.setText(str(round(rot, 2)) + u'\N{DEGREE SIGN} ')
@@ -60,6 +67,9 @@ class MqttHandler:
                 math.cos(float(rot) * math.pi / 180), math.sin(float(rot) * math.pi / 180))
             self.sky_ra_vect = (
                 -math.sin(float(rot) * math.pi / 180), math.cos(float(rot) * math.pi / 180))
+            self.localization_dec_ra_rot[2] = self.sky_rot
+            if self.localization_dec_ra_rot[0] is not None and self.localization_dec_ra_rot[1] is not None:
+                self.logger.LogFacingLoc(self.localization_dec_ra_rot[0], self.localization_dec_ra_rot[1], self.localization_dec_ra_rot[2], self.logger.loc_capt_time)
         elif msg.topic == "sensors/battV":
             self.ui.lcdNumber_batt_volt.display(float(msg.payload.decode("utf-8")))
         elif msg.topic == "sensors/buck1V":

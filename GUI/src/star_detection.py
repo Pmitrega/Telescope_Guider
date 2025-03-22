@@ -81,7 +81,7 @@ def calculateStarCentroid(image, x_range, y_range, method):
         tot_brightness = 0
         for i in range(x_range[0], x_range[1]):
             for j in range(y_range[0], y_range[1]):
-                brightness = int(image[i,j])**4
+                brightness = int(image[j,i])**4
                 cent_x = cent_x + brightness * i
                 cent_y = cent_y + brightness * j
                 tot_brightness = tot_brightness + brightness

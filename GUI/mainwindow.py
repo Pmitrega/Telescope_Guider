@@ -21,6 +21,8 @@ from src.telescope_controller import TelescopeController
 from src.preview import transformImage
 from src.logger import Logger
 
+from datetime import datetime
+
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -45,6 +47,7 @@ class MainWindow(QMainWindow):
         self.control_mode = "MANUAL_SPEED"
         self.ui.spinBox_setExposure.setRange(1, 10000)
         self.ui.pushButton_3.clicked.connect(self.keepCurrentLoc)
+        self.localize_request_time = None
 
     def setDisplayedImage(self, img: np.ndarray):
         transformed = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
@@ -173,6 +176,9 @@ class MainWindow(QMainWindow):
         self.mqtt_handler.run_client(self.ui.comboBox_address.currentText())
 
     def localizeField(self):
+        localize_capture_time = datetime.now()
+        self.logger.loc_capt_time = localize_capture_time
+        self.mqtt_handler.localization_dec_ra_rot = [None, None, None]
         transformed = cv2.rotate(self.mqtt_handler.image, cv2.ROTATE_90_CLOCKWISE)
         transformed = transformed / 2 ** 8
         bin_im, star_locs = star_detec.segmentation(transformed.astype(np.uint8))
