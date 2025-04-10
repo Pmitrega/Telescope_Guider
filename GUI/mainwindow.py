@@ -182,6 +182,13 @@ class MainWindow(QMainWindow):
         transformed = cv2.rotate(self.mqtt_handler.image, cv2.ROTATE_90_CLOCKWISE)
         transformed = transformed / 2 ** 8
         bin_im, star_locs = star_detec.segmentation(transformed.astype(np.uint8))
+        self.mqtt_handler.star_loc_center_x = 0
+        self.mqtt_handler.star_loc_center_y = 0
+        for st_loc in star_locs:
+            self.mqtt_handler.star_loc_center_x += st_loc[0]
+            self.mqtt_handler.star_loc_center_y += st_loc[1]
+        self.mqtt_handler.star_loc_center_x = self.mqtt_handler.star_loc_center_x / len(star_locs)
+        self.mqtt_handler.star_loc_center_y = self.mqtt_handler.star_loc_center_y / len(star_locs)
         if len(star_locs) >= 0:
             star_detec.requestStarsLocation(star_locs, self.mqtt_handler.mqtt_client)
 
@@ -207,9 +214,13 @@ class MainWindow(QMainWindow):
         self.telescope_controller.run_dec_ident_iter = 0
         self.telescope_controller.run_ra_ident_iter = 0
         self.telescope_controller.run_ra_ident = True
-    
+    def requestImageTransmissionMode(self, value):
+        if self.mqtt_handler.mqtt_client.is_connected():
+            self.mqtt_handler.setImageMode(str(value))
     def keepCurrentLoc(self):
         self.telescope_controller.go_to_loc = self.telescope_controller.reference_star_current
+
+
 
 
 if __name__ == "__main__":
