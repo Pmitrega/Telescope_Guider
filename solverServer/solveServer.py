@@ -143,7 +143,7 @@ def on_message(client, userdata, msg):
             M1 = solution.best_match().wcs_fields["CD1_1"][0]
             M3 = solution.best_match().wcs_fields["CD2_1"][0]
             M4 = solution.best_match().wcs_fields["CD2_2"][0]
-            WCS = "[" + str(M1) + "," + str(M2) + "," + str(M3) + "," + str(M4) + "]"
+            WCS = "[" + str(M1) + "," + str(M2) + "," + str(M3) + "," + str(M4) + ","+ str(CRPIX1) + ","+ str(CRPIX2) + ","+ str(CRVAL1) + ","+ str(CRVAL2) + "]"
             print(M1)
             print(M3)
             rot = round(abs(math.atan2(M1, M3) * 180 / math.pi) + 270, 2) % 360
