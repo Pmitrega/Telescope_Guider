@@ -91,5 +91,6 @@ private:
     imageInfo m_image_info;
     cameraSettings m_camera_settings;
     bool m_send_jpg = false;
+    std::string m_image_mode = "camera";
     bool m_jpg_ready = false;
 };

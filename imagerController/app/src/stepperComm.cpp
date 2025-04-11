@@ -484,7 +484,7 @@ void stepperCommunicator::messageParser(std::string message){
             }
             if(is_fine){
                 m_M2C2_R = (float)std::stoi(pre_parsed.substr(3, pre_parsed.size()));
-                LOG_WARNING("got R3 %f!\r\n", m_M2C2_R);
+                // LOG_WARNING("got R3 %f!\r\n", m_M2C2_R);
                 // std::cout << "recieved batt curr v: " << m_batt_curr<<std::endl;
             }
         }

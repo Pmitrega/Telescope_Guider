@@ -5,11 +5,97 @@
 
 void saveImage(uint8_t* buffer, uint32_t width, uint32_t heigth);
 
+static void readFile(std::string filename, char* buffer, long buff_len) {
+    // Check if the file extension is .png
+    if (filename.substr(filename.find_last_of(".") + 1) == "png") {
+        // Read the image using OpenCV
+        cv::Mat image = cv::imread(filename, cv::IMREAD_UNCHANGED);  // Use IMREAD_UNCHANGED to read the raw data
+
+        if (image.empty()) {
+            LOG_ERROR("Failed to load image: %s\r\n", filename.c_str());
+            return;
+        }
+
+        // Check if the buffer is large enough
+        if (image.total() * image.elemSize() > buff_len) {
+            LOG_ERROR("Buffer size is too small to hold the image data for: %s\r\n", filename.c_str());
+            return;
+        }
+
+        // Copy the image data to the provided buffer
+        std::memcpy(buffer, image.data, image.total() * image.elemSize());
+    } else {
+        // If it's not a PNG file, fallback to the original file reading method
+        std::ifstream fin;
+        fin.open(filename.c_str(), std::ios::binary | std::ios::in);
+        if (fin.is_open()) {
+            fin.read(buffer, buff_len);
+            fin.close();
+        } else {
+            LOG_ERROR("Failed to open file: %s\r\n", filename.c_str());
+        }
+    }
+}
+
+
+// Function to read CSV file
+struct ImageInfo {
+    std::string name;
+    int interval;
+    int exposure;
+    int gain;
+    std::string capture_time;
+};
+
+// Function to read the CSV file and return a vector of ImageInfo structs
+static std::vector<ImageInfo> readCSV(const std::string &filename) {
+    std::ifstream file(filename);  // Open the file
+    std::string line;
+    std::vector<ImageInfo> imageInfoList;  // Vector to store ImageInfo structs
+
+    // Check if the file is open
+    if (!file.is_open()) {
+        std::cerr << "Could not open the file!" << std::endl;
+        return imageInfoList;
+    }
+
+    // Read the first line (header) and discard it
+    std::getline(file, line);
+
+    // Read the rest of the lines
+    while (std::getline(file, line)) {
+        std::stringstream ss(line);  // Stringstream to split the line into fields
+        ImageInfo imageInfo;
+
+        // Read the fields from the CSV line
+        std::getline(ss, imageInfo.name, ',');            // Read the name
+        ss >> imageInfo.interval; ss.ignore();            // Read the interval
+        ss >> imageInfo.exposure; ss.ignore();            // Read the exposure
+        ss >> imageInfo.gain; ss.ignore();                // Read the gain
+        std::getline(ss, imageInfo.capture_time, ',');    // Read the capture time
+
+        // Add the filled struct to the vector
+        imageInfoList.push_back(imageInfo);
+    }
+
+    file.close();  // Close the file
+    return imageInfoList;  // Return the vector of ImageInfo structs
+}
+
 void GuiderWorker::handleMQTTTransmission(){
     int not_updated_count = 0;
     const int not_updated_timeout = 200;
     const int hearthbeat_timeout = 200;
     int hearthbeat_timer = 0;
+
+    std::string test1_path = "/home/guider/Project/Telescope_Guider/imagerController/test_images/series_1/";
+    std::string test2_path = "/home/guider/Project/Telescope_Guider/imagerController/test_images/series_2/";
+    auto test1_ImagesInfo = readCSV(test1_path + "info.csv");
+    auto test2_ImagesInfo = readCSV(test2_path + "info.csv");
+    int test_it = 0;
+
+    auto start_time = std::chrono::steady_clock::now(); 
+
     while(1){
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
         if(hearthbeat_timer%hearthbeat_timeout == 0){
@@ -103,46 +189,85 @@ void GuiderWorker::handleMQTTTransmission(){
             m_image_info.image_ystart.second = false;
 		    m_mqtt_client.publishMessageString("images/raw/ROIstart_y", m_image_info.image_ystart.first);
         }
-        if(m_image_info.image_gain.second == true){
+        if(m_image_info.image_gain.second == true && m_image_mode == "camera"){
             m_image_info.image_gain.second = false;
 		    m_mqtt_client.publishMessageString("images/raw/gain", m_image_info.image_gain.first);
         }
-        if(m_image_info.image_exposure.second == true){
+        if(m_image_info.image_exposure.second == true && m_image_mode == "camera"){
             m_image_info.image_exposure.second = false;
 		    m_mqtt_client.publishMessageString("images/raw/exposure", m_image_info.image_exposure.first);
         }
-        if(m_image_info.image_title.second == true){
+        if(m_image_info.image_title.second == true && m_image_mode == "camera"){
             m_image_info.image_title.second = false;
 		    m_mqtt_client.publishMessageString("images/raw/title", m_image_info.image_title.first);
         }
-        if(m_image_info.capture_interval.second == true){
+        if(m_image_info.capture_interval.second == true && m_image_mode == "camera"){
             m_image_info.capture_interval.second = false;
 		    m_mqtt_client.publishMessageString("images/raw/interval", m_image_info.capture_interval.first);
         }
-        if(m_image_info.image_capture_time.second == true){
+        if(m_image_info.image_capture_time.second == true && m_image_mode == "camera"){
             m_image_info.image_capture_time.second = false;
 		    m_mqtt_client.publishMessageString("images/raw/capture_time", m_image_info.image_capture_time.first);
         }
-        if(m_image_info.image_buffer.second == true && m_image_info.image_buffer.first != nullptr && !m_send_jpg){
-            LOG_INFO("transmiting %s\r\n", m_image_info.image_title.first.c_str());
-            m_image_info.image_buffer.second = false;
-		    m_mqtt_client.publishMessageImageRaw("images/raw", (char*)m_image_info.image_buffer.first, 1280*960*2);
+        if(m_image_mode == "camera"){
+            if(m_image_info.image_buffer.second == true && m_image_info.image_buffer.first != nullptr && !m_send_jpg){
+                    LOG_INFO("transmiting %s\r\n", m_image_info.image_title.first.c_str());
+                    m_image_info.image_buffer.second = false;
+                    m_mqtt_client.publishMessageImageRaw("images/raw", (char*)m_image_info.image_buffer.first, 1280*960*2);
+            }
+            if(m_send_jpg && m_jpg_ready){
+                LOG_INFO("transmiting %s\r\n", m_image_info.image_title.first.c_str());
+                m_jpg_ready = false;
+                std::ifstream file("/tmp/compressed.jpg", std::ios::binary | std::ios::ate);
+                std::streamsize size = file.tellg();
+                file.seekg(0, std::ios::beg);
+                std::vector<char> buffer(size);
+                if (file.read(buffer.data(), size))
+                {
+                    m_mqtt_client.publishMessageImageRaw("images/jpg", buffer.data(), size);
+                }
+                else{
+                    LOG_ERROR("Couldn't read compressed.jpg\r\n");
+                }
+                
+            }
         }
-        if(m_send_jpg && m_jpg_ready){
-            LOG_INFO("transmiting %s\r\n", m_image_info.image_title.first.c_str());
-            m_jpg_ready = false;
-            std::ifstream file("/tmp/compressed.jpg", std::ios::binary | std::ios::ate);
-            std::streamsize size = file.tellg();
-            file.seekg(0, std::ios::beg);
-            std::vector<char> buffer(size);
-            if (file.read(buffer.data(), size))
-            {
-                m_mqtt_client.publishMessageImageRaw("images/jpg", buffer.data(), size);
+        if (m_image_mode == "Test_data_1" || m_image_mode == "Test_data_2") {
+            // Calculate elapsed time since the last send
+            auto current_time = std::chrono::steady_clock::now();
+            std::chrono::milliseconds elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - start_time);
+            std::vector<ImageInfo>* test_ImagesInfo = nullptr;
+            bool is_ok = true;
+            std::string test_path = "";
+            if(m_image_mode == "Test_data_1"){
+                test_ImagesInfo = &test1_ImagesInfo;
+                test_path = test1_path;
+            }
+            else if(m_image_mode == "Test_data_2"){
+                test_ImagesInfo = &test2_ImagesInfo;
+                test_path = test2_path;
             }
             else{
-                LOG_ERROR("Couldn't read compressed.jpg\r\n");
+                LOG_ERROR("WRONG test name\r\n")
+                is_ok = false;
             }
-            
+            // If the required interval has passed, do the operation
+            test_it = test_it % test_ImagesInfo->size(); // Dereference the pointer to get the size
+            if (is_ok && elapsed_time.count() >= (*test_ImagesInfo)[test_it].interval) { // Dereference the pointer to access elements
+                test_it += 1;
+                test_it = test_it % test_ImagesInfo->size(); // Ensure it wraps around
+                char buffer[1280 * 960 * 2];
+                std::string filename = test_path;
+                filename = filename + (*test_ImagesInfo)[test_it].name;  // Dereference pointer to access name
+                readFile(filename, buffer, sizeof(buffer));
+                m_mqtt_client.publishMessageImageRaw("images/raw", (char*)buffer, sizeof(buffer));
+                m_mqtt_client.publishMessageString("images/raw/gain", std::to_string((*test_ImagesInfo)[test_it].gain)); // Dereference to get gain
+                m_mqtt_client.publishMessageString("images/raw/exposure", std::to_string((*test_ImagesInfo)[test_it].exposure)); // Dereference to get exposure
+                m_mqtt_client.publishMessageString("images/raw/title", (*test_ImagesInfo)[test_it].name); // Dereference to get name
+                m_mqtt_client.publishMessageString("images/raw/interval", std::to_string((*test_ImagesInfo)[test_it].interval)); // Dereference to get interval
+                m_mqtt_client.publishMessageString("images/raw/capture_time", (*test_ImagesInfo)[test_it].capture_time); // Dereference to get capture_time
+                start_time = current_time;  // Update the start_time to the current time
+            }
         }
 
     }
@@ -212,6 +337,14 @@ void GuiderWorker::handleMQTTRecieve(){
                     m_send_jpg = true;
                 else
                     m_send_jpg = false;
+            }
+            if(mqtt_message.topic == "image_mode"){
+                if(mqtt_message.payload == "camera" || mqtt_message.payload == "Test_data_1" || mqtt_message.payload == "Test_data_2"){
+                    m_image_mode = mqtt_message.payload;
+                    LOG_INFO("Sending image data from: %s\r\n", mqtt_message.payload.c_str());
+                }
+                else
+                    LOG_WARNING("Can't hande image mode, requested image mode: %s\r\n", mqtt_message.payload.c_str());
             }
         }
     }

@@ -83,6 +83,7 @@ MqttClientWrapper::MqttClientWrapper(){
     MQTTClient_subscribe(m_client, "camera/#", 0);
     MQTTClient_subscribe(m_client, "stepper/#", 0);
     MQTTClient_subscribe(m_client, "motors/#", 0);
+    MQTTClient_subscribe(m_client, "image_mode", 0);
     MQTTClient_subscribe(m_client, "images/jpg/enable", 0);
 }
 
