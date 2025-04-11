@@ -1659,6 +1659,7 @@ class Ui_MainWindow(object):
 
         self.histogramWidget = PlotWidget(self.centralwidget)
         self.histogramWidget.setObjectName(u"histogramWidget")
+        self.histogramWidget.setMinimumSize(QSize(160, 0))
         self.histogramWidget.setMaximumSize(QSize(250, 16777215))
 
         self.verticalLayout_46.addWidget(self.histogramWidget)
@@ -1675,7 +1676,7 @@ class Ui_MainWindow(object):
         self.label_7.setObjectName(u"label_7")
         sizePolicy1.setHeightForWidth(self.label_7.sizePolicy().hasHeightForWidth())
         self.label_7.setSizePolicy(sizePolicy1)
-        self.label_7.setMaximumSize(QSize(100, 100))
+        self.label_7.setMaximumSize(QSize(100, 60))
         font5 = QFont()
         font5.setPointSize(14)
         self.label_7.setFont(font5)
@@ -1686,7 +1687,7 @@ class Ui_MainWindow(object):
         self.lcdNumber_batt_volt.setObjectName(u"lcdNumber_batt_volt")
         sizePolicy1.setHeightForWidth(self.lcdNumber_batt_volt.sizePolicy().hasHeightForWidth())
         self.lcdNumber_batt_volt.setSizePolicy(sizePolicy1)
-        self.lcdNumber_batt_volt.setMaximumSize(QSize(100, 100))
+        self.lcdNumber_batt_volt.setMaximumSize(QSize(100, 60))
 
         self.horizontalLayout_12.addWidget(self.lcdNumber_batt_volt)
 
@@ -1700,7 +1701,7 @@ class Ui_MainWindow(object):
         self.label_6.setObjectName(u"label_6")
         sizePolicy1.setHeightForWidth(self.label_6.sizePolicy().hasHeightForWidth())
         self.label_6.setSizePolicy(sizePolicy1)
-        self.label_6.setMaximumSize(QSize(100, 100))
+        self.label_6.setMaximumSize(QSize(100, 60))
         self.label_6.setFont(font5)
 
         self.horizontalLayout_11.addWidget(self.label_6)
@@ -1709,7 +1710,7 @@ class Ui_MainWindow(object):
         self.lcdNumber_batt_curr.setObjectName(u"lcdNumber_batt_curr")
         sizePolicy1.setHeightForWidth(self.lcdNumber_batt_curr.sizePolicy().hasHeightForWidth())
         self.lcdNumber_batt_curr.setSizePolicy(sizePolicy1)
-        self.lcdNumber_batt_curr.setMaximumSize(QSize(100, 100))
+        self.lcdNumber_batt_curr.setMaximumSize(QSize(100, 60))
 
         self.horizontalLayout_11.addWidget(self.lcdNumber_batt_curr)
 
@@ -1752,7 +1753,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
         self.label_50.setText(QCoreApplication.translate("MainWindow", u"Streamed Images", None))
-        self.comboBox_address_2.setItemText(0, QCoreApplication.translate("MainWindow", u"Camera", None))
+        self.comboBox_address_2.setItemText(0, QCoreApplication.translate("MainWindow", u"camera", None))
         self.comboBox_address_2.setItemText(1, QCoreApplication.translate("MainWindow", u"Test_data_1", None))
         self.comboBox_address_2.setItemText(2, QCoreApplication.translate("MainWindow", u"Test_data_2", None))
 

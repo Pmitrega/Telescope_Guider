@@ -85,7 +85,7 @@
         </property>
         <item>
          <property name="text">
-          <string>Camera</string>
+          <string>camera</string>
          </property>
         </item>
         <item>
@@ -1305,7 +1305,7 @@
            </size>
           </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>0</number>
           </property>
           <property name="usesScrollButtons">
            <bool>true</bool>
@@ -1408,6 +1408,12 @@
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>140</width>
+                 <height>0</height>
+                </size>
                </property>
                <property name="maximumSize">
                 <size>
@@ -4690,6 +4696,12 @@
       </item>
       <item>
        <widget class="PlotWidget" name="histogramWidget" native="true">
+        <property name="minimumSize">
+         <size>
+          <width>160</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="maximumSize">
          <size>
           <width>250</width>
@@ -4718,7 +4730,7 @@
           <property name="maximumSize">
            <size>
             <width>100</width>
-            <height>100</height>
+            <height>60</height>
            </size>
           </property>
           <property name="font">
@@ -4742,7 +4754,7 @@
           <property name="maximumSize">
            <size>
             <width>100</width>
-            <height>100</height>
+            <height>60</height>
            </size>
           </property>
          </widget>
@@ -4765,7 +4777,7 @@
           <property name="maximumSize">
            <size>
             <width>100</width>
-            <height>100</height>
+            <height>60</height>
            </size>
           </property>
           <property name="font">
@@ -4789,7 +4801,7 @@
           <property name="maximumSize">
            <size>
             <width>100</width>
-            <height>100</height>
+            <height>60</height>
            </size>
           </property>
          </widget>

@@ -118,6 +118,7 @@ class MqttHandler:
     def on_connect(self, client, userdata, flags, reason_code, properties):
         print(f"Connected with result code {reason_code}")
         client.subscribe("#")
+        self.setImageMode(self.ui.comboBox_address_2.currentText())
 
     def setRaSpeed(self, speed: int):
         self.logger.logRaCtrl(speed)
