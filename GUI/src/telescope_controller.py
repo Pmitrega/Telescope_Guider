@@ -5,7 +5,7 @@ import numpy as np
 import src.star_detection as star_detection
 import csv
 from src.logger import Logger
-
+from ui_form import Ui_MainWindow
 STEPS_TO_SECS = 0.104166666666667  # Steps to seconds for both motors.
 
 
@@ -48,10 +48,12 @@ class starCentroid:
 
 
 class TelescopeController:
-    def __init__(self, set_ra_speed_func: Callable[[int], None], set_dec_speed_func: Callable[[int], None], logger:Logger):
+    def __init__(self, set_ra_speed_func: Callable[[int], None], set_dec_speed_func: Callable[[int], None], logger:Logger, mqtt_handler, ui:Ui_MainWindow):
         self.logger = logger
         self.image_buffer = None
         self.new_image = False
+        self.ui = ui
+        self.mqtt_handler = mqtt_handler
         self.setRaSpeed = set_ra_speed_func
         self.setDecSpeed = set_dec_speed_func
         self.last_star_centroids = []
@@ -100,6 +102,7 @@ class TelescopeController:
         if self.run_ident:
             self.runIdent()
         if self.reference_star_current is not None:
+            self.mqtt_handler.ref_star_plot = self.reference_star_current
             err = self.getErrorToRefStar(self.go_to_loc)
             self.logger.LogErrX(err[0])
             self.logger.LogErrY(err[1])
@@ -222,10 +225,13 @@ class TelescopeController:
             return []
         I2Bin = self.image_buffer / 2 ** 8
         I2Bin = I2Bin.astype(np.uint8)
+        self.adaptive_thre = int(self.ui.horizontalSlider_sens.value())
         bin_im, star_centroids = star_detection.segmentation(I2Bin.astype(np.uint8), self.adaptive_thre)
-
+        print(len(star_centroids))
+        self.ui.lineEdit_detected.setText(str(len(star_centroids)))
         # ret, I_mat = cv2.threshold(I_mat, min_I * 1.4, 65535, cv2.THRESH_BINARY)
-
+        if len(star_centroids) > 500:
+            return
         cv2.imwrite("../binaraized.png", bin_im)
         output = cv2.connectedComponentsWithStats(bin_im.astype(np.uint8))
         current_star_centroids = []
@@ -244,16 +250,17 @@ class TelescopeController:
                     if star_last.does_match(star_curr) and star_last == self.reference_star_current:
                         self.reference_star_current = star_curr
                         found_reference = True
-                        print("reference current:", self.reference_star_current)
+                        # print("reference current:", self.reference_star_current)
                         break
         self.last_star_centroids = current_star_centroids
+
 
         if found_reference is False:
             self.find_new_reference_star(self.last_star_centroids)
         if self.reference_star_current is not None and self.reference_star_initial is not None:
             if self.reference_star_current is not None:
                 error = self.getErrorToRefStarPix(self.go_to_loc)
-                print(error)
+                # print(error)
             # f = open("error.csv", "a")
             # f.write(f"{error[0]},{error[1]}\n")
             # f.close()

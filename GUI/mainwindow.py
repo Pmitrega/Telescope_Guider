@@ -7,16 +7,16 @@ import faulthandler
 import cv2
 from src.mqtt_handler import MqttHandler
 import src.star_detection as star_detec
-
-from PySide6.QtWidgets import QApplication, QMainWindow
-from PySide6.QtCore import QTimer
-from PySide6.QtGui import QPixmap
+import src.WCS as WCS
+from PySide6.QtWidgets import QApplication, QMainWindow, QMenu
+from PySide6.QtCore import QTimer, Qt
+from PySide6.QtGui import QPixmap, QAction, QImage
 # Important:
 # You need to run the following command to generate the ui_form.py file
 #     pyside6-uic form.ui -o ui_form.py, or
 #     pyside2-uic form.ui -o ui_form.py
 from ui_form import Ui_MainWindow
-from src.telescope_controller import TelescopeController
+from src.telescope_controller import TelescopeController, starCentroid
 
 from src.preview import transformImage
 from src.logger import Logger
@@ -30,12 +30,17 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.logger = Logger()
-        self.mqtt_handler = MqttHandler(self.ui, self.logger)
-        self.telescope_controller = TelescopeController(self.mqtt_handler.setRaSpeed, self.mqtt_handler.setDecSpeed, self.logger)
+        self.ui.grid_mer = [[[0, 0]]]
+        self.ui.grid_lat = [[[0, 0]]]
+        self.wcs = WCS.WCS(0.00074019, 0.00085509, 0.0008611016, - 0.000761324044, 989.3, 664.5, 308.25474896 , 83.6631)
+        self.ref_star_plot = starCentroid(0, 1280/2, 960/2)
+        self.mqtt_handler = MqttHandler(self.ui, self.logger, self.wcs, self.ref_star_plot)
+        self.telescope_controller = TelescopeController(self.mqtt_handler.setRaSpeed, self.mqtt_handler.setDecSpeed, self.logger, self.mqtt_handler, self.ui)
         self.errors_x = []
         self.errors_y = []
         self.ctrl_ra = []
         self.ctrl_dec = []
+
         self.attachImageMouseClick()
         self.initializePlots()
         self.timer_image_update = QTimer()
@@ -48,6 +53,7 @@ class MainWindow(QMainWindow):
         self.ui.spinBox_setExposure.setRange(1, 10000)
         self.ui.pushButton_3.clicked.connect(self.keepCurrentLoc)
         self.localize_request_time = None
+        self.test_it = 0
 
     def setDisplayedImage(self, img: np.ndarray):
         transformed = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
@@ -121,18 +127,47 @@ class MainWindow(QMainWindow):
             self.mqtt_handler.image_ready = False
             transformed = cv2.rotate(self.mqtt_handler.image, cv2.ROTATE_90_CLOCKWISE)
             run_auto = self.ui.radioButton_auto_speed.isChecked() and self.ui.checkBox_startGuiding.isChecked()
+            test_run = True
+            run_auto = False
             self.telescope_controller.genNewImage(transformed, 1000, run_auto)
             if self.telescope_controller.reference_star_current is not None:
                 err = self.telescope_controller.getErrorToRefStar(self.telescope_controller.go_to_loc)
-                print("error: ", err)
+                # print("error: ", err)
                 self.addErrorX(err[0])
                 self.addErrorY(err[1])
             if run_auto:
                 self.addCtrlRa(self.telescope_controller.curr_ctrl[0])
                 self.addCtrlDec(self.telescope_controller.curr_ctrl[1])
+            elif test_run:
+                if self.test_it % 40 == 0:
+                    self.addCtrlDec(150)
+                    self.addCtrlRa(0)
+                    self.mqtt_handler.setDecSpeed(150)
+                    self.mqtt_handler.setRaSpeed(0)
+                elif self.test_it % 40 == 20:
+                    self.addCtrlDec(-150)
+                    self.addCtrlRa(0)
+                    self.mqtt_handler.setDecSpeed(-150)
+                    self.mqtt_handler.setRaSpeed(0)
+                    # self.addCtrlDec(0)
+                    # self.addCtrlRa(-400)
+                    # self.mqtt_handler.setDecSpeed(0)
+                    # self.mqtt_handler.setRaSpeed(-400)
+                # elif self.test_it % 40 == 20:
+                #     self.addCtrlDec(400)
+                #     self.addCtrlRa(0)
+                #     self.mqtt_handler.setDecSpeed(400)
+                #     self.mqtt_handler.setRaSpeed(0)
+                # elif self.test_it % 40 == 30:
+                #     self.addCtrlDec(-400)
+                #     self.addCtrlRa(0)
+                #     self.mqtt_handler.setDecSpeed(-400)
+                #     self.mqtt_handler.setRaSpeed(0)
+                self.test_it = self.test_it + 1
+
             elif self.ui.radioButton_auto_speed.isChecked() and not self.ui.checkBox_startGuiding.isChecked():
                 self.mqtt_handler.setDecSpeed(0)
-                self.mqtt_handler.setDecSpeed(0)
+                self.mqtt_handler.setRaSpeed(0)
                 self.addCtrlRa(0)
                 self.addCtrlDec(0)
             self.setDisplayedImage(self.mqtt_handler.image)
@@ -155,15 +190,42 @@ class MainWindow(QMainWindow):
 
     def attachImageMouseClick(self):
         def callback(event):
-            x_rescale = 1280 / self.ui.imageWidget.width()
-            y_rescale = 960 / self.ui.imageWidget.height()
-            # print("clicked", event.position().toPoint().x() * x_rescale, " ",
-            #       event.position().toPoint().y() * y_rescale)
-            x = int(event.position().toPoint().x() * x_rescale)
-            y = int(event.position().toPoint().y() * y_rescale)
-            self.circ_center = [y, x]
-            self.telescope_controller.setSetPoint(y, x)
-            self.setDisplayedImage(self.mqtt_handler.image)
+            if event.button() == Qt.MouseButton.LeftButton:
+                x_rescale = 1280 / self.ui.imageWidget.width()
+                y_rescale = 960 / self.ui.imageWidget.height()
+                # print("clicked", event.position().toPoint().x() * x_rescale, " ",
+                #       event.position().toPoint().y() * y_rescale)
+                x = int(event.position().toPoint().x() * x_rescale)
+                y = int(event.position().toPoint().y() * y_rescale)
+                self.circ_center = [y, x]
+                self.telescope_controller.setSetPoint(y, x)
+                self.setDisplayedImage(self.mqtt_handler.image)
+            else:
+                show_context_menu(event)
+
+        def show_context_menu(event):
+            # Tworzymy menu kontekstowe
+            context_menu = QMenu(self)
+
+            # Dodajemy akcję zapisu do schowka
+            save_action = QAction("Zapisz obraz do schowka", self)
+            save_action.triggered.connect(save_image_to_clipboard)
+            context_menu.addAction(save_action)
+
+            # Wyświetlamy menu w miejscu kliknięcia
+            context_menu.exec(event.globalPosition().toPoint())  # Convert to QPoint
+
+        def save_image_to_clipboard():
+            # Zapisz obraz do schowka
+            clipboard = QApplication.clipboard()
+            image_data = cv2.rotate(self.mqtt_handler.image, cv2.ROTATE_180)
+            image_data = cv2.flip(image_data, 1)
+            height, width = image_data.shape
+
+            qimage = QImage(image_data.data, width, height, QImage.Format_Grayscale16)
+            pixmap = QPixmap.fromImage(qimage)  # Convert to QPixmap
+            clipboard.setPixmap(pixmap)
+
         self.ui.imageWidget.mousePressEvent = callback
 
     def checkMqttStatus(self):
@@ -181,7 +243,7 @@ class MainWindow(QMainWindow):
         self.mqtt_handler.localization_dec_ra_rot = [None, None, None]
         transformed = cv2.rotate(self.mqtt_handler.image, cv2.ROTATE_90_CLOCKWISE)
         transformed = transformed / 2 ** 8
-        bin_im, star_locs = star_detec.segmentation(transformed.astype(np.uint8))
+        bin_im, star_locs = star_detec.segmentation(transformed.astype(np.uint8), thr = int(self.ui.horizontalSlider_sens.value()))
         self.mqtt_handler.star_loc_center_x = 0
         self.mqtt_handler.star_loc_center_y = 0
         for st_loc in star_locs:
@@ -190,7 +252,7 @@ class MainWindow(QMainWindow):
         self.mqtt_handler.star_loc_center_x = self.mqtt_handler.star_loc_center_x / len(star_locs)
         self.mqtt_handler.star_loc_center_y = self.mqtt_handler.star_loc_center_y / len(star_locs)
         if len(star_locs) >= 0:
-            star_detec.requestStarsLocation(star_locs, self.mqtt_handler.mqtt_client)
+            star_detec.requestStarsLocation(star_locs, self.mqtt_handler.mqtt_client, self.ui)
 
     def enterManualMode(self):
         self.control_mode = "MANUAL_SPEED"

@@ -1,7 +1,8 @@
 import cv2
 import numpy as np
+from PySide6.QtGui import QPixmap
 
-def segmentation(im: np.ndarray, thr=-10):
+def segmentation(im: np.ndarray, thr=-5):
     im_filt = cv2.GaussianBlur(im, (5, 5), 2)
     im_th = cv2.adaptiveThreshold(im_filt, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, \
                                   cv2.THRESH_BINARY, 399, thr)
@@ -16,8 +17,8 @@ def segmentation(im: np.ndarray, thr=-10):
             y_st = seg[2][i][cv2.CC_STAT_TOP]
             y_en = seg[2][i][cv2.CC_STAT_HEIGHT] + seg[2][i][cv2.CC_STAT_TOP]
             center = calculateStarCentroid(im_filt, (x_st, x_en), (y_st, y_en), "COG")             
-            print("COG",center[0], center[1])  
-            print("bin_COG",seg[3][i][0], seg[3][i][1])  
+            # print("COG",center[0], center[1])
+            # print("bin_COG",seg[3][i][0], seg[3][i][1])
             new_star = [seg[2][i, cv2.CC_STAT_AREA], center[0], center[1], np.sqrt(seg[2][i, cv2.CC_STAT_AREA])]
             #new_star = [seg[2][i, cv2.CC_STAT_AREA], seg[3][i][0], seg[3][i][1], np.sqrt(seg[2][i, cv2.CC_STAT_AREA])]
             # print(new_star[3])
@@ -38,13 +39,15 @@ def segmentation(im: np.ndarray, thr=-10):
     return im_th, current_star_centroids
 
 
-def requestStarsLocation(star_list: list, mqtt_client):
+def requestStarsLocation(star_list: list, mqtt_client, ui):
     solver_star_list_req = []
     for el in star_list:
         solver_star_list_req.append([round(float(el[1]),2), round(float(el[2]),2)])
     print(str(solver_star_list_req))
     if len(solver_star_list_req) >= 3:
         mqtt_client.publish("solver/star_locs", str(solver_star_list_req))
+        ui.label_solver_status.setPixmap(QPixmap(u"images/led_yellow.png"))
+
 
 
 def testRequestStarsLocation(mqtt_client):

@@ -43,297 +43,17 @@ class Ui_MainWindow(object):
         self.centralwidget.setSizePolicy(sizePolicy1)
         self.gridLayout = QGridLayout(self.centralwidget)
         self.gridLayout.setObjectName(u"gridLayout")
-        self.verticalLayout_3 = QVBoxLayout()
-        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
-        self.verticalLayout_3.setContentsMargins(-1, 10, -1, 10)
-        self.label_50 = QLabel(self.centralwidget)
-        self.label_50.setObjectName(u"label_50")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
-        sizePolicy2.setHorizontalStretch(0)
-        sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.label_50.sizePolicy().hasHeightForWidth())
-        self.label_50.setSizePolicy(sizePolicy2)
-        self.label_50.setMaximumSize(QSize(200, 16777215))
-        font = QFont()
-        font.setFamilies([u"Segoe MDL2 Assets"])
-        font.setPointSize(12)
-        self.label_50.setFont(font)
-        self.label_50.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.verticalLayout_3.addWidget(self.label_50)
-
-        self.comboBox_address_2 = QComboBox(self.centralwidget)
-        self.comboBox_address_2.addItem("")
-        self.comboBox_address_2.addItem("")
-        self.comboBox_address_2.addItem("")
-        self.comboBox_address_2.setObjectName(u"comboBox_address_2")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        sizePolicy3.setHorizontalStretch(0)
-        sizePolicy3.setVerticalStretch(0)
-        sizePolicy3.setHeightForWidth(self.comboBox_address_2.sizePolicy().hasHeightForWidth())
-        self.comboBox_address_2.setSizePolicy(sizePolicy3)
-        self.comboBox_address_2.setMaximumSize(QSize(200, 16777215))
-        self.comboBox_address_2.setEditable(True)
-
-        self.verticalLayout_3.addWidget(self.comboBox_address_2)
-
-        self.verticalLayout_14 = QVBoxLayout()
-        self.verticalLayout_14.setObjectName(u"verticalLayout_14")
-        self.verticalLayout_4 = QVBoxLayout()
-        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
-        self.verticalLayout_23 = QVBoxLayout()
-        self.verticalLayout_23.setObjectName(u"verticalLayout_23")
-        self.pushButton_4 = QPushButton(self.centralwidget)
-        self.pushButton_4.setObjectName(u"pushButton_4")
-        sizePolicy3.setHeightForWidth(self.pushButton_4.sizePolicy().hasHeightForWidth())
-        self.pushButton_4.setSizePolicy(sizePolicy3)
-        self.pushButton_4.setMaximumSize(QSize(190, 16777215))
-
-        self.verticalLayout_23.addWidget(self.pushButton_4)
-
-        self.horizontalLayout_21 = QHBoxLayout()
-        self.horizontalLayout_21.setObjectName(u"horizontalLayout_21")
-        self.label_37 = QLabel(self.centralwidget)
-        self.label_37.setObjectName(u"label_37")
-        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Preferred)
-        sizePolicy4.setHorizontalStretch(0)
-        sizePolicy4.setVerticalStretch(0)
-        sizePolicy4.setHeightForWidth(self.label_37.sizePolicy().hasHeightForWidth())
-        self.label_37.setSizePolicy(sizePolicy4)
-        self.label_37.setMinimumSize(QSize(70, 0))
-        self.label_37.setMaximumSize(QSize(100, 25))
-        self.label_37.setFont(font)
-        self.label_37.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.horizontalLayout_21.addWidget(self.label_37)
-
-        self.spinBox_setExposure = QSpinBox(self.centralwidget)
-        self.spinBox_setExposure.setObjectName(u"spinBox_setExposure")
-        sizePolicy5 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
-        sizePolicy5.setHorizontalStretch(0)
-        sizePolicy5.setVerticalStretch(0)
-        sizePolicy5.setHeightForWidth(self.spinBox_setExposure.sizePolicy().hasHeightForWidth())
-        self.spinBox_setExposure.setSizePolicy(sizePolicy5)
-        self.spinBox_setExposure.setMinimumSize(QSize(50, 0))
-        self.spinBox_setExposure.setMaximumSize(QSize(100, 25))
-        self.spinBox_setExposure.setMinimum(100)
-        self.spinBox_setExposure.setMaximum(20000)
-        self.spinBox_setExposure.setValue(500)
-
-        self.horizontalLayout_21.addWidget(self.spinBox_setExposure)
-
-
-        self.verticalLayout_23.addLayout(self.horizontalLayout_21)
-
-        self.horizontalLayout_2 = QHBoxLayout()
-        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.label_36 = QLabel(self.centralwidget)
-        self.label_36.setObjectName(u"label_36")
-        sizePolicy4.setHeightForWidth(self.label_36.sizePolicy().hasHeightForWidth())
-        self.label_36.setSizePolicy(sizePolicy4)
-        self.label_36.setMaximumSize(QSize(100, 25))
-        self.label_36.setFont(font)
-        self.label_36.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.horizontalLayout_2.addWidget(self.label_36)
-
-        self.spinBox_setInterval = QSpinBox(self.centralwidget)
-        self.spinBox_setInterval.setObjectName(u"spinBox_setInterval")
-        sizePolicy5.setHeightForWidth(self.spinBox_setInterval.sizePolicy().hasHeightForWidth())
-        self.spinBox_setInterval.setSizePolicy(sizePolicy5)
-        self.spinBox_setInterval.setMaximumSize(QSize(100, 16777215))
-        self.spinBox_setInterval.setMinimum(100)
-        self.spinBox_setInterval.setMaximum(20000)
-        self.spinBox_setInterval.setValue(1000)
-
-        self.horizontalLayout_2.addWidget(self.spinBox_setInterval)
-
-
-        self.verticalLayout_23.addLayout(self.horizontalLayout_2)
-
-        self.horizontalLayout_22 = QHBoxLayout()
-        self.horizontalLayout_22.setObjectName(u"horizontalLayout_22")
-        self.label_35 = QLabel(self.centralwidget)
-        self.label_35.setObjectName(u"label_35")
-        sizePolicy4.setHeightForWidth(self.label_35.sizePolicy().hasHeightForWidth())
-        self.label_35.setSizePolicy(sizePolicy4)
-        self.label_35.setMaximumSize(QSize(100, 25))
-        self.label_35.setFont(font)
-        self.label_35.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.horizontalLayout_22.addWidget(self.label_35)
-
-        self.spinBox_setGain = QSpinBox(self.centralwidget)
-        self.spinBox_setGain.setObjectName(u"spinBox_setGain")
-        sizePolicy6 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
-        sizePolicy6.setHorizontalStretch(0)
-        sizePolicy6.setVerticalStretch(0)
-        sizePolicy6.setHeightForWidth(self.spinBox_setGain.sizePolicy().hasHeightForWidth())
-        self.spinBox_setGain.setSizePolicy(sizePolicy6)
-        self.spinBox_setGain.setMaximumSize(QSize(100, 16777215))
-        self.spinBox_setGain.setMaximum(100)
-        self.spinBox_setGain.setValue(70)
-
-        self.horizontalLayout_22.addWidget(self.spinBox_setGain)
-
-
-        self.verticalLayout_23.addLayout(self.horizontalLayout_22)
-
-
-        self.verticalLayout_4.addLayout(self.verticalLayout_23)
-
-
-        self.verticalLayout_14.addLayout(self.verticalLayout_4)
-
-
-        self.verticalLayout_3.addLayout(self.verticalLayout_14)
-
-        self.label_39 = QLabel(self.centralwidget)
-        self.label_39.setObjectName(u"label_39")
-        sizePolicy4.setHeightForWidth(self.label_39.sizePolicy().hasHeightForWidth())
-        self.label_39.setSizePolicy(sizePolicy4)
-        self.label_39.setMaximumSize(QSize(200, 16777215))
-        self.label_39.setFont(font)
-        self.label_39.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.verticalLayout_3.addWidget(self.label_39)
-
-        self.verticalLayout_24 = QVBoxLayout()
-        self.verticalLayout_24.setObjectName(u"verticalLayout_24")
-        self.verticalLayout_24.setContentsMargins(-1, 3, -1, 3)
-        self.label_12 = QLabel(self.centralwidget)
-        self.label_12.setObjectName(u"label_12")
-        sizePolicy4.setHeightForWidth(self.label_12.sizePolicy().hasHeightForWidth())
-        self.label_12.setSizePolicy(sizePolicy4)
-        self.label_12.setMaximumSize(QSize(200, 16777215))
-        self.label_12.setFont(font)
-        self.label_12.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.verticalLayout_24.addWidget(self.label_12)
-
-        self.lineEdit_rec_title = QLineEdit(self.centralwidget)
-        self.lineEdit_rec_title.setObjectName(u"lineEdit_rec_title")
-        sizePolicy5.setHeightForWidth(self.lineEdit_rec_title.sizePolicy().hasHeightForWidth())
-        self.lineEdit_rec_title.setSizePolicy(sizePolicy5)
-        self.lineEdit_rec_title.setMaximumSize(QSize(200, 16777215))
-        self.lineEdit_rec_title.setReadOnly(True)
-
-        self.verticalLayout_24.addWidget(self.lineEdit_rec_title)
-
-
-        self.verticalLayout_3.addLayout(self.verticalLayout_24)
-
-        self.verticalLayout_12 = QVBoxLayout()
-        self.verticalLayout_12.setObjectName(u"verticalLayout_12")
-        self.verticalLayout_12.setContentsMargins(-1, 3, -1, 3)
-        self.label_10 = QLabel(self.centralwidget)
-        self.label_10.setObjectName(u"label_10")
-        sizePolicy4.setHeightForWidth(self.label_10.sizePolicy().hasHeightForWidth())
-        self.label_10.setSizePolicy(sizePolicy4)
-        self.label_10.setMaximumSize(QSize(200, 16777215))
-        self.label_10.setFont(font)
-        self.label_10.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.verticalLayout_12.addWidget(self.label_10)
-
-        self.lineEdit_rec_exp = QLineEdit(self.centralwidget)
-        self.lineEdit_rec_exp.setObjectName(u"lineEdit_rec_exp")
-        sizePolicy5.setHeightForWidth(self.lineEdit_rec_exp.sizePolicy().hasHeightForWidth())
-        self.lineEdit_rec_exp.setSizePolicy(sizePolicy5)
-        self.lineEdit_rec_exp.setMaximumSize(QSize(200, 16777215))
-        self.lineEdit_rec_exp.setReadOnly(True)
-
-        self.verticalLayout_12.addWidget(self.lineEdit_rec_exp)
-
-
-        self.verticalLayout_3.addLayout(self.verticalLayout_12)
-
-        self.verticalLayout_11 = QVBoxLayout()
-        self.verticalLayout_11.setObjectName(u"verticalLayout_11")
-        self.verticalLayout_11.setContentsMargins(-1, 3, -1, 3)
-        self.label_9 = QLabel(self.centralwidget)
-        self.label_9.setObjectName(u"label_9")
-        sizePolicy4.setHeightForWidth(self.label_9.sizePolicy().hasHeightForWidth())
-        self.label_9.setSizePolicy(sizePolicy4)
-        self.label_9.setMaximumSize(QSize(200, 16777215))
-        self.label_9.setFont(font)
-        self.label_9.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.verticalLayout_11.addWidget(self.label_9)
-
-        self.lineEdit_rec_capt_time = QLineEdit(self.centralwidget)
-        self.lineEdit_rec_capt_time.setObjectName(u"lineEdit_rec_capt_time")
-        sizePolicy5.setHeightForWidth(self.lineEdit_rec_capt_time.sizePolicy().hasHeightForWidth())
-        self.lineEdit_rec_capt_time.setSizePolicy(sizePolicy5)
-        self.lineEdit_rec_capt_time.setMaximumSize(QSize(200, 16777215))
-        self.lineEdit_rec_capt_time.setReadOnly(True)
-
-        self.verticalLayout_11.addWidget(self.lineEdit_rec_capt_time)
-
-
-        self.verticalLayout_3.addLayout(self.verticalLayout_11)
-
-        self.verticalLayout_15 = QVBoxLayout()
-        self.verticalLayout_15.setObjectName(u"verticalLayout_15")
-        self.verticalLayout_15.setContentsMargins(-1, 3, -1, 3)
-        self.label_11 = QLabel(self.centralwidget)
-        self.label_11.setObjectName(u"label_11")
-        sizePolicy4.setHeightForWidth(self.label_11.sizePolicy().hasHeightForWidth())
-        self.label_11.setSizePolicy(sizePolicy4)
-        self.label_11.setMaximumSize(QSize(200, 16777215))
-        self.label_11.setFont(font)
-        self.label_11.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.verticalLayout_15.addWidget(self.label_11)
-
-        self.lineEdit_rec_interval = QLineEdit(self.centralwidget)
-        self.lineEdit_rec_interval.setObjectName(u"lineEdit_rec_interval")
-        sizePolicy5.setHeightForWidth(self.lineEdit_rec_interval.sizePolicy().hasHeightForWidth())
-        self.lineEdit_rec_interval.setSizePolicy(sizePolicy5)
-        self.lineEdit_rec_interval.setMaximumSize(QSize(200, 16777215))
-        self.lineEdit_rec_interval.setReadOnly(True)
-
-        self.verticalLayout_15.addWidget(self.lineEdit_rec_interval)
-
-
-        self.verticalLayout_3.addLayout(self.verticalLayout_15)
-
-        self.verticalLayout_25 = QVBoxLayout()
-        self.verticalLayout_25.setObjectName(u"verticalLayout_25")
-        self.verticalLayout_25.setContentsMargins(-1, 3, -1, 3)
-        self.label_33 = QLabel(self.centralwidget)
-        self.label_33.setObjectName(u"label_33")
-        sizePolicy4.setHeightForWidth(self.label_33.sizePolicy().hasHeightForWidth())
-        self.label_33.setSizePolicy(sizePolicy4)
-        self.label_33.setMaximumSize(QSize(200, 16777215))
-        self.label_33.setFont(font)
-        self.label_33.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.verticalLayout_25.addWidget(self.label_33)
-
-        self.lineEdit_rec_gain = QLineEdit(self.centralwidget)
-        self.lineEdit_rec_gain.setObjectName(u"lineEdit_rec_gain")
-        sizePolicy5.setHeightForWidth(self.lineEdit_rec_gain.sizePolicy().hasHeightForWidth())
-        self.lineEdit_rec_gain.setSizePolicy(sizePolicy5)
-        self.lineEdit_rec_gain.setMaximumSize(QSize(200, 16777215))
-        self.lineEdit_rec_gain.setReadOnly(True)
-
-        self.verticalLayout_25.addWidget(self.lineEdit_rec_gain)
-
-
-        self.verticalLayout_3.addLayout(self.verticalLayout_25)
-
-
-        self.gridLayout.addLayout(self.verticalLayout_3, 3, 1, 1, 1)
-
         self.verticalLayout_2 = QVBoxLayout()
         self.verticalLayout_2.setSpacing(0)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.verticalLayout_2.setContentsMargins(-1, 1, -1, 5)
         self.tabWidget = QTabWidget(self.centralwidget)
         self.tabWidget.setObjectName(u"tabWidget")
-        sizePolicy3.setHeightForWidth(self.tabWidget.sizePolicy().hasHeightForWidth())
-        self.tabWidget.setSizePolicy(sizePolicy3)
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.tabWidget.sizePolicy().hasHeightForWidth())
+        self.tabWidget.setSizePolicy(sizePolicy2)
         self.tabWidget.setMinimumSize(QSize(0, 160))
         self.tab = QWidget()
         self.tab.setObjectName(u"tab")
@@ -349,26 +69,26 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3.setContentsMargins(20, 5, 20, 5)
         self.label = QLabel(self.verticalLayoutWidget_4)
         self.label.setObjectName(u"label")
-        font1 = QFont()
-        font1.setFamilies([u"Palatino Linotype"])
-        font1.setPointSize(12)
-        font1.setBold(False)
-        font1.setItalic(False)
-        font1.setUnderline(False)
-        font1.setStrikeOut(False)
-        font1.setKerning(True)
-        self.label.setFont(font1)
+        font = QFont()
+        font.setFamilies([u"Palatino Linotype"])
+        font.setPointSize(12)
+        font.setBold(False)
+        font.setItalic(False)
+        font.setUnderline(False)
+        font.setStrikeOut(False)
+        font.setKerning(True)
+        self.label.setFont(font)
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.horizontalLayout_3.addWidget(self.label)
 
         self.spinBox_RaSpeed = QSpinBox(self.verticalLayoutWidget_4)
         self.spinBox_RaSpeed.setObjectName(u"spinBox_RaSpeed")
-        sizePolicy7 = QSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
-        sizePolicy7.setHorizontalStretch(50)
-        sizePolicy7.setVerticalStretch(50)
-        sizePolicy7.setHeightForWidth(self.spinBox_RaSpeed.sizePolicy().hasHeightForWidth())
-        self.spinBox_RaSpeed.setSizePolicy(sizePolicy7)
+        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
+        sizePolicy3.setHorizontalStretch(50)
+        sizePolicy3.setVerticalStretch(50)
+        sizePolicy3.setHeightForWidth(self.spinBox_RaSpeed.sizePolicy().hasHeightForWidth())
+        self.spinBox_RaSpeed.setSizePolicy(sizePolicy3)
         self.spinBox_RaSpeed.setMinimumSize(QSize(50, 40))
         self.spinBox_RaSpeed.setMinimum(-4000)
         self.spinBox_RaSpeed.setMaximum(4000)
@@ -393,15 +113,15 @@ class Ui_MainWindow(object):
         self.horizontalLayout_5.setContentsMargins(20, 5, 20, 5)
         self.label_3 = QLabel(self.verticalLayoutWidget_4)
         self.label_3.setObjectName(u"label_3")
-        self.label_3.setFont(font1)
+        self.label_3.setFont(font)
         self.label_3.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.horizontalLayout_5.addWidget(self.label_3)
 
         self.spinBox_DecSpeed = QSpinBox(self.verticalLayoutWidget_4)
         self.spinBox_DecSpeed.setObjectName(u"spinBox_DecSpeed")
-        sizePolicy7.setHeightForWidth(self.spinBox_DecSpeed.sizePolicy().hasHeightForWidth())
-        self.spinBox_DecSpeed.setSizePolicy(sizePolicy7)
+        sizePolicy3.setHeightForWidth(self.spinBox_DecSpeed.sizePolicy().hasHeightForWidth())
+        self.spinBox_DecSpeed.setSizePolicy(sizePolicy3)
         self.spinBox_DecSpeed.setMinimumSize(QSize(50, 40))
         self.spinBox_DecSpeed.setMinimum(-4000)
         self.spinBox_DecSpeed.setMaximum(4000)
@@ -543,6 +263,286 @@ class Ui_MainWindow(object):
 
         self.gridLayout.addLayout(self.verticalLayout_2, 0, 1, 3, 3)
 
+        self.verticalLayout_3 = QVBoxLayout()
+        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.verticalLayout_3.setContentsMargins(-1, 10, -1, 10)
+        self.label_50 = QLabel(self.centralwidget)
+        self.label_50.setObjectName(u"label_50")
+        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
+        sizePolicy4.setHorizontalStretch(0)
+        sizePolicy4.setVerticalStretch(0)
+        sizePolicy4.setHeightForWidth(self.label_50.sizePolicy().hasHeightForWidth())
+        self.label_50.setSizePolicy(sizePolicy4)
+        self.label_50.setMaximumSize(QSize(200, 16777215))
+        font1 = QFont()
+        font1.setFamilies([u"Segoe MDL2 Assets"])
+        font1.setPointSize(12)
+        self.label_50.setFont(font1)
+        self.label_50.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.verticalLayout_3.addWidget(self.label_50)
+
+        self.comboBox_address_2 = QComboBox(self.centralwidget)
+        self.comboBox_address_2.addItem("")
+        self.comboBox_address_2.addItem("")
+        self.comboBox_address_2.addItem("")
+        self.comboBox_address_2.setObjectName(u"comboBox_address_2")
+        sizePolicy2.setHeightForWidth(self.comboBox_address_2.sizePolicy().hasHeightForWidth())
+        self.comboBox_address_2.setSizePolicy(sizePolicy2)
+        self.comboBox_address_2.setMaximumSize(QSize(200, 16777215))
+        self.comboBox_address_2.setEditable(True)
+
+        self.verticalLayout_3.addWidget(self.comboBox_address_2)
+
+        self.verticalLayout_14 = QVBoxLayout()
+        self.verticalLayout_14.setObjectName(u"verticalLayout_14")
+        self.verticalLayout_4 = QVBoxLayout()
+        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.verticalLayout_23 = QVBoxLayout()
+        self.verticalLayout_23.setObjectName(u"verticalLayout_23")
+        self.pushButton_4 = QPushButton(self.centralwidget)
+        self.pushButton_4.setObjectName(u"pushButton_4")
+        sizePolicy2.setHeightForWidth(self.pushButton_4.sizePolicy().hasHeightForWidth())
+        self.pushButton_4.setSizePolicy(sizePolicy2)
+        self.pushButton_4.setMaximumSize(QSize(190, 16777215))
+
+        self.verticalLayout_23.addWidget(self.pushButton_4)
+
+        self.horizontalLayout_21 = QHBoxLayout()
+        self.horizontalLayout_21.setObjectName(u"horizontalLayout_21")
+        self.label_37 = QLabel(self.centralwidget)
+        self.label_37.setObjectName(u"label_37")
+        sizePolicy5 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Preferred)
+        sizePolicy5.setHorizontalStretch(0)
+        sizePolicy5.setVerticalStretch(0)
+        sizePolicy5.setHeightForWidth(self.label_37.sizePolicy().hasHeightForWidth())
+        self.label_37.setSizePolicy(sizePolicy5)
+        self.label_37.setMinimumSize(QSize(70, 0))
+        self.label_37.setMaximumSize(QSize(100, 25))
+        self.label_37.setFont(font1)
+        self.label_37.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.horizontalLayout_21.addWidget(self.label_37)
+
+        self.spinBox_setExposure = QSpinBox(self.centralwidget)
+        self.spinBox_setExposure.setObjectName(u"spinBox_setExposure")
+        sizePolicy6 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        sizePolicy6.setHorizontalStretch(0)
+        sizePolicy6.setVerticalStretch(0)
+        sizePolicy6.setHeightForWidth(self.spinBox_setExposure.sizePolicy().hasHeightForWidth())
+        self.spinBox_setExposure.setSizePolicy(sizePolicy6)
+        self.spinBox_setExposure.setMinimumSize(QSize(50, 0))
+        self.spinBox_setExposure.setMaximumSize(QSize(100, 25))
+        self.spinBox_setExposure.setMinimum(100)
+        self.spinBox_setExposure.setMaximum(20000)
+        self.spinBox_setExposure.setValue(500)
+
+        self.horizontalLayout_21.addWidget(self.spinBox_setExposure)
+
+
+        self.verticalLayout_23.addLayout(self.horizontalLayout_21)
+
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.label_36 = QLabel(self.centralwidget)
+        self.label_36.setObjectName(u"label_36")
+        sizePolicy5.setHeightForWidth(self.label_36.sizePolicy().hasHeightForWidth())
+        self.label_36.setSizePolicy(sizePolicy5)
+        self.label_36.setMaximumSize(QSize(100, 25))
+        self.label_36.setFont(font1)
+        self.label_36.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.horizontalLayout_2.addWidget(self.label_36)
+
+        self.spinBox_setInterval = QSpinBox(self.centralwidget)
+        self.spinBox_setInterval.setObjectName(u"spinBox_setInterval")
+        sizePolicy6.setHeightForWidth(self.spinBox_setInterval.sizePolicy().hasHeightForWidth())
+        self.spinBox_setInterval.setSizePolicy(sizePolicy6)
+        self.spinBox_setInterval.setMaximumSize(QSize(100, 16777215))
+        self.spinBox_setInterval.setMinimum(100)
+        self.spinBox_setInterval.setMaximum(20000)
+        self.spinBox_setInterval.setValue(1000)
+
+        self.horizontalLayout_2.addWidget(self.spinBox_setInterval)
+
+
+        self.verticalLayout_23.addLayout(self.horizontalLayout_2)
+
+        self.horizontalLayout_22 = QHBoxLayout()
+        self.horizontalLayout_22.setObjectName(u"horizontalLayout_22")
+        self.label_35 = QLabel(self.centralwidget)
+        self.label_35.setObjectName(u"label_35")
+        sizePolicy5.setHeightForWidth(self.label_35.sizePolicy().hasHeightForWidth())
+        self.label_35.setSizePolicy(sizePolicy5)
+        self.label_35.setMaximumSize(QSize(100, 25))
+        self.label_35.setFont(font1)
+        self.label_35.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.horizontalLayout_22.addWidget(self.label_35)
+
+        self.spinBox_setGain = QSpinBox(self.centralwidget)
+        self.spinBox_setGain.setObjectName(u"spinBox_setGain")
+        sizePolicy7 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
+        sizePolicy7.setHorizontalStretch(0)
+        sizePolicy7.setVerticalStretch(0)
+        sizePolicy7.setHeightForWidth(self.spinBox_setGain.sizePolicy().hasHeightForWidth())
+        self.spinBox_setGain.setSizePolicy(sizePolicy7)
+        self.spinBox_setGain.setMaximumSize(QSize(100, 16777215))
+        self.spinBox_setGain.setMaximum(100)
+        self.spinBox_setGain.setValue(70)
+
+        self.horizontalLayout_22.addWidget(self.spinBox_setGain)
+
+
+        self.verticalLayout_23.addLayout(self.horizontalLayout_22)
+
+
+        self.verticalLayout_4.addLayout(self.verticalLayout_23)
+
+
+        self.verticalLayout_14.addLayout(self.verticalLayout_4)
+
+
+        self.verticalLayout_3.addLayout(self.verticalLayout_14)
+
+        self.label_39 = QLabel(self.centralwidget)
+        self.label_39.setObjectName(u"label_39")
+        sizePolicy5.setHeightForWidth(self.label_39.sizePolicy().hasHeightForWidth())
+        self.label_39.setSizePolicy(sizePolicy5)
+        self.label_39.setMaximumSize(QSize(200, 16777215))
+        self.label_39.setFont(font1)
+        self.label_39.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.verticalLayout_3.addWidget(self.label_39)
+
+        self.verticalLayout_24 = QVBoxLayout()
+        self.verticalLayout_24.setObjectName(u"verticalLayout_24")
+        self.verticalLayout_24.setContentsMargins(-1, 3, -1, 3)
+        self.label_12 = QLabel(self.centralwidget)
+        self.label_12.setObjectName(u"label_12")
+        sizePolicy5.setHeightForWidth(self.label_12.sizePolicy().hasHeightForWidth())
+        self.label_12.setSizePolicy(sizePolicy5)
+        self.label_12.setMaximumSize(QSize(200, 16777215))
+        self.label_12.setFont(font1)
+        self.label_12.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.verticalLayout_24.addWidget(self.label_12)
+
+        self.lineEdit_rec_title = QLineEdit(self.centralwidget)
+        self.lineEdit_rec_title.setObjectName(u"lineEdit_rec_title")
+        sizePolicy6.setHeightForWidth(self.lineEdit_rec_title.sizePolicy().hasHeightForWidth())
+        self.lineEdit_rec_title.setSizePolicy(sizePolicy6)
+        self.lineEdit_rec_title.setMaximumSize(QSize(200, 16777215))
+        self.lineEdit_rec_title.setReadOnly(True)
+
+        self.verticalLayout_24.addWidget(self.lineEdit_rec_title)
+
+
+        self.verticalLayout_3.addLayout(self.verticalLayout_24)
+
+        self.verticalLayout_12 = QVBoxLayout()
+        self.verticalLayout_12.setObjectName(u"verticalLayout_12")
+        self.verticalLayout_12.setContentsMargins(-1, 3, -1, 3)
+        self.label_10 = QLabel(self.centralwidget)
+        self.label_10.setObjectName(u"label_10")
+        sizePolicy5.setHeightForWidth(self.label_10.sizePolicy().hasHeightForWidth())
+        self.label_10.setSizePolicy(sizePolicy5)
+        self.label_10.setMaximumSize(QSize(200, 16777215))
+        self.label_10.setFont(font1)
+        self.label_10.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.verticalLayout_12.addWidget(self.label_10)
+
+        self.lineEdit_rec_exp = QLineEdit(self.centralwidget)
+        self.lineEdit_rec_exp.setObjectName(u"lineEdit_rec_exp")
+        sizePolicy6.setHeightForWidth(self.lineEdit_rec_exp.sizePolicy().hasHeightForWidth())
+        self.lineEdit_rec_exp.setSizePolicy(sizePolicy6)
+        self.lineEdit_rec_exp.setMaximumSize(QSize(200, 16777215))
+        self.lineEdit_rec_exp.setReadOnly(True)
+
+        self.verticalLayout_12.addWidget(self.lineEdit_rec_exp)
+
+
+        self.verticalLayout_3.addLayout(self.verticalLayout_12)
+
+        self.verticalLayout_11 = QVBoxLayout()
+        self.verticalLayout_11.setObjectName(u"verticalLayout_11")
+        self.verticalLayout_11.setContentsMargins(-1, 3, -1, 3)
+        self.label_9 = QLabel(self.centralwidget)
+        self.label_9.setObjectName(u"label_9")
+        sizePolicy5.setHeightForWidth(self.label_9.sizePolicy().hasHeightForWidth())
+        self.label_9.setSizePolicy(sizePolicy5)
+        self.label_9.setMaximumSize(QSize(200, 16777215))
+        self.label_9.setFont(font1)
+        self.label_9.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.verticalLayout_11.addWidget(self.label_9)
+
+        self.lineEdit_rec_capt_time = QLineEdit(self.centralwidget)
+        self.lineEdit_rec_capt_time.setObjectName(u"lineEdit_rec_capt_time")
+        sizePolicy6.setHeightForWidth(self.lineEdit_rec_capt_time.sizePolicy().hasHeightForWidth())
+        self.lineEdit_rec_capt_time.setSizePolicy(sizePolicy6)
+        self.lineEdit_rec_capt_time.setMaximumSize(QSize(200, 16777215))
+        self.lineEdit_rec_capt_time.setReadOnly(True)
+
+        self.verticalLayout_11.addWidget(self.lineEdit_rec_capt_time)
+
+
+        self.verticalLayout_3.addLayout(self.verticalLayout_11)
+
+        self.verticalLayout_15 = QVBoxLayout()
+        self.verticalLayout_15.setObjectName(u"verticalLayout_15")
+        self.verticalLayout_15.setContentsMargins(-1, 3, -1, 3)
+        self.label_11 = QLabel(self.centralwidget)
+        self.label_11.setObjectName(u"label_11")
+        sizePolicy5.setHeightForWidth(self.label_11.sizePolicy().hasHeightForWidth())
+        self.label_11.setSizePolicy(sizePolicy5)
+        self.label_11.setMaximumSize(QSize(200, 16777215))
+        self.label_11.setFont(font1)
+        self.label_11.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.verticalLayout_15.addWidget(self.label_11)
+
+        self.lineEdit_rec_interval = QLineEdit(self.centralwidget)
+        self.lineEdit_rec_interval.setObjectName(u"lineEdit_rec_interval")
+        sizePolicy6.setHeightForWidth(self.lineEdit_rec_interval.sizePolicy().hasHeightForWidth())
+        self.lineEdit_rec_interval.setSizePolicy(sizePolicy6)
+        self.lineEdit_rec_interval.setMaximumSize(QSize(200, 16777215))
+        self.lineEdit_rec_interval.setReadOnly(True)
+
+        self.verticalLayout_15.addWidget(self.lineEdit_rec_interval)
+
+
+        self.verticalLayout_3.addLayout(self.verticalLayout_15)
+
+        self.verticalLayout_25 = QVBoxLayout()
+        self.verticalLayout_25.setObjectName(u"verticalLayout_25")
+        self.verticalLayout_25.setContentsMargins(-1, 3, -1, 3)
+        self.label_33 = QLabel(self.centralwidget)
+        self.label_33.setObjectName(u"label_33")
+        sizePolicy5.setHeightForWidth(self.label_33.sizePolicy().hasHeightForWidth())
+        self.label_33.setSizePolicy(sizePolicy5)
+        self.label_33.setMaximumSize(QSize(200, 16777215))
+        self.label_33.setFont(font1)
+        self.label_33.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.verticalLayout_25.addWidget(self.label_33)
+
+        self.lineEdit_rec_gain = QLineEdit(self.centralwidget)
+        self.lineEdit_rec_gain.setObjectName(u"lineEdit_rec_gain")
+        sizePolicy6.setHeightForWidth(self.lineEdit_rec_gain.sizePolicy().hasHeightForWidth())
+        self.lineEdit_rec_gain.setSizePolicy(sizePolicy6)
+        self.lineEdit_rec_gain.setMaximumSize(QSize(200, 16777215))
+        self.lineEdit_rec_gain.setReadOnly(True)
+
+        self.verticalLayout_25.addWidget(self.lineEdit_rec_gain)
+
+
+        self.verticalLayout_3.addLayout(self.verticalLayout_25)
+
+
+        self.gridLayout.addLayout(self.verticalLayout_3, 3, 1, 1, 1)
+
         self.verticalLayout_45 = QVBoxLayout()
         self.verticalLayout_45.setObjectName(u"verticalLayout_45")
         self.imageWidget = RawImageWidget(self.centralwidget)
@@ -556,741 +556,6 @@ class Ui_MainWindow(object):
 
 
         self.gridLayout.addLayout(self.verticalLayout_45, 3, 2, 1, 2)
-
-        self.verticalLayout = QVBoxLayout()
-        self.verticalLayout.setObjectName(u"verticalLayout")
-        self.verticalLayout.setContentsMargins(5, 5, 5, 5)
-        self.verticalLayout_21 = QVBoxLayout()
-        self.verticalLayout_21.setObjectName(u"verticalLayout_21")
-        self.verticalLayout_20 = QVBoxLayout()
-        self.verticalLayout_20.setObjectName(u"verticalLayout_20")
-        self.verticalLayout_19 = QVBoxLayout()
-        self.verticalLayout_19.setObjectName(u"verticalLayout_19")
-        self.comboBox_address = QComboBox(self.centralwidget)
-        self.comboBox_address.addItem("")
-        self.comboBox_address.addItem("")
-        self.comboBox_address.setObjectName(u"comboBox_address")
-        self.comboBox_address.setMaximumSize(QSize(200, 16777215))
-        self.comboBox_address.setEditable(True)
-
-        self.verticalLayout_19.addWidget(self.comboBox_address)
-
-
-        self.verticalLayout_20.addLayout(self.verticalLayout_19)
-
-        self.pushButton = QPushButton(self.centralwidget)
-        self.pushButton.setObjectName(u"pushButton")
-        self.pushButton.setMaximumSize(QSize(200, 16777215))
-
-        self.verticalLayout_20.addWidget(self.pushButton)
-
-        self.horizontalLayout_17 = QHBoxLayout()
-        self.horizontalLayout_17.setObjectName(u"horizontalLayout_17")
-        self.label_20 = QLabel(self.centralwidget)
-        self.label_20.setObjectName(u"label_20")
-        self.label_20.setMaximumSize(QSize(70, 16777215))
-        self.label_20.setAlignment(Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTrailing|Qt.AlignmentFlag.AlignVCenter)
-
-        self.horizontalLayout_17.addWidget(self.label_20)
-
-        self.label_19 = QLabel(self.centralwidget)
-        self.label_19.setObjectName(u"label_19")
-        self.label_19.setMaximumSize(QSize(70, 16777215))
-        self.label_19.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.horizontalLayout_17.addWidget(self.label_19)
-
-        self.label_21 = QLabel(self.centralwidget)
-        self.label_21.setObjectName(u"label_21")
-        self.label_21.setMaximumSize(QSize(70, 16777215))
-        self.label_21.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
-
-        self.horizontalLayout_17.addWidget(self.label_21)
-
-
-        self.verticalLayout_20.addLayout(self.horizontalLayout_17)
-
-        self.horizontalLayout_18 = QHBoxLayout()
-        self.horizontalLayout_18.setObjectName(u"horizontalLayout_18")
-        self.label_broker_status = QLabel(self.centralwidget)
-        self.label_broker_status.setObjectName(u"label_broker_status")
-        sizePolicy5.setHeightForWidth(self.label_broker_status.sizePolicy().hasHeightForWidth())
-        self.label_broker_status.setSizePolicy(sizePolicy5)
-        self.label_broker_status.setMaximumSize(QSize(16, 16))
-        self.label_broker_status.setPixmap(QPixmap(u"../stepper_controller_V2/GUI/StepperGUI/graphics/led_red.png"))
-        self.label_broker_status.setScaledContents(True)
-        self.label_broker_status.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.horizontalLayout_18.addWidget(self.label_broker_status)
-
-        self.label_guider_status = QLabel(self.centralwidget)
-        self.label_guider_status.setObjectName(u"label_guider_status")
-        sizePolicy5.setHeightForWidth(self.label_guider_status.sizePolicy().hasHeightForWidth())
-        self.label_guider_status.setSizePolicy(sizePolicy5)
-        self.label_guider_status.setMaximumSize(QSize(16, 16))
-        self.label_guider_status.setPixmap(QPixmap(u"../stepper_controller_V2/GUI/StepperGUI/graphics/led_red.png"))
-        self.label_guider_status.setScaledContents(True)
-        self.label_guider_status.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.horizontalLayout_18.addWidget(self.label_guider_status)
-
-        self.label_stepper_status = QLabel(self.centralwidget)
-        self.label_stepper_status.setObjectName(u"label_stepper_status")
-        sizePolicy5.setHeightForWidth(self.label_stepper_status.sizePolicy().hasHeightForWidth())
-        self.label_stepper_status.setSizePolicy(sizePolicy5)
-        self.label_stepper_status.setMaximumSize(QSize(16, 16))
-        self.label_stepper_status.setPixmap(QPixmap(u"../stepper_controller_V2/GUI/StepperGUI/graphics/led_red.png"))
-        self.label_stepper_status.setScaledContents(True)
-        self.label_stepper_status.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.horizontalLayout_18.addWidget(self.label_stepper_status)
-
-
-        self.verticalLayout_20.addLayout(self.horizontalLayout_18)
-
-
-        self.verticalLayout_21.addLayout(self.verticalLayout_20)
-
-        self.radioButton_manual_speed = QRadioButton(self.centralwidget)
-        self.radioButton_manual_speed.setObjectName(u"radioButton_manual_speed")
-        self.radioButton_manual_speed.setMaximumSize(QSize(200, 16777215))
-        self.radioButton_manual_speed.setChecked(True)
-
-        self.verticalLayout_21.addWidget(self.radioButton_manual_speed)
-
-        self.radioButton_auto_speed = QRadioButton(self.centralwidget)
-        self.radioButton_auto_speed.setObjectName(u"radioButton_auto_speed")
-        self.radioButton_auto_speed.setMaximumSize(QSize(200, 16777215))
-
-        self.verticalLayout_21.addWidget(self.radioButton_auto_speed)
-
-        self.radioButton_manual_steps = QRadioButton(self.centralwidget)
-        self.radioButton_manual_steps.setObjectName(u"radioButton_manual_steps")
-        self.radioButton_manual_steps.setMaximumSize(QSize(200, 16777215))
-
-        self.verticalLayout_21.addWidget(self.radioButton_manual_steps)
-
-        self.radioButton_manual_coil = QRadioButton(self.centralwidget)
-        self.radioButton_manual_coil.setObjectName(u"radioButton_manual_coil")
-        self.radioButton_manual_coil.setMaximumSize(QSize(200, 16777215))
-
-        self.verticalLayout_21.addWidget(self.radioButton_manual_coil)
-
-
-        self.verticalLayout.addLayout(self.verticalLayout_21)
-
-        self.verticalLayout_5 = QVBoxLayout()
-        self.verticalLayout_5.setObjectName(u"verticalLayout_5")
-        self.verticalLayout_5.setContentsMargins(5, -1, 5, -1)
-        self.tabWidget_2 = QTabWidget(self.centralwidget)
-        self.tabWidget_2.setObjectName(u"tabWidget_2")
-        self.tabWidget_2.setMaximumSize(QSize(220, 16777215))
-        self.tabWidget_2.setUsesScrollButtons(True)
-        self.Mott = QWidget()
-        self.Mott.setObjectName(u"Mott")
-        self.verticalLayoutWidget_8 = QWidget(self.Mott)
-        self.verticalLayoutWidget_8.setObjectName(u"verticalLayoutWidget_8")
-        self.verticalLayoutWidget_8.setGeometry(QRect(10, 60, 181, 55))
-        self.verticalLayout_10 = QVBoxLayout(self.verticalLayoutWidget_8)
-        self.verticalLayout_10.setObjectName(u"verticalLayout_10")
-        self.verticalLayout_10.setContentsMargins(0, 3, 0, 3)
-        self.label_8 = QLabel(self.verticalLayoutWidget_8)
-        self.label_8.setObjectName(u"label_8")
-        sizePolicy4.setHeightForWidth(self.label_8.sizePolicy().hasHeightForWidth())
-        self.label_8.setSizePolicy(sizePolicy4)
-        self.label_8.setMaximumSize(QSize(160, 16777215))
-        self.label_8.setFont(font)
-        self.label_8.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.verticalLayout_10.addWidget(self.label_8)
-
-        self.comboBox_preview = QComboBox(self.verticalLayoutWidget_8)
-        self.comboBox_preview.addItem("")
-        self.comboBox_preview.addItem("")
-        self.comboBox_preview.addItem("")
-        self.comboBox_preview.setObjectName(u"comboBox_preview")
-        sizePolicy5.setHeightForWidth(self.comboBox_preview.sizePolicy().hasHeightForWidth())
-        self.comboBox_preview.setSizePolicy(sizePolicy5)
-        self.comboBox_preview.setMaximumSize(QSize(160, 16777215))
-
-        self.verticalLayout_10.addWidget(self.comboBox_preview)
-
-        self.verticalLayoutWidget_11 = QWidget(self.Mott)
-        self.verticalLayoutWidget_11.setObjectName(u"verticalLayoutWidget_11")
-        self.verticalLayoutWidget_11.setGeometry(QRect(10, 10, 181, 41))
-        self.verticalLayout_13 = QVBoxLayout(self.verticalLayoutWidget_11)
-        self.verticalLayout_13.setObjectName(u"verticalLayout_13")
-        self.verticalLayout_13.setContentsMargins(0, 0, 0, 0)
-        self.checkBox = QCheckBox(self.verticalLayoutWidget_11)
-        self.checkBox.setObjectName(u"checkBox")
-        sizePolicy5.setHeightForWidth(self.checkBox.sizePolicy().hasHeightForWidth())
-        self.checkBox.setSizePolicy(sizePolicy5)
-        self.checkBox.setMaximumSize(QSize(160, 16777215))
-        font2 = QFont()
-        font2.setPointSize(12)
-        self.checkBox.setFont(font2)
-
-        self.verticalLayout_13.addWidget(self.checkBox)
-
-        self.verticalLayoutWidget_14 = QWidget(self.Mott)
-        self.verticalLayoutWidget_14.setObjectName(u"verticalLayoutWidget_14")
-        self.verticalLayoutWidget_14.setGeometry(QRect(10, 120, 181, 140))
-        self.verticalLayout_16 = QVBoxLayout(self.verticalLayoutWidget_14)
-        self.verticalLayout_16.setObjectName(u"verticalLayout_16")
-        self.verticalLayout_16.setContentsMargins(0, 3, 0, 3)
-        self.checkBox_show_sky_coo = QCheckBox(self.verticalLayoutWidget_14)
-        self.checkBox_show_sky_coo.setObjectName(u"checkBox_show_sky_coo")
-        sizePolicy5.setHeightForWidth(self.checkBox_show_sky_coo.sizePolicy().hasHeightForWidth())
-        self.checkBox_show_sky_coo.setSizePolicy(sizePolicy5)
-        self.checkBox_show_sky_coo.setMaximumSize(QSize(160, 16777215))
-
-        self.verticalLayout_16.addWidget(self.checkBox_show_sky_coo)
-
-        self.checkBox_show_motor_coo = QCheckBox(self.verticalLayoutWidget_14)
-        self.checkBox_show_motor_coo.setObjectName(u"checkBox_show_motor_coo")
-        sizePolicy5.setHeightForWidth(self.checkBox_show_motor_coo.sizePolicy().hasHeightForWidth())
-        self.checkBox_show_motor_coo.setSizePolicy(sizePolicy5)
-        self.checkBox_show_motor_coo.setMaximumSize(QSize(160, 16777215))
-
-        self.verticalLayout_16.addWidget(self.checkBox_show_motor_coo)
-
-        self.checkBox_show_all_detected = QCheckBox(self.verticalLayoutWidget_14)
-        self.checkBox_show_all_detected.setObjectName(u"checkBox_show_all_detected")
-        sizePolicy5.setHeightForWidth(self.checkBox_show_all_detected.sizePolicy().hasHeightForWidth())
-        self.checkBox_show_all_detected.setSizePolicy(sizePolicy5)
-        self.checkBox_show_all_detected.setMaximumSize(QSize(160, 16777215))
-
-        self.verticalLayout_16.addWidget(self.checkBox_show_all_detected)
-
-        self.checkBox_show_sky_grid = QCheckBox(self.verticalLayoutWidget_14)
-        self.checkBox_show_sky_grid.setObjectName(u"checkBox_show_sky_grid")
-        sizePolicy5.setHeightForWidth(self.checkBox_show_sky_grid.sizePolicy().hasHeightForWidth())
-        self.checkBox_show_sky_grid.setSizePolicy(sizePolicy5)
-        self.checkBox_show_sky_grid.setMaximumSize(QSize(160, 16777215))
-
-        self.verticalLayout_16.addWidget(self.checkBox_show_sky_grid)
-
-        self.checkBox_show_guiding_star = QCheckBox(self.verticalLayoutWidget_14)
-        self.checkBox_show_guiding_star.setObjectName(u"checkBox_show_guiding_star")
-        sizePolicy5.setHeightForWidth(self.checkBox_show_guiding_star.sizePolicy().hasHeightForWidth())
-        self.checkBox_show_guiding_star.setSizePolicy(sizePolicy5)
-        self.checkBox_show_guiding_star.setMaximumSize(QSize(160, 16777215))
-
-        self.verticalLayout_16.addWidget(self.checkBox_show_guiding_star)
-
-        self.checkBox_save_raw = QCheckBox(self.Mott)
-        self.checkBox_save_raw.setObjectName(u"checkBox_save_raw")
-        self.checkBox_save_raw.setGeometry(QRect(10, 270, 160, 27))
-        sizePolicy5.setHeightForWidth(self.checkBox_save_raw.sizePolicy().hasHeightForWidth())
-        self.checkBox_save_raw.setSizePolicy(sizePolicy5)
-        self.checkBox_save_raw.setMaximumSize(QSize(160, 16777215))
-        self.checkBox_save_raw.setFont(font2)
-        self.tabWidget_2.addTab(self.Mott, "")
-        self.tab_5 = QWidget()
-        self.tab_5.setObjectName(u"tab_5")
-        self.verticalLayoutWidget_16 = QWidget(self.tab_5)
-        self.verticalLayoutWidget_16.setObjectName(u"verticalLayoutWidget_16")
-        self.verticalLayoutWidget_16.setGeometry(QRect(0, 0, 201, 81))
-        self.verticalLayout_18 = QVBoxLayout(self.verticalLayoutWidget_16)
-        self.verticalLayout_18.setObjectName(u"verticalLayout_18")
-        self.verticalLayout_18.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout_10 = QHBoxLayout()
-        self.horizontalLayout_10.setObjectName(u"horizontalLayout_10")
-        self.horizontalLayout_10.setContentsMargins(-1, 3, -1, 3)
-        self.label_5 = QLabel(self.verticalLayoutWidget_16)
-        self.label_5.setObjectName(u"label_5")
-        sizePolicy2.setHeightForWidth(self.label_5.sizePolicy().hasHeightForWidth())
-        self.label_5.setSizePolicy(sizePolicy2)
-        self.label_5.setMaximumSize(QSize(16777215, 80))
-        self.label_5.setFont(font2)
-        self.label_5.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.horizontalLayout_10.addWidget(self.label_5)
-
-        self.label_13 = QLabel(self.verticalLayoutWidget_16)
-        self.label_13.setObjectName(u"label_13")
-        sizePolicy2.setHeightForWidth(self.label_13.sizePolicy().hasHeightForWidth())
-        self.label_13.setSizePolicy(sizePolicy2)
-        self.label_13.setMaximumSize(QSize(16777215, 80))
-        self.label_13.setFont(font2)
-        self.label_13.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.horizontalLayout_10.addWidget(self.label_13)
-
-
-        self.verticalLayout_18.addLayout(self.horizontalLayout_10)
-
-        self.horizontalLayout_9 = QHBoxLayout()
-        self.horizontalLayout_9.setObjectName(u"horizontalLayout_9")
-        self.lcdNumber_buck1 = QLCDNumber(self.verticalLayoutWidget_16)
-        self.lcdNumber_buck1.setObjectName(u"lcdNumber_buck1")
-        sizePolicy8 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
-        sizePolicy8.setHorizontalStretch(0)
-        sizePolicy8.setVerticalStretch(0)
-        sizePolicy8.setHeightForWidth(self.lcdNumber_buck1.sizePolicy().hasHeightForWidth())
-        self.lcdNumber_buck1.setSizePolicy(sizePolicy8)
-        self.lcdNumber_buck1.setMaximumSize(QSize(80, 80))
-
-        self.horizontalLayout_9.addWidget(self.lcdNumber_buck1)
-
-        self.lcdNumber_buck2 = QLCDNumber(self.verticalLayoutWidget_16)
-        self.lcdNumber_buck2.setObjectName(u"lcdNumber_buck2")
-        sizePolicy8.setHeightForWidth(self.lcdNumber_buck2.sizePolicy().hasHeightForWidth())
-        self.lcdNumber_buck2.setSizePolicy(sizePolicy8)
-        self.lcdNumber_buck2.setMaximumSize(QSize(80, 16777215))
-
-        self.horizontalLayout_9.addWidget(self.lcdNumber_buck2)
-
-
-        self.verticalLayout_18.addLayout(self.horizontalLayout_9)
-
-        self.verticalLayoutWidget_15 = QWidget(self.tab_5)
-        self.verticalLayoutWidget_15.setObjectName(u"verticalLayoutWidget_15")
-        self.verticalLayoutWidget_15.setGeometry(QRect(0, 80, 203, 201))
-        self.verticalLayout_17 = QVBoxLayout(self.verticalLayoutWidget_15)
-        self.verticalLayout_17.setObjectName(u"verticalLayout_17")
-        self.verticalLayout_17.setContentsMargins(0, 0, 0, 0)
-        self.label_18 = QLabel(self.verticalLayoutWidget_15)
-        self.label_18.setObjectName(u"label_18")
-        sizePolicy4.setHeightForWidth(self.label_18.sizePolicy().hasHeightForWidth())
-        self.label_18.setSizePolicy(sizePolicy4)
-        font3 = QFont()
-        font3.setPointSize(16)
-        self.label_18.setFont(font3)
-
-        self.verticalLayout_17.addWidget(self.label_18)
-
-        self.horizontalLayout_13 = QHBoxLayout()
-        self.horizontalLayout_13.setObjectName(u"horizontalLayout_13")
-        self.horizontalLayout_13.setContentsMargins(5, 3, 10, 3)
-        self.label_14 = QLabel(self.verticalLayoutWidget_15)
-        self.label_14.setObjectName(u"label_14")
-        sizePolicy4.setHeightForWidth(self.label_14.sizePolicy().hasHeightForWidth())
-        self.label_14.setSizePolicy(sizePolicy4)
-        self.label_14.setMaximumSize(QSize(80, 80))
-        self.label_14.setFont(font2)
-
-        self.horizontalLayout_13.addWidget(self.label_14)
-
-        self.label_31 = QLabel(self.verticalLayoutWidget_15)
-        self.label_31.setObjectName(u"label_31")
-        sizePolicy5.setHeightForWidth(self.label_31.sizePolicy().hasHeightForWidth())
-        self.label_31.setSizePolicy(sizePolicy5)
-        self.label_31.setMaximumSize(QSize(16, 16))
-        self.label_31.setPixmap(QPixmap(u"../stepper_controller_V2/GUI/StepperGUI/graphics/led_red.png"))
-        self.label_31.setScaledContents(True)
-        self.label_31.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.horizontalLayout_13.addWidget(self.label_31)
-
-        self.lcdNumber_M1C1 = QLCDNumber(self.verticalLayoutWidget_15)
-        self.lcdNumber_M1C1.setObjectName(u"lcdNumber_M1C1")
-        sizePolicy9 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum)
-        sizePolicy9.setHorizontalStretch(0)
-        sizePolicy9.setVerticalStretch(0)
-        sizePolicy9.setHeightForWidth(self.lcdNumber_M1C1.sizePolicy().hasHeightForWidth())
-        self.lcdNumber_M1C1.setSizePolicy(sizePolicy9)
-        self.lcdNumber_M1C1.setMaximumSize(QSize(80, 80))
-
-        self.horizontalLayout_13.addWidget(self.lcdNumber_M1C1)
-
-
-        self.verticalLayout_17.addLayout(self.horizontalLayout_13)
-
-        self.horizontalLayout_14 = QHBoxLayout()
-        self.horizontalLayout_14.setObjectName(u"horizontalLayout_14")
-        self.horizontalLayout_14.setContentsMargins(5, 3, 10, 3)
-        self.label_15 = QLabel(self.verticalLayoutWidget_15)
-        self.label_15.setObjectName(u"label_15")
-        sizePolicy4.setHeightForWidth(self.label_15.sizePolicy().hasHeightForWidth())
-        self.label_15.setSizePolicy(sizePolicy4)
-        self.label_15.setMaximumSize(QSize(80, 16777215))
-        self.label_15.setFont(font2)
-
-        self.horizontalLayout_14.addWidget(self.label_15)
-
-        self.label_34 = QLabel(self.verticalLayoutWidget_15)
-        self.label_34.setObjectName(u"label_34")
-        sizePolicy5.setHeightForWidth(self.label_34.sizePolicy().hasHeightForWidth())
-        self.label_34.setSizePolicy(sizePolicy5)
-        self.label_34.setMaximumSize(QSize(16, 16))
-        self.label_34.setPixmap(QPixmap(u"../stepper_controller_V2/GUI/StepperGUI/graphics/led_red.png"))
-        self.label_34.setScaledContents(True)
-        self.label_34.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.horizontalLayout_14.addWidget(self.label_34)
-
-        self.lcdNumber_M1C2 = QLCDNumber(self.verticalLayoutWidget_15)
-        self.lcdNumber_M1C2.setObjectName(u"lcdNumber_M1C2")
-        sizePolicy9.setHeightForWidth(self.lcdNumber_M1C2.sizePolicy().hasHeightForWidth())
-        self.lcdNumber_M1C2.setSizePolicy(sizePolicy9)
-        self.lcdNumber_M1C2.setMaximumSize(QSize(80, 16777215))
-
-        self.horizontalLayout_14.addWidget(self.lcdNumber_M1C2)
-
-
-        self.verticalLayout_17.addLayout(self.horizontalLayout_14)
-
-        self.horizontalLayout_16 = QHBoxLayout()
-        self.horizontalLayout_16.setObjectName(u"horizontalLayout_16")
-        self.horizontalLayout_16.setContentsMargins(5, 3, 10, 3)
-        self.label_17 = QLabel(self.verticalLayoutWidget_15)
-        self.label_17.setObjectName(u"label_17")
-        sizePolicy4.setHeightForWidth(self.label_17.sizePolicy().hasHeightForWidth())
-        self.label_17.setSizePolicy(sizePolicy4)
-        self.label_17.setMaximumSize(QSize(80, 16777215))
-        self.label_17.setFont(font2)
-
-        self.horizontalLayout_16.addWidget(self.label_17)
-
-        self.label_32 = QLabel(self.verticalLayoutWidget_15)
-        self.label_32.setObjectName(u"label_32")
-        sizePolicy5.setHeightForWidth(self.label_32.sizePolicy().hasHeightForWidth())
-        self.label_32.setSizePolicy(sizePolicy5)
-        self.label_32.setMaximumSize(QSize(16, 16))
-        self.label_32.setPixmap(QPixmap(u"../stepper_controller_V2/GUI/StepperGUI/graphics/led_red.png"))
-        self.label_32.setScaledContents(True)
-        self.label_32.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.horizontalLayout_16.addWidget(self.label_32)
-
-        self.lcdNumber_M2C1 = QLCDNumber(self.verticalLayoutWidget_15)
-        self.lcdNumber_M2C1.setObjectName(u"lcdNumber_M2C1")
-        sizePolicy9.setHeightForWidth(self.lcdNumber_M2C1.sizePolicy().hasHeightForWidth())
-        self.lcdNumber_M2C1.setSizePolicy(sizePolicy9)
-        self.lcdNumber_M2C1.setMaximumSize(QSize(80, 16777215))
-
-        self.horizontalLayout_16.addWidget(self.lcdNumber_M2C1)
-
-
-        self.verticalLayout_17.addLayout(self.horizontalLayout_16)
-
-        self.horizontalLayout_15 = QHBoxLayout()
-        self.horizontalLayout_15.setObjectName(u"horizontalLayout_15")
-        self.horizontalLayout_15.setContentsMargins(5, 3, 10, 3)
-        self.label_16 = QLabel(self.verticalLayoutWidget_15)
-        self.label_16.setObjectName(u"label_16")
-        sizePolicy4.setHeightForWidth(self.label_16.sizePolicy().hasHeightForWidth())
-        self.label_16.setSizePolicy(sizePolicy4)
-        self.label_16.setMaximumSize(QSize(80, 16777215))
-        self.label_16.setFont(font2)
-
-        self.horizontalLayout_15.addWidget(self.label_16)
-
-        self.label_38 = QLabel(self.verticalLayoutWidget_15)
-        self.label_38.setObjectName(u"label_38")
-        sizePolicy5.setHeightForWidth(self.label_38.sizePolicy().hasHeightForWidth())
-        self.label_38.setSizePolicy(sizePolicy5)
-        self.label_38.setMaximumSize(QSize(16, 16))
-        self.label_38.setPixmap(QPixmap(u"../stepper_controller_V2/GUI/StepperGUI/graphics/led_red.png"))
-        self.label_38.setScaledContents(True)
-        self.label_38.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.horizontalLayout_15.addWidget(self.label_38)
-
-        self.lcdNumber_M2C2 = QLCDNumber(self.verticalLayoutWidget_15)
-        self.lcdNumber_M2C2.setObjectName(u"lcdNumber_M2C2")
-        sizePolicy9.setHeightForWidth(self.lcdNumber_M2C2.sizePolicy().hasHeightForWidth())
-        self.lcdNumber_M2C2.setSizePolicy(sizePolicy9)
-        self.lcdNumber_M2C2.setMaximumSize(QSize(80, 16777215))
-
-        self.horizontalLayout_15.addWidget(self.lcdNumber_M2C2)
-
-
-        self.verticalLayout_17.addLayout(self.horizontalLayout_15)
-
-        self.verticalLayoutWidget_20 = QWidget(self.tab_5)
-        self.verticalLayoutWidget_20.setObjectName(u"verticalLayoutWidget_20")
-        self.verticalLayoutWidget_20.setGeometry(QRect(0, 280, 201, 100))
-        self.verticalLayout_22 = QVBoxLayout(self.verticalLayoutWidget_20)
-        self.verticalLayout_22.setObjectName(u"verticalLayout_22")
-        self.verticalLayout_22.setContentsMargins(0, 0, 0, 0)
-        self.label_29 = QLabel(self.verticalLayoutWidget_20)
-        self.label_29.setObjectName(u"label_29")
-        sizePolicy4.setHeightForWidth(self.label_29.sizePolicy().hasHeightForWidth())
-        self.label_29.setSizePolicy(sizePolicy4)
-        self.label_29.setMaximumSize(QSize(160, 16777215))
-        self.label_29.setFont(font3)
-
-        self.verticalLayout_22.addWidget(self.label_29)
-
-        self.horizontalLayout_20 = QHBoxLayout()
-        self.horizontalLayout_20.setObjectName(u"horizontalLayout_20")
-        self.horizontalLayout_20.setContentsMargins(-1, 3, -1, 3)
-        self.label_24 = QLabel(self.verticalLayoutWidget_20)
-        self.label_24.setObjectName(u"label_24")
-        sizePolicy4.setHeightForWidth(self.label_24.sizePolicy().hasHeightForWidth())
-        self.label_24.setSizePolicy(sizePolicy4)
-        self.label_24.setMaximumSize(QSize(50, 16777215))
-        self.label_24.setFont(font2)
-
-        self.horizontalLayout_20.addWidget(self.label_24)
-
-        self.lcdNumber_M1C1_R = QLCDNumber(self.verticalLayoutWidget_20)
-        self.lcdNumber_M1C1_R.setObjectName(u"lcdNumber_M1C1_R")
-        sizePolicy9.setHeightForWidth(self.lcdNumber_M1C1_R.sizePolicy().hasHeightForWidth())
-        self.lcdNumber_M1C1_R.setSizePolicy(sizePolicy9)
-        self.lcdNumber_M1C1_R.setMaximumSize(QSize(40, 16777215))
-        self.lcdNumber_M1C1_R.setSmallDecimalPoint(False)
-        self.lcdNumber_M1C1_R.setDigitCount(3)
-
-        self.horizontalLayout_20.addWidget(self.lcdNumber_M1C1_R)
-
-        self.label_28 = QLabel(self.verticalLayoutWidget_20)
-        self.label_28.setObjectName(u"label_28")
-        sizePolicy4.setHeightForWidth(self.label_28.sizePolicy().hasHeightForWidth())
-        self.label_28.setSizePolicy(sizePolicy4)
-        self.label_28.setMaximumSize(QSize(50, 16777215))
-        self.label_28.setFont(font2)
-
-        self.horizontalLayout_20.addWidget(self.label_28)
-
-        self.lcdNumber_M1C2_R = QLCDNumber(self.verticalLayoutWidget_20)
-        self.lcdNumber_M1C2_R.setObjectName(u"lcdNumber_M1C2_R")
-        sizePolicy8.setHeightForWidth(self.lcdNumber_M1C2_R.sizePolicy().hasHeightForWidth())
-        self.lcdNumber_M1C2_R.setSizePolicy(sizePolicy8)
-        self.lcdNumber_M1C2_R.setMaximumSize(QSize(40, 16777215))
-        self.lcdNumber_M1C2_R.setSmallDecimalPoint(False)
-        self.lcdNumber_M1C2_R.setDigitCount(3)
-
-        self.horizontalLayout_20.addWidget(self.lcdNumber_M1C2_R)
-
-
-        self.verticalLayout_22.addLayout(self.horizontalLayout_20)
-
-        self.horizontalLayout_19 = QHBoxLayout()
-        self.horizontalLayout_19.setObjectName(u"horizontalLayout_19")
-        self.horizontalLayout_19.setContentsMargins(-1, 3, -1, 3)
-        self.label_22 = QLabel(self.verticalLayoutWidget_20)
-        self.label_22.setObjectName(u"label_22")
-        sizePolicy4.setHeightForWidth(self.label_22.sizePolicy().hasHeightForWidth())
-        self.label_22.setSizePolicy(sizePolicy4)
-        self.label_22.setMaximumSize(QSize(50, 16777215))
-        self.label_22.setFont(font2)
-
-        self.horizontalLayout_19.addWidget(self.label_22)
-
-        self.lcdNumber_M2C1_R = QLCDNumber(self.verticalLayoutWidget_20)
-        self.lcdNumber_M2C1_R.setObjectName(u"lcdNumber_M2C1_R")
-        sizePolicy8.setHeightForWidth(self.lcdNumber_M2C1_R.sizePolicy().hasHeightForWidth())
-        self.lcdNumber_M2C1_R.setSizePolicy(sizePolicy8)
-        self.lcdNumber_M2C1_R.setMaximumSize(QSize(40, 16777215))
-        self.lcdNumber_M2C1_R.setSmallDecimalPoint(False)
-        self.lcdNumber_M2C1_R.setDigitCount(3)
-
-        self.horizontalLayout_19.addWidget(self.lcdNumber_M2C1_R)
-
-        self.label_23 = QLabel(self.verticalLayoutWidget_20)
-        self.label_23.setObjectName(u"label_23")
-        sizePolicy4.setHeightForWidth(self.label_23.sizePolicy().hasHeightForWidth())
-        self.label_23.setSizePolicy(sizePolicy4)
-        self.label_23.setMaximumSize(QSize(50, 16777215))
-        self.label_23.setFont(font2)
-
-        self.horizontalLayout_19.addWidget(self.label_23)
-
-        self.lcdNumber_M2C2_R = QLCDNumber(self.verticalLayoutWidget_20)
-        self.lcdNumber_M2C2_R.setObjectName(u"lcdNumber_M2C2_R")
-        sizePolicy9.setHeightForWidth(self.lcdNumber_M2C2_R.sizePolicy().hasHeightForWidth())
-        self.lcdNumber_M2C2_R.setSizePolicy(sizePolicy9)
-        self.lcdNumber_M2C2_R.setMaximumSize(QSize(40, 16777215))
-        self.lcdNumber_M2C2_R.setSmallDecimalPoint(False)
-        self.lcdNumber_M2C2_R.setDigitCount(3)
-
-        self.horizontalLayout_19.addWidget(self.lcdNumber_M2C2_R)
-
-
-        self.verticalLayout_22.addLayout(self.horizontalLayout_19)
-
-        self.tabWidget_2.addTab(self.tab_5, "")
-        self.tab_4 = QWidget()
-        self.tab_4.setObjectName(u"tab_4")
-        self.verticalLayoutWidget_19 = QWidget(self.tab_4)
-        self.verticalLayoutWidget_19.setObjectName(u"verticalLayoutWidget_19")
-        self.verticalLayoutWidget_19.setGeometry(QRect(9, 10, 191, 415))
-        self.verticalLayout_26 = QVBoxLayout(self.verticalLayoutWidget_19)
-        self.verticalLayout_26.setObjectName(u"verticalLayout_26")
-        self.verticalLayout_26.setContentsMargins(0, 0, 0, 6)
-        self.verticalLayout_29 = QVBoxLayout()
-        self.verticalLayout_29.setObjectName(u"verticalLayout_29")
-        self.pushButton_find_location = QPushButton(self.verticalLayoutWidget_19)
-        self.pushButton_find_location.setObjectName(u"pushButton_find_location")
-        sizePolicy3.setHeightForWidth(self.pushButton_find_location.sizePolicy().hasHeightForWidth())
-        self.pushButton_find_location.setSizePolicy(sizePolicy3)
-        self.pushButton_find_location.setMaximumSize(QSize(150, 16777215))
-
-        self.verticalLayout_29.addWidget(self.pushButton_find_location)
-
-        self.label_42 = QLabel(self.verticalLayoutWidget_19)
-        self.label_42.setObjectName(u"label_42")
-        sizePolicy4.setHeightForWidth(self.label_42.sizePolicy().hasHeightForWidth())
-        self.label_42.setSizePolicy(sizePolicy4)
-        self.label_42.setMaximumSize(QSize(150, 20))
-        font4 = QFont()
-        font4.setPointSize(11)
-        self.label_42.setFont(font4)
-        self.label_42.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.verticalLayout_29.addWidget(self.label_42)
-
-        self.verticalLayout_27 = QVBoxLayout()
-        self.verticalLayout_27.setObjectName(u"verticalLayout_27")
-        self.label_40 = QLabel(self.verticalLayoutWidget_19)
-        self.label_40.setObjectName(u"label_40")
-        sizePolicy2.setHeightForWidth(self.label_40.sizePolicy().hasHeightForWidth())
-        self.label_40.setSizePolicy(sizePolicy2)
-        self.label_40.setMaximumSize(QSize(150, 20))
-        self.label_40.setFont(font4)
-        self.label_40.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.verticalLayout_27.addWidget(self.label_40)
-
-        self.lineEdit_sky_ra = QLineEdit(self.verticalLayoutWidget_19)
-        self.lineEdit_sky_ra.setObjectName(u"lineEdit_sky_ra")
-        sizePolicy3.setHeightForWidth(self.lineEdit_sky_ra.sizePolicy().hasHeightForWidth())
-        self.lineEdit_sky_ra.setSizePolicy(sizePolicy3)
-        self.lineEdit_sky_ra.setMinimumSize(QSize(0, 20))
-        self.lineEdit_sky_ra.setMaximumSize(QSize(150, 25))
-        self.lineEdit_sky_ra.setReadOnly(True)
-
-        self.verticalLayout_27.addWidget(self.lineEdit_sky_ra)
-
-
-        self.verticalLayout_29.addLayout(self.verticalLayout_27)
-
-        self.verticalLayout_28 = QVBoxLayout()
-        self.verticalLayout_28.setObjectName(u"verticalLayout_28")
-        self.label_41 = QLabel(self.verticalLayoutWidget_19)
-        self.label_41.setObjectName(u"label_41")
-        sizePolicy2.setHeightForWidth(self.label_41.sizePolicy().hasHeightForWidth())
-        self.label_41.setSizePolicy(sizePolicy2)
-        self.label_41.setMaximumSize(QSize(150, 20))
-        self.label_41.setFont(font4)
-        self.label_41.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.verticalLayout_28.addWidget(self.label_41)
-
-        self.lineEdit_sky_dec = QLineEdit(self.verticalLayoutWidget_19)
-        self.lineEdit_sky_dec.setObjectName(u"lineEdit_sky_dec")
-        sizePolicy3.setHeightForWidth(self.lineEdit_sky_dec.sizePolicy().hasHeightForWidth())
-        self.lineEdit_sky_dec.setSizePolicy(sizePolicy3)
-        self.lineEdit_sky_dec.setMinimumSize(QSize(100, 20))
-        self.lineEdit_sky_dec.setMaximumSize(QSize(150, 25))
-        self.lineEdit_sky_dec.setReadOnly(True)
-
-        self.verticalLayout_28.addWidget(self.lineEdit_sky_dec)
-
-
-        self.verticalLayout_29.addLayout(self.verticalLayout_28)
-
-        self.verticalLayout_33 = QVBoxLayout()
-        self.verticalLayout_33.setObjectName(u"verticalLayout_33")
-        self.label_46 = QLabel(self.verticalLayoutWidget_19)
-        self.label_46.setObjectName(u"label_46")
-        self.label_46.setMaximumSize(QSize(150, 20))
-        self.label_46.setFont(font4)
-        self.label_46.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.verticalLayout_33.addWidget(self.label_46)
-
-        self.lineEdit_sky_rot = QLineEdit(self.verticalLayoutWidget_19)
-        self.lineEdit_sky_rot.setObjectName(u"lineEdit_sky_rot")
-        self.lineEdit_sky_rot.setMinimumSize(QSize(0, 20))
-        self.lineEdit_sky_rot.setMaximumSize(QSize(150, 25))
-        self.lineEdit_sky_rot.setReadOnly(True)
-
-        self.verticalLayout_33.addWidget(self.lineEdit_sky_rot)
-
-
-        self.verticalLayout_29.addLayout(self.verticalLayout_33)
-
-
-        self.verticalLayout_26.addLayout(self.verticalLayout_29)
-
-        self.verticalLayout_30 = QVBoxLayout()
-        self.verticalLayout_30.setObjectName(u"verticalLayout_30")
-        self.label_43 = QLabel(self.verticalLayoutWidget_19)
-        self.label_43.setObjectName(u"label_43")
-        self.label_43.setMaximumSize(QSize(150, 20))
-        self.label_43.setFont(font4)
-        self.label_43.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.verticalLayout_30.addWidget(self.label_43)
-
-        self.verticalLayout_31 = QVBoxLayout()
-        self.verticalLayout_31.setObjectName(u"verticalLayout_31")
-        self.label_44 = QLabel(self.verticalLayoutWidget_19)
-        self.label_44.setObjectName(u"label_44")
-        self.label_44.setMaximumSize(QSize(150, 20))
-        self.label_44.setFont(font4)
-        self.label_44.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.verticalLayout_31.addWidget(self.label_44)
-
-        self.lineEdit_7 = QLineEdit(self.verticalLayoutWidget_19)
-        self.lineEdit_7.setObjectName(u"lineEdit_7")
-        self.lineEdit_7.setMinimumSize(QSize(0, 20))
-        self.lineEdit_7.setMaximumSize(QSize(150, 25))
-        self.lineEdit_7.setReadOnly(True)
-
-        self.verticalLayout_31.addWidget(self.lineEdit_7)
-
-
-        self.verticalLayout_30.addLayout(self.verticalLayout_31)
-
-        self.verticalLayout_32 = QVBoxLayout()
-        self.verticalLayout_32.setObjectName(u"verticalLayout_32")
-        self.label_45 = QLabel(self.verticalLayoutWidget_19)
-        self.label_45.setObjectName(u"label_45")
-        self.label_45.setMaximumSize(QSize(150, 20))
-        self.label_45.setFont(font4)
-        self.label_45.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.verticalLayout_32.addWidget(self.label_45)
-
-        self.lineEdit_9 = QLineEdit(self.verticalLayoutWidget_19)
-        self.lineEdit_9.setObjectName(u"lineEdit_9")
-        self.lineEdit_9.setMinimumSize(QSize(0, 20))
-        self.lineEdit_9.setMaximumSize(QSize(150, 25))
-        self.lineEdit_9.setReadOnly(True)
-
-        self.verticalLayout_32.addWidget(self.lineEdit_9)
-
-
-        self.verticalLayout_30.addLayout(self.verticalLayout_32)
-
-        self.verticalLayout_34 = QVBoxLayout()
-        self.verticalLayout_34.setObjectName(u"verticalLayout_34")
-        self.label_47 = QLabel(self.verticalLayoutWidget_19)
-        self.label_47.setObjectName(u"label_47")
-        self.label_47.setMaximumSize(QSize(150, 20))
-        self.label_47.setFont(font2)
-        self.label_47.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.verticalLayout_34.addWidget(self.label_47)
-
-        self.lineEdit_11 = QLineEdit(self.verticalLayoutWidget_19)
-        self.lineEdit_11.setObjectName(u"lineEdit_11")
-        self.lineEdit_11.setMaximumSize(QSize(150, 25))
-        self.lineEdit_11.setReadOnly(True)
-
-        self.verticalLayout_34.addWidget(self.lineEdit_11)
-
-
-        self.verticalLayout_30.addLayout(self.verticalLayout_34)
-
-
-        self.verticalLayout_26.addLayout(self.verticalLayout_30)
-
-        self.tabWidget_2.addTab(self.tab_4, "")
-
-        self.verticalLayout_5.addWidget(self.tabWidget_2)
-
-
-        self.verticalLayout.addLayout(self.verticalLayout_5)
-
-
-        self.gridLayout.addLayout(self.verticalLayout, 0, 0, 4, 1)
 
         self.verticalLayout_46 = QVBoxLayout()
         self.verticalLayout_46.setObjectName(u"verticalLayout_46")
@@ -1677,9 +942,9 @@ class Ui_MainWindow(object):
         sizePolicy1.setHeightForWidth(self.label_7.sizePolicy().hasHeightForWidth())
         self.label_7.setSizePolicy(sizePolicy1)
         self.label_7.setMaximumSize(QSize(100, 60))
-        font5 = QFont()
-        font5.setPointSize(14)
-        self.label_7.setFont(font5)
+        font2 = QFont()
+        font2.setPointSize(14)
+        self.label_7.setFont(font2)
 
         self.horizontalLayout_12.addWidget(self.label_7)
 
@@ -1702,7 +967,7 @@ class Ui_MainWindow(object):
         sizePolicy1.setHeightForWidth(self.label_6.sizePolicy().hasHeightForWidth())
         self.label_6.setSizePolicy(sizePolicy1)
         self.label_6.setMaximumSize(QSize(100, 60))
-        self.label_6.setFont(font5)
+        self.label_6.setFont(font2)
 
         self.horizontalLayout_11.addWidget(self.label_6)
 
@@ -1719,6 +984,818 @@ class Ui_MainWindow(object):
 
 
         self.gridLayout.addLayout(self.verticalLayout_9, 1, 4, 1, 1)
+
+        self.verticalLayout = QVBoxLayout()
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.verticalLayout.setContentsMargins(5, 5, 5, 5)
+        self.verticalLayout_21 = QVBoxLayout()
+        self.verticalLayout_21.setObjectName(u"verticalLayout_21")
+        self.verticalLayout_20 = QVBoxLayout()
+        self.verticalLayout_20.setObjectName(u"verticalLayout_20")
+        self.verticalLayout_19 = QVBoxLayout()
+        self.verticalLayout_19.setObjectName(u"verticalLayout_19")
+        self.comboBox_address = QComboBox(self.centralwidget)
+        self.comboBox_address.addItem("")
+        self.comboBox_address.addItem("")
+        self.comboBox_address.setObjectName(u"comboBox_address")
+        self.comboBox_address.setMaximumSize(QSize(200, 16777215))
+        self.comboBox_address.setEditable(True)
+
+        self.verticalLayout_19.addWidget(self.comboBox_address)
+
+
+        self.verticalLayout_20.addLayout(self.verticalLayout_19)
+
+        self.pushButton = QPushButton(self.centralwidget)
+        self.pushButton.setObjectName(u"pushButton")
+        self.pushButton.setMaximumSize(QSize(200, 16777215))
+
+        self.verticalLayout_20.addWidget(self.pushButton)
+
+        self.horizontalLayout_17 = QHBoxLayout()
+        self.horizontalLayout_17.setObjectName(u"horizontalLayout_17")
+        self.label_20 = QLabel(self.centralwidget)
+        self.label_20.setObjectName(u"label_20")
+        self.label_20.setMaximumSize(QSize(70, 16777215))
+        self.label_20.setAlignment(Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTrailing|Qt.AlignmentFlag.AlignVCenter)
+
+        self.horizontalLayout_17.addWidget(self.label_20)
+
+        self.label_19 = QLabel(self.centralwidget)
+        self.label_19.setObjectName(u"label_19")
+        self.label_19.setMaximumSize(QSize(70, 16777215))
+        self.label_19.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.horizontalLayout_17.addWidget(self.label_19)
+
+        self.label_21 = QLabel(self.centralwidget)
+        self.label_21.setObjectName(u"label_21")
+        self.label_21.setMaximumSize(QSize(70, 16777215))
+        self.label_21.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
+
+        self.horizontalLayout_17.addWidget(self.label_21)
+
+
+        self.verticalLayout_20.addLayout(self.horizontalLayout_17)
+
+        self.horizontalLayout_18 = QHBoxLayout()
+        self.horizontalLayout_18.setObjectName(u"horizontalLayout_18")
+        self.label_broker_status = QLabel(self.centralwidget)
+        self.label_broker_status.setObjectName(u"label_broker_status")
+        sizePolicy6.setHeightForWidth(self.label_broker_status.sizePolicy().hasHeightForWidth())
+        self.label_broker_status.setSizePolicy(sizePolicy6)
+        self.label_broker_status.setMaximumSize(QSize(16, 16))
+        self.label_broker_status.setPixmap(QPixmap(u"../stepper_controller_V2/GUI/StepperGUI/graphics/led_red.png"))
+        self.label_broker_status.setScaledContents(True)
+        self.label_broker_status.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.horizontalLayout_18.addWidget(self.label_broker_status)
+
+        self.label_guider_status = QLabel(self.centralwidget)
+        self.label_guider_status.setObjectName(u"label_guider_status")
+        sizePolicy6.setHeightForWidth(self.label_guider_status.sizePolicy().hasHeightForWidth())
+        self.label_guider_status.setSizePolicy(sizePolicy6)
+        self.label_guider_status.setMaximumSize(QSize(16, 16))
+        self.label_guider_status.setPixmap(QPixmap(u"../stepper_controller_V2/GUI/StepperGUI/graphics/led_red.png"))
+        self.label_guider_status.setScaledContents(True)
+        self.label_guider_status.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.horizontalLayout_18.addWidget(self.label_guider_status)
+
+        self.label_stepper_status = QLabel(self.centralwidget)
+        self.label_stepper_status.setObjectName(u"label_stepper_status")
+        sizePolicy6.setHeightForWidth(self.label_stepper_status.sizePolicy().hasHeightForWidth())
+        self.label_stepper_status.setSizePolicy(sizePolicy6)
+        self.label_stepper_status.setMaximumSize(QSize(16, 16))
+        self.label_stepper_status.setPixmap(QPixmap(u"../stepper_controller_V2/GUI/StepperGUI/graphics/led_red.png"))
+        self.label_stepper_status.setScaledContents(True)
+        self.label_stepper_status.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.horizontalLayout_18.addWidget(self.label_stepper_status)
+
+
+        self.verticalLayout_20.addLayout(self.horizontalLayout_18)
+
+
+        self.verticalLayout_21.addLayout(self.verticalLayout_20)
+
+        self.radioButton_manual_speed = QRadioButton(self.centralwidget)
+        self.radioButton_manual_speed.setObjectName(u"radioButton_manual_speed")
+        self.radioButton_manual_speed.setMaximumSize(QSize(200, 16777215))
+        self.radioButton_manual_speed.setChecked(True)
+
+        self.verticalLayout_21.addWidget(self.radioButton_manual_speed)
+
+        self.radioButton_auto_speed = QRadioButton(self.centralwidget)
+        self.radioButton_auto_speed.setObjectName(u"radioButton_auto_speed")
+        self.radioButton_auto_speed.setMaximumSize(QSize(200, 16777215))
+
+        self.verticalLayout_21.addWidget(self.radioButton_auto_speed)
+
+        self.radioButton_manual_steps = QRadioButton(self.centralwidget)
+        self.radioButton_manual_steps.setObjectName(u"radioButton_manual_steps")
+        self.radioButton_manual_steps.setMaximumSize(QSize(200, 16777215))
+
+        self.verticalLayout_21.addWidget(self.radioButton_manual_steps)
+
+        self.radioButton_manual_coil = QRadioButton(self.centralwidget)
+        self.radioButton_manual_coil.setObjectName(u"radioButton_manual_coil")
+        self.radioButton_manual_coil.setMaximumSize(QSize(200, 16777215))
+
+        self.verticalLayout_21.addWidget(self.radioButton_manual_coil)
+
+
+        self.verticalLayout.addLayout(self.verticalLayout_21)
+
+        self.verticalLayout_5 = QVBoxLayout()
+        self.verticalLayout_5.setObjectName(u"verticalLayout_5")
+        self.verticalLayout_5.setContentsMargins(5, -1, 5, -1)
+        self.tabWidget_2 = QTabWidget(self.centralwidget)
+        self.tabWidget_2.setObjectName(u"tabWidget_2")
+        self.tabWidget_2.setMaximumSize(QSize(220, 16777215))
+        self.tabWidget_2.setUsesScrollButtons(True)
+        self.Mott = QWidget()
+        self.Mott.setObjectName(u"Mott")
+        self.verticalLayoutWidget_8 = QWidget(self.Mott)
+        self.verticalLayoutWidget_8.setObjectName(u"verticalLayoutWidget_8")
+        self.verticalLayoutWidget_8.setGeometry(QRect(10, 60, 181, 55))
+        self.verticalLayout_10 = QVBoxLayout(self.verticalLayoutWidget_8)
+        self.verticalLayout_10.setObjectName(u"verticalLayout_10")
+        self.verticalLayout_10.setContentsMargins(0, 3, 0, 3)
+        self.label_8 = QLabel(self.verticalLayoutWidget_8)
+        self.label_8.setObjectName(u"label_8")
+        sizePolicy5.setHeightForWidth(self.label_8.sizePolicy().hasHeightForWidth())
+        self.label_8.setSizePolicy(sizePolicy5)
+        self.label_8.setMaximumSize(QSize(160, 16777215))
+        self.label_8.setFont(font1)
+        self.label_8.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.verticalLayout_10.addWidget(self.label_8)
+
+        self.comboBox_preview = QComboBox(self.verticalLayoutWidget_8)
+        self.comboBox_preview.addItem("")
+        self.comboBox_preview.addItem("")
+        self.comboBox_preview.addItem("")
+        self.comboBox_preview.setObjectName(u"comboBox_preview")
+        sizePolicy6.setHeightForWidth(self.comboBox_preview.sizePolicy().hasHeightForWidth())
+        self.comboBox_preview.setSizePolicy(sizePolicy6)
+        self.comboBox_preview.setMaximumSize(QSize(160, 16777215))
+
+        self.verticalLayout_10.addWidget(self.comboBox_preview)
+
+        self.verticalLayoutWidget_11 = QWidget(self.Mott)
+        self.verticalLayoutWidget_11.setObjectName(u"verticalLayoutWidget_11")
+        self.verticalLayoutWidget_11.setGeometry(QRect(10, 10, 181, 41))
+        self.verticalLayout_13 = QVBoxLayout(self.verticalLayoutWidget_11)
+        self.verticalLayout_13.setObjectName(u"verticalLayout_13")
+        self.verticalLayout_13.setContentsMargins(0, 0, 0, 0)
+        self.checkBox = QCheckBox(self.verticalLayoutWidget_11)
+        self.checkBox.setObjectName(u"checkBox")
+        sizePolicy6.setHeightForWidth(self.checkBox.sizePolicy().hasHeightForWidth())
+        self.checkBox.setSizePolicy(sizePolicy6)
+        self.checkBox.setMinimumSize(QSize(140, 0))
+        self.checkBox.setMaximumSize(QSize(160, 16777215))
+        font3 = QFont()
+        font3.setPointSize(12)
+        self.checkBox.setFont(font3)
+
+        self.verticalLayout_13.addWidget(self.checkBox)
+
+        self.verticalLayoutWidget_14 = QWidget(self.Mott)
+        self.verticalLayoutWidget_14.setObjectName(u"verticalLayoutWidget_14")
+        self.verticalLayoutWidget_14.setGeometry(QRect(10, 120, 181, 165))
+        self.verticalLayout_16 = QVBoxLayout(self.verticalLayoutWidget_14)
+        self.verticalLayout_16.setObjectName(u"verticalLayout_16")
+        self.verticalLayout_16.setContentsMargins(0, 3, 0, 3)
+        self.checkBox_show_sky_coo = QCheckBox(self.verticalLayoutWidget_14)
+        self.checkBox_show_sky_coo.setObjectName(u"checkBox_show_sky_coo")
+        sizePolicy6.setHeightForWidth(self.checkBox_show_sky_coo.sizePolicy().hasHeightForWidth())
+        self.checkBox_show_sky_coo.setSizePolicy(sizePolicy6)
+        self.checkBox_show_sky_coo.setMaximumSize(QSize(160, 16777215))
+
+        self.verticalLayout_16.addWidget(self.checkBox_show_sky_coo)
+
+        self.checkBox_show_motor_coo = QCheckBox(self.verticalLayoutWidget_14)
+        self.checkBox_show_motor_coo.setObjectName(u"checkBox_show_motor_coo")
+        sizePolicy6.setHeightForWidth(self.checkBox_show_motor_coo.sizePolicy().hasHeightForWidth())
+        self.checkBox_show_motor_coo.setSizePolicy(sizePolicy6)
+        self.checkBox_show_motor_coo.setMaximumSize(QSize(160, 16777215))
+
+        self.verticalLayout_16.addWidget(self.checkBox_show_motor_coo)
+
+        self.checkBox_show_all_detected = QCheckBox(self.verticalLayoutWidget_14)
+        self.checkBox_show_all_detected.setObjectName(u"checkBox_show_all_detected")
+        sizePolicy6.setHeightForWidth(self.checkBox_show_all_detected.sizePolicy().hasHeightForWidth())
+        self.checkBox_show_all_detected.setSizePolicy(sizePolicy6)
+        self.checkBox_show_all_detected.setMaximumSize(QSize(160, 16777215))
+
+        self.verticalLayout_16.addWidget(self.checkBox_show_all_detected)
+
+        self.checkBox_show_sky_grid = QCheckBox(self.verticalLayoutWidget_14)
+        self.checkBox_show_sky_grid.setObjectName(u"checkBox_show_sky_grid")
+        sizePolicy6.setHeightForWidth(self.checkBox_show_sky_grid.sizePolicy().hasHeightForWidth())
+        self.checkBox_show_sky_grid.setSizePolicy(sizePolicy6)
+        self.checkBox_show_sky_grid.setMaximumSize(QSize(160, 16777215))
+
+        self.verticalLayout_16.addWidget(self.checkBox_show_sky_grid)
+
+        self.checkBox_show_guiding_star = QCheckBox(self.verticalLayoutWidget_14)
+        self.checkBox_show_guiding_star.setObjectName(u"checkBox_show_guiding_star")
+        sizePolicy6.setHeightForWidth(self.checkBox_show_guiding_star.sizePolicy().hasHeightForWidth())
+        self.checkBox_show_guiding_star.setSizePolicy(sizePolicy6)
+        self.checkBox_show_guiding_star.setMaximumSize(QSize(160, 16777215))
+
+        self.verticalLayout_16.addWidget(self.checkBox_show_guiding_star)
+
+        self.checkBox_save_raw = QCheckBox(self.Mott)
+        self.checkBox_save_raw.setObjectName(u"checkBox_save_raw")
+        self.checkBox_save_raw.setGeometry(QRect(0, 290, 160, 27))
+        sizePolicy6.setHeightForWidth(self.checkBox_save_raw.sizePolicy().hasHeightForWidth())
+        self.checkBox_save_raw.setSizePolicy(sizePolicy6)
+        self.checkBox_save_raw.setMaximumSize(QSize(160, 16777215))
+        self.checkBox_save_raw.setFont(font3)
+        self.tabWidget_2.addTab(self.Mott, "")
+        self.tab_5 = QWidget()
+        self.tab_5.setObjectName(u"tab_5")
+        self.verticalLayoutWidget_16 = QWidget(self.tab_5)
+        self.verticalLayoutWidget_16.setObjectName(u"verticalLayoutWidget_16")
+        self.verticalLayoutWidget_16.setGeometry(QRect(0, 0, 201, 81))
+        self.verticalLayout_18 = QVBoxLayout(self.verticalLayoutWidget_16)
+        self.verticalLayout_18.setObjectName(u"verticalLayout_18")
+        self.verticalLayout_18.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_10 = QHBoxLayout()
+        self.horizontalLayout_10.setObjectName(u"horizontalLayout_10")
+        self.horizontalLayout_10.setContentsMargins(-1, 3, -1, 3)
+        self.label_5 = QLabel(self.verticalLayoutWidget_16)
+        self.label_5.setObjectName(u"label_5")
+        sizePolicy4.setHeightForWidth(self.label_5.sizePolicy().hasHeightForWidth())
+        self.label_5.setSizePolicy(sizePolicy4)
+        self.label_5.setMaximumSize(QSize(16777215, 80))
+        self.label_5.setFont(font3)
+        self.label_5.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.horizontalLayout_10.addWidget(self.label_5)
+
+        self.label_13 = QLabel(self.verticalLayoutWidget_16)
+        self.label_13.setObjectName(u"label_13")
+        sizePolicy4.setHeightForWidth(self.label_13.sizePolicy().hasHeightForWidth())
+        self.label_13.setSizePolicy(sizePolicy4)
+        self.label_13.setMaximumSize(QSize(16777215, 80))
+        self.label_13.setFont(font3)
+        self.label_13.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.horizontalLayout_10.addWidget(self.label_13)
+
+
+        self.verticalLayout_18.addLayout(self.horizontalLayout_10)
+
+        self.horizontalLayout_9 = QHBoxLayout()
+        self.horizontalLayout_9.setObjectName(u"horizontalLayout_9")
+        self.lcdNumber_buck1 = QLCDNumber(self.verticalLayoutWidget_16)
+        self.lcdNumber_buck1.setObjectName(u"lcdNumber_buck1")
+        sizePolicy8 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        sizePolicy8.setHorizontalStretch(0)
+        sizePolicy8.setVerticalStretch(0)
+        sizePolicy8.setHeightForWidth(self.lcdNumber_buck1.sizePolicy().hasHeightForWidth())
+        self.lcdNumber_buck1.setSizePolicy(sizePolicy8)
+        self.lcdNumber_buck1.setMaximumSize(QSize(80, 80))
+
+        self.horizontalLayout_9.addWidget(self.lcdNumber_buck1)
+
+        self.lcdNumber_buck2 = QLCDNumber(self.verticalLayoutWidget_16)
+        self.lcdNumber_buck2.setObjectName(u"lcdNumber_buck2")
+        sizePolicy8.setHeightForWidth(self.lcdNumber_buck2.sizePolicy().hasHeightForWidth())
+        self.lcdNumber_buck2.setSizePolicy(sizePolicy8)
+        self.lcdNumber_buck2.setMaximumSize(QSize(80, 16777215))
+
+        self.horizontalLayout_9.addWidget(self.lcdNumber_buck2)
+
+
+        self.verticalLayout_18.addLayout(self.horizontalLayout_9)
+
+        self.verticalLayoutWidget_15 = QWidget(self.tab_5)
+        self.verticalLayoutWidget_15.setObjectName(u"verticalLayoutWidget_15")
+        self.verticalLayoutWidget_15.setGeometry(QRect(0, 80, 203, 201))
+        self.verticalLayout_17 = QVBoxLayout(self.verticalLayoutWidget_15)
+        self.verticalLayout_17.setObjectName(u"verticalLayout_17")
+        self.verticalLayout_17.setContentsMargins(0, 0, 0, 0)
+        self.label_18 = QLabel(self.verticalLayoutWidget_15)
+        self.label_18.setObjectName(u"label_18")
+        sizePolicy5.setHeightForWidth(self.label_18.sizePolicy().hasHeightForWidth())
+        self.label_18.setSizePolicy(sizePolicy5)
+        font4 = QFont()
+        font4.setPointSize(16)
+        self.label_18.setFont(font4)
+
+        self.verticalLayout_17.addWidget(self.label_18)
+
+        self.horizontalLayout_13 = QHBoxLayout()
+        self.horizontalLayout_13.setObjectName(u"horizontalLayout_13")
+        self.horizontalLayout_13.setContentsMargins(5, 3, 10, 3)
+        self.label_14 = QLabel(self.verticalLayoutWidget_15)
+        self.label_14.setObjectName(u"label_14")
+        sizePolicy5.setHeightForWidth(self.label_14.sizePolicy().hasHeightForWidth())
+        self.label_14.setSizePolicy(sizePolicy5)
+        self.label_14.setMaximumSize(QSize(80, 80))
+        self.label_14.setFont(font3)
+
+        self.horizontalLayout_13.addWidget(self.label_14)
+
+        self.label_31 = QLabel(self.verticalLayoutWidget_15)
+        self.label_31.setObjectName(u"label_31")
+        sizePolicy6.setHeightForWidth(self.label_31.sizePolicy().hasHeightForWidth())
+        self.label_31.setSizePolicy(sizePolicy6)
+        self.label_31.setMaximumSize(QSize(16, 16))
+        self.label_31.setPixmap(QPixmap(u"../stepper_controller_V2/GUI/StepperGUI/graphics/led_red.png"))
+        self.label_31.setScaledContents(True)
+        self.label_31.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.horizontalLayout_13.addWidget(self.label_31)
+
+        self.lcdNumber_M1C1 = QLCDNumber(self.verticalLayoutWidget_15)
+        self.lcdNumber_M1C1.setObjectName(u"lcdNumber_M1C1")
+        sizePolicy9 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum)
+        sizePolicy9.setHorizontalStretch(0)
+        sizePolicy9.setVerticalStretch(0)
+        sizePolicy9.setHeightForWidth(self.lcdNumber_M1C1.sizePolicy().hasHeightForWidth())
+        self.lcdNumber_M1C1.setSizePolicy(sizePolicy9)
+        self.lcdNumber_M1C1.setMaximumSize(QSize(80, 80))
+
+        self.horizontalLayout_13.addWidget(self.lcdNumber_M1C1)
+
+
+        self.verticalLayout_17.addLayout(self.horizontalLayout_13)
+
+        self.horizontalLayout_14 = QHBoxLayout()
+        self.horizontalLayout_14.setObjectName(u"horizontalLayout_14")
+        self.horizontalLayout_14.setContentsMargins(5, 3, 10, 3)
+        self.label_15 = QLabel(self.verticalLayoutWidget_15)
+        self.label_15.setObjectName(u"label_15")
+        sizePolicy5.setHeightForWidth(self.label_15.sizePolicy().hasHeightForWidth())
+        self.label_15.setSizePolicy(sizePolicy5)
+        self.label_15.setMaximumSize(QSize(80, 16777215))
+        self.label_15.setFont(font3)
+
+        self.horizontalLayout_14.addWidget(self.label_15)
+
+        self.label_34 = QLabel(self.verticalLayoutWidget_15)
+        self.label_34.setObjectName(u"label_34")
+        sizePolicy6.setHeightForWidth(self.label_34.sizePolicy().hasHeightForWidth())
+        self.label_34.setSizePolicy(sizePolicy6)
+        self.label_34.setMaximumSize(QSize(16, 16))
+        self.label_34.setPixmap(QPixmap(u"../stepper_controller_V2/GUI/StepperGUI/graphics/led_red.png"))
+        self.label_34.setScaledContents(True)
+        self.label_34.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.horizontalLayout_14.addWidget(self.label_34)
+
+        self.lcdNumber_M1C2 = QLCDNumber(self.verticalLayoutWidget_15)
+        self.lcdNumber_M1C2.setObjectName(u"lcdNumber_M1C2")
+        sizePolicy9.setHeightForWidth(self.lcdNumber_M1C2.sizePolicy().hasHeightForWidth())
+        self.lcdNumber_M1C2.setSizePolicy(sizePolicy9)
+        self.lcdNumber_M1C2.setMaximumSize(QSize(80, 16777215))
+
+        self.horizontalLayout_14.addWidget(self.lcdNumber_M1C2)
+
+
+        self.verticalLayout_17.addLayout(self.horizontalLayout_14)
+
+        self.horizontalLayout_16 = QHBoxLayout()
+        self.horizontalLayout_16.setObjectName(u"horizontalLayout_16")
+        self.horizontalLayout_16.setContentsMargins(5, 3, 10, 3)
+        self.label_17 = QLabel(self.verticalLayoutWidget_15)
+        self.label_17.setObjectName(u"label_17")
+        sizePolicy5.setHeightForWidth(self.label_17.sizePolicy().hasHeightForWidth())
+        self.label_17.setSizePolicy(sizePolicy5)
+        self.label_17.setMaximumSize(QSize(80, 16777215))
+        self.label_17.setFont(font3)
+
+        self.horizontalLayout_16.addWidget(self.label_17)
+
+        self.label_32 = QLabel(self.verticalLayoutWidget_15)
+        self.label_32.setObjectName(u"label_32")
+        sizePolicy6.setHeightForWidth(self.label_32.sizePolicy().hasHeightForWidth())
+        self.label_32.setSizePolicy(sizePolicy6)
+        self.label_32.setMaximumSize(QSize(16, 16))
+        self.label_32.setPixmap(QPixmap(u"../stepper_controller_V2/GUI/StepperGUI/graphics/led_red.png"))
+        self.label_32.setScaledContents(True)
+        self.label_32.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.horizontalLayout_16.addWidget(self.label_32)
+
+        self.lcdNumber_M2C1 = QLCDNumber(self.verticalLayoutWidget_15)
+        self.lcdNumber_M2C1.setObjectName(u"lcdNumber_M2C1")
+        sizePolicy9.setHeightForWidth(self.lcdNumber_M2C1.sizePolicy().hasHeightForWidth())
+        self.lcdNumber_M2C1.setSizePolicy(sizePolicy9)
+        self.lcdNumber_M2C1.setMaximumSize(QSize(80, 16777215))
+
+        self.horizontalLayout_16.addWidget(self.lcdNumber_M2C1)
+
+
+        self.verticalLayout_17.addLayout(self.horizontalLayout_16)
+
+        self.horizontalLayout_15 = QHBoxLayout()
+        self.horizontalLayout_15.setObjectName(u"horizontalLayout_15")
+        self.horizontalLayout_15.setContentsMargins(5, 3, 10, 3)
+        self.label_16 = QLabel(self.verticalLayoutWidget_15)
+        self.label_16.setObjectName(u"label_16")
+        sizePolicy5.setHeightForWidth(self.label_16.sizePolicy().hasHeightForWidth())
+        self.label_16.setSizePolicy(sizePolicy5)
+        self.label_16.setMaximumSize(QSize(80, 16777215))
+        self.label_16.setFont(font3)
+
+        self.horizontalLayout_15.addWidget(self.label_16)
+
+        self.label_38 = QLabel(self.verticalLayoutWidget_15)
+        self.label_38.setObjectName(u"label_38")
+        sizePolicy6.setHeightForWidth(self.label_38.sizePolicy().hasHeightForWidth())
+        self.label_38.setSizePolicy(sizePolicy6)
+        self.label_38.setMaximumSize(QSize(16, 16))
+        self.label_38.setPixmap(QPixmap(u"../stepper_controller_V2/GUI/StepperGUI/graphics/led_red.png"))
+        self.label_38.setScaledContents(True)
+        self.label_38.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.horizontalLayout_15.addWidget(self.label_38)
+
+        self.lcdNumber_M2C2 = QLCDNumber(self.verticalLayoutWidget_15)
+        self.lcdNumber_M2C2.setObjectName(u"lcdNumber_M2C2")
+        sizePolicy9.setHeightForWidth(self.lcdNumber_M2C2.sizePolicy().hasHeightForWidth())
+        self.lcdNumber_M2C2.setSizePolicy(sizePolicy9)
+        self.lcdNumber_M2C2.setMaximumSize(QSize(80, 16777215))
+
+        self.horizontalLayout_15.addWidget(self.lcdNumber_M2C2)
+
+
+        self.verticalLayout_17.addLayout(self.horizontalLayout_15)
+
+        self.verticalLayoutWidget_20 = QWidget(self.tab_5)
+        self.verticalLayoutWidget_20.setObjectName(u"verticalLayoutWidget_20")
+        self.verticalLayoutWidget_20.setGeometry(QRect(0, 280, 201, 100))
+        self.verticalLayout_22 = QVBoxLayout(self.verticalLayoutWidget_20)
+        self.verticalLayout_22.setObjectName(u"verticalLayout_22")
+        self.verticalLayout_22.setContentsMargins(0, 0, 0, 0)
+        self.label_29 = QLabel(self.verticalLayoutWidget_20)
+        self.label_29.setObjectName(u"label_29")
+        sizePolicy5.setHeightForWidth(self.label_29.sizePolicy().hasHeightForWidth())
+        self.label_29.setSizePolicy(sizePolicy5)
+        self.label_29.setMaximumSize(QSize(160, 16777215))
+        self.label_29.setFont(font4)
+
+        self.verticalLayout_22.addWidget(self.label_29)
+
+        self.horizontalLayout_20 = QHBoxLayout()
+        self.horizontalLayout_20.setObjectName(u"horizontalLayout_20")
+        self.horizontalLayout_20.setContentsMargins(-1, 3, -1, 3)
+        self.label_24 = QLabel(self.verticalLayoutWidget_20)
+        self.label_24.setObjectName(u"label_24")
+        sizePolicy5.setHeightForWidth(self.label_24.sizePolicy().hasHeightForWidth())
+        self.label_24.setSizePolicy(sizePolicy5)
+        self.label_24.setMaximumSize(QSize(50, 16777215))
+        self.label_24.setFont(font3)
+
+        self.horizontalLayout_20.addWidget(self.label_24)
+
+        self.lcdNumber_M1C1_R = QLCDNumber(self.verticalLayoutWidget_20)
+        self.lcdNumber_M1C1_R.setObjectName(u"lcdNumber_M1C1_R")
+        sizePolicy9.setHeightForWidth(self.lcdNumber_M1C1_R.sizePolicy().hasHeightForWidth())
+        self.lcdNumber_M1C1_R.setSizePolicy(sizePolicy9)
+        self.lcdNumber_M1C1_R.setMaximumSize(QSize(40, 16777215))
+        self.lcdNumber_M1C1_R.setSmallDecimalPoint(False)
+        self.lcdNumber_M1C1_R.setDigitCount(3)
+
+        self.horizontalLayout_20.addWidget(self.lcdNumber_M1C1_R)
+
+        self.label_28 = QLabel(self.verticalLayoutWidget_20)
+        self.label_28.setObjectName(u"label_28")
+        sizePolicy5.setHeightForWidth(self.label_28.sizePolicy().hasHeightForWidth())
+        self.label_28.setSizePolicy(sizePolicy5)
+        self.label_28.setMaximumSize(QSize(50, 16777215))
+        self.label_28.setFont(font3)
+
+        self.horizontalLayout_20.addWidget(self.label_28)
+
+        self.lcdNumber_M1C2_R = QLCDNumber(self.verticalLayoutWidget_20)
+        self.lcdNumber_M1C2_R.setObjectName(u"lcdNumber_M1C2_R")
+        sizePolicy8.setHeightForWidth(self.lcdNumber_M1C2_R.sizePolicy().hasHeightForWidth())
+        self.lcdNumber_M1C2_R.setSizePolicy(sizePolicy8)
+        self.lcdNumber_M1C2_R.setMaximumSize(QSize(40, 16777215))
+        self.lcdNumber_M1C2_R.setSmallDecimalPoint(False)
+        self.lcdNumber_M1C2_R.setDigitCount(3)
+
+        self.horizontalLayout_20.addWidget(self.lcdNumber_M1C2_R)
+
+
+        self.verticalLayout_22.addLayout(self.horizontalLayout_20)
+
+        self.horizontalLayout_19 = QHBoxLayout()
+        self.horizontalLayout_19.setObjectName(u"horizontalLayout_19")
+        self.horizontalLayout_19.setContentsMargins(-1, 3, -1, 3)
+        self.label_22 = QLabel(self.verticalLayoutWidget_20)
+        self.label_22.setObjectName(u"label_22")
+        sizePolicy5.setHeightForWidth(self.label_22.sizePolicy().hasHeightForWidth())
+        self.label_22.setSizePolicy(sizePolicy5)
+        self.label_22.setMaximumSize(QSize(50, 16777215))
+        self.label_22.setFont(font3)
+
+        self.horizontalLayout_19.addWidget(self.label_22)
+
+        self.lcdNumber_M2C1_R = QLCDNumber(self.verticalLayoutWidget_20)
+        self.lcdNumber_M2C1_R.setObjectName(u"lcdNumber_M2C1_R")
+        sizePolicy8.setHeightForWidth(self.lcdNumber_M2C1_R.sizePolicy().hasHeightForWidth())
+        self.lcdNumber_M2C1_R.setSizePolicy(sizePolicy8)
+        self.lcdNumber_M2C1_R.setMaximumSize(QSize(40, 16777215))
+        self.lcdNumber_M2C1_R.setSmallDecimalPoint(False)
+        self.lcdNumber_M2C1_R.setDigitCount(3)
+
+        self.horizontalLayout_19.addWidget(self.lcdNumber_M2C1_R)
+
+        self.label_23 = QLabel(self.verticalLayoutWidget_20)
+        self.label_23.setObjectName(u"label_23")
+        sizePolicy5.setHeightForWidth(self.label_23.sizePolicy().hasHeightForWidth())
+        self.label_23.setSizePolicy(sizePolicy5)
+        self.label_23.setMaximumSize(QSize(50, 16777215))
+        self.label_23.setFont(font3)
+
+        self.horizontalLayout_19.addWidget(self.label_23)
+
+        self.lcdNumber_M2C2_R = QLCDNumber(self.verticalLayoutWidget_20)
+        self.lcdNumber_M2C2_R.setObjectName(u"lcdNumber_M2C2_R")
+        sizePolicy9.setHeightForWidth(self.lcdNumber_M2C2_R.sizePolicy().hasHeightForWidth())
+        self.lcdNumber_M2C2_R.setSizePolicy(sizePolicy9)
+        self.lcdNumber_M2C2_R.setMaximumSize(QSize(40, 16777215))
+        self.lcdNumber_M2C2_R.setSmallDecimalPoint(False)
+        self.lcdNumber_M2C2_R.setDigitCount(3)
+
+        self.horizontalLayout_19.addWidget(self.lcdNumber_M2C2_R)
+
+
+        self.verticalLayout_22.addLayout(self.horizontalLayout_19)
+
+        self.tabWidget_2.addTab(self.tab_5, "")
+        self.tab_4 = QWidget()
+        self.tab_4.setObjectName(u"tab_4")
+        self.verticalLayoutWidget_19 = QWidget(self.tab_4)
+        self.verticalLayoutWidget_19.setObjectName(u"verticalLayoutWidget_19")
+        self.verticalLayoutWidget_19.setGeometry(QRect(0, 0, 191, 561))
+        self.verticalLayout_26 = QVBoxLayout(self.verticalLayoutWidget_19)
+        self.verticalLayout_26.setObjectName(u"verticalLayout_26")
+        self.verticalLayout_26.setContentsMargins(0, 0, 0, 6)
+        self.verticalLayout_29 = QVBoxLayout()
+        self.verticalLayout_29.setObjectName(u"verticalLayout_29")
+        self.horizontalLayout_26 = QHBoxLayout()
+        self.horizontalLayout_26.setObjectName(u"horizontalLayout_26")
+        self.pushButton_find_location = QPushButton(self.verticalLayoutWidget_19)
+        self.pushButton_find_location.setObjectName(u"pushButton_find_location")
+        sizePolicy2.setHeightForWidth(self.pushButton_find_location.sizePolicy().hasHeightForWidth())
+        self.pushButton_find_location.setSizePolicy(sizePolicy2)
+        self.pushButton_find_location.setMaximumSize(QSize(80, 16777215))
+
+        self.horizontalLayout_26.addWidget(self.pushButton_find_location)
+
+        self.label_solver_status = QLabel(self.verticalLayoutWidget_19)
+        self.label_solver_status.setObjectName(u"label_solver_status")
+        sizePolicy6.setHeightForWidth(self.label_solver_status.sizePolicy().hasHeightForWidth())
+        self.label_solver_status.setSizePolicy(sizePolicy6)
+        self.label_solver_status.setMaximumSize(QSize(16, 16))
+        self.label_solver_status.setPixmap(QPixmap(u"../stepper_controller_V2/GUI/StepperGUI/graphics/led_red.png"))
+        self.label_solver_status.setScaledContents(True)
+        self.label_solver_status.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.horizontalLayout_26.addWidget(self.label_solver_status)
+
+
+        self.verticalLayout_29.addLayout(self.horizontalLayout_26)
+
+        self.label_42 = QLabel(self.verticalLayoutWidget_19)
+        self.label_42.setObjectName(u"label_42")
+        sizePolicy5.setHeightForWidth(self.label_42.sizePolicy().hasHeightForWidth())
+        self.label_42.setSizePolicy(sizePolicy5)
+        self.label_42.setMaximumSize(QSize(150, 14))
+        font5 = QFont()
+        font5.setPointSize(10)
+        self.label_42.setFont(font5)
+        self.label_42.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.verticalLayout_29.addWidget(self.label_42)
+
+        self.verticalLayout_27 = QVBoxLayout()
+        self.verticalLayout_27.setObjectName(u"verticalLayout_27")
+        self.label_40 = QLabel(self.verticalLayoutWidget_19)
+        self.label_40.setObjectName(u"label_40")
+        sizePolicy4.setHeightForWidth(self.label_40.sizePolicy().hasHeightForWidth())
+        self.label_40.setSizePolicy(sizePolicy4)
+        self.label_40.setMaximumSize(QSize(150, 14))
+        self.label_40.setFont(font5)
+        self.label_40.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.verticalLayout_27.addWidget(self.label_40)
+
+        self.lineEdit_sky_ra = QLineEdit(self.verticalLayoutWidget_19)
+        self.lineEdit_sky_ra.setObjectName(u"lineEdit_sky_ra")
+        sizePolicy2.setHeightForWidth(self.lineEdit_sky_ra.sizePolicy().hasHeightForWidth())
+        self.lineEdit_sky_ra.setSizePolicy(sizePolicy2)
+        self.lineEdit_sky_ra.setMinimumSize(QSize(0, 20))
+        self.lineEdit_sky_ra.setMaximumSize(QSize(150, 15))
+        font6 = QFont()
+        font6.setPointSize(9)
+        self.lineEdit_sky_ra.setFont(font6)
+        self.lineEdit_sky_ra.setReadOnly(True)
+
+        self.verticalLayout_27.addWidget(self.lineEdit_sky_ra)
+
+
+        self.verticalLayout_29.addLayout(self.verticalLayout_27)
+
+        self.verticalLayout_28 = QVBoxLayout()
+        self.verticalLayout_28.setObjectName(u"verticalLayout_28")
+        self.label_41 = QLabel(self.verticalLayoutWidget_19)
+        self.label_41.setObjectName(u"label_41")
+        sizePolicy4.setHeightForWidth(self.label_41.sizePolicy().hasHeightForWidth())
+        self.label_41.setSizePolicy(sizePolicy4)
+        self.label_41.setMaximumSize(QSize(150, 20))
+        self.label_41.setFont(font5)
+        self.label_41.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.verticalLayout_28.addWidget(self.label_41)
+
+        self.lineEdit_sky_dec = QLineEdit(self.verticalLayoutWidget_19)
+        self.lineEdit_sky_dec.setObjectName(u"lineEdit_sky_dec")
+        sizePolicy2.setHeightForWidth(self.lineEdit_sky_dec.sizePolicy().hasHeightForWidth())
+        self.lineEdit_sky_dec.setSizePolicy(sizePolicy2)
+        self.lineEdit_sky_dec.setMinimumSize(QSize(100, 20))
+        self.lineEdit_sky_dec.setMaximumSize(QSize(150, 15))
+        self.lineEdit_sky_dec.setReadOnly(True)
+
+        self.verticalLayout_28.addWidget(self.lineEdit_sky_dec)
+
+
+        self.verticalLayout_29.addLayout(self.verticalLayout_28)
+
+        self.verticalLayout_33 = QVBoxLayout()
+        self.verticalLayout_33.setObjectName(u"verticalLayout_33")
+        self.label_46 = QLabel(self.verticalLayoutWidget_19)
+        self.label_46.setObjectName(u"label_46")
+        self.label_46.setMaximumSize(QSize(150, 20))
+        self.label_46.setFont(font5)
+        self.label_46.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.verticalLayout_33.addWidget(self.label_46)
+
+        self.lineEdit_sky_rot = QLineEdit(self.verticalLayoutWidget_19)
+        self.lineEdit_sky_rot.setObjectName(u"lineEdit_sky_rot")
+        self.lineEdit_sky_rot.setMinimumSize(QSize(0, 20))
+        self.lineEdit_sky_rot.setMaximumSize(QSize(150, 20))
+        self.lineEdit_sky_rot.setReadOnly(True)
+
+        self.verticalLayout_33.addWidget(self.lineEdit_sky_rot)
+
+
+        self.verticalLayout_29.addLayout(self.verticalLayout_33)
+
+
+        self.verticalLayout_26.addLayout(self.verticalLayout_29)
+
+        self.verticalLayout_30 = QVBoxLayout()
+        self.verticalLayout_30.setObjectName(u"verticalLayout_30")
+        self.label_43 = QLabel(self.verticalLayoutWidget_19)
+        self.label_43.setObjectName(u"label_43")
+        self.label_43.setMaximumSize(QSize(150, 20))
+        self.label_43.setFont(font5)
+        self.label_43.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.verticalLayout_30.addWidget(self.label_43)
+
+        self.verticalLayout_31 = QVBoxLayout()
+        self.verticalLayout_31.setObjectName(u"verticalLayout_31")
+        self.label_44 = QLabel(self.verticalLayoutWidget_19)
+        self.label_44.setObjectName(u"label_44")
+        self.label_44.setMaximumSize(QSize(150, 20))
+        self.label_44.setFont(font5)
+        self.label_44.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.verticalLayout_31.addWidget(self.label_44)
+
+        self.lineEdit_7 = QLineEdit(self.verticalLayoutWidget_19)
+        self.lineEdit_7.setObjectName(u"lineEdit_7")
+        self.lineEdit_7.setMinimumSize(QSize(0, 20))
+        self.lineEdit_7.setMaximumSize(QSize(150, 20))
+        self.lineEdit_7.setReadOnly(True)
+
+        self.verticalLayout_31.addWidget(self.lineEdit_7)
+
+
+        self.verticalLayout_30.addLayout(self.verticalLayout_31)
+
+        self.verticalLayout_32 = QVBoxLayout()
+        self.verticalLayout_32.setObjectName(u"verticalLayout_32")
+        self.label_45 = QLabel(self.verticalLayoutWidget_19)
+        self.label_45.setObjectName(u"label_45")
+        self.label_45.setMaximumSize(QSize(150, 20))
+        self.label_45.setFont(font5)
+        self.label_45.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.verticalLayout_32.addWidget(self.label_45)
+
+        self.lineEdit_9 = QLineEdit(self.verticalLayoutWidget_19)
+        self.lineEdit_9.setObjectName(u"lineEdit_9")
+        self.lineEdit_9.setMinimumSize(QSize(0, 20))
+        self.lineEdit_9.setMaximumSize(QSize(150, 20))
+        self.lineEdit_9.setReadOnly(True)
+
+        self.verticalLayout_32.addWidget(self.lineEdit_9)
+
+
+        self.verticalLayout_30.addLayout(self.verticalLayout_32)
+
+        self.verticalLayout_34 = QVBoxLayout()
+        self.verticalLayout_34.setObjectName(u"verticalLayout_34")
+        self.label_47 = QLabel(self.verticalLayoutWidget_19)
+        self.label_47.setObjectName(u"label_47")
+        self.label_47.setMaximumSize(QSize(150, 20))
+        self.label_47.setFont(font5)
+        self.label_47.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.verticalLayout_34.addWidget(self.label_47)
+
+        self.lineEdit_11 = QLineEdit(self.verticalLayoutWidget_19)
+        self.lineEdit_11.setObjectName(u"lineEdit_11")
+        self.lineEdit_11.setMinimumSize(QSize(0, 20))
+        self.lineEdit_11.setMaximumSize(QSize(150, 20))
+        self.lineEdit_11.setReadOnly(True)
+
+        self.verticalLayout_34.addWidget(self.lineEdit_11)
+
+
+        self.verticalLayout_30.addLayout(self.verticalLayout_34)
+
+
+        self.verticalLayout_26.addLayout(self.verticalLayout_30)
+
+        self.label_51 = QLabel(self.verticalLayoutWidget_19)
+        self.label_51.setObjectName(u"label_51")
+        self.label_51.setMaximumSize(QSize(150, 20))
+        self.label_51.setFont(font5)
+        self.label_51.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.verticalLayout_26.addWidget(self.label_51)
+
+        self.lineEdit_ref_ra = QLineEdit(self.verticalLayoutWidget_19)
+        self.lineEdit_ref_ra.setObjectName(u"lineEdit_ref_ra")
+        self.lineEdit_ref_ra.setMinimumSize(QSize(0, 20))
+        self.lineEdit_ref_ra.setMaximumSize(QSize(150, 20))
+        self.lineEdit_ref_ra.setReadOnly(True)
+
+        self.verticalLayout_26.addWidget(self.lineEdit_ref_ra)
+
+        self.lineEdit_ref_dec = QLineEdit(self.verticalLayoutWidget_19)
+        self.lineEdit_ref_dec.setObjectName(u"lineEdit_ref_dec")
+        self.lineEdit_ref_dec.setMinimumSize(QSize(0, 20))
+        self.lineEdit_ref_dec.setMaximumSize(QSize(150, 20))
+        self.lineEdit_ref_dec.setReadOnly(True)
+
+        self.verticalLayout_26.addWidget(self.lineEdit_ref_dec)
+
+        self.horizontalSlider_sens = QSlider(self.verticalLayoutWidget_19)
+        self.horizontalSlider_sens.setObjectName(u"horizontalSlider_sens")
+        self.horizontalSlider_sens.setMaximumSize(QSize(150, 16777215))
+        self.horizontalSlider_sens.setMinimum(-30)
+        self.horizontalSlider_sens.setMaximum(0)
+        self.horizontalSlider_sens.setSliderPosition(-10)
+        self.horizontalSlider_sens.setOrientation(Qt.Orientation.Horizontal)
+
+        self.verticalLayout_26.addWidget(self.horizontalSlider_sens)
+
+        self.horizontalLayout_25 = QHBoxLayout()
+        self.horizontalLayout_25.setObjectName(u"horizontalLayout_25")
+        self.label_52 = QLabel(self.verticalLayoutWidget_19)
+        self.label_52.setObjectName(u"label_52")
+        self.label_52.setMaximumSize(QSize(150, 20))
+        self.label_52.setFont(font5)
+        self.label_52.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.horizontalLayout_25.addWidget(self.label_52)
+
+        self.lineEdit_detected = QLineEdit(self.verticalLayoutWidget_19)
+        self.lineEdit_detected.setObjectName(u"lineEdit_detected")
+        sizePolicy6.setHeightForWidth(self.lineEdit_detected.sizePolicy().hasHeightForWidth())
+        self.lineEdit_detected.setSizePolicy(sizePolicy6)
+        self.lineEdit_detected.setMaximumSize(QSize(200, 16777215))
+        self.lineEdit_detected.setReadOnly(True)
+
+        self.horizontalLayout_25.addWidget(self.lineEdit_detected)
+
+
+        self.verticalLayout_26.addLayout(self.horizontalLayout_25)
+
+        self.tabWidget_2.addTab(self.tab_4, "")
+
+        self.verticalLayout_5.addWidget(self.tabWidget_2)
+
+
+        self.verticalLayout.addLayout(self.verticalLayout_5)
+
+
+        self.gridLayout.addLayout(self.verticalLayout, 0, 0, 4, 1)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
@@ -1752,6 +1829,18 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
+        self.label.setText(QCoreApplication.translate("MainWindow", u"RA Speed ", None))
+        self.label_3.setText(QCoreApplication.translate("MainWindow", u"Dec Speed", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("MainWindow", u"Manual Speed", None))
+        self.label_4.setText(QCoreApplication.translate("MainWindow", u"Dec gain", None))
+        self.label_2.setText(QCoreApplication.translate("MainWindow", u"Ra gain", None))
+        self.checkBox_startGuiding.setText(QCoreApplication.translate("MainWindow", u"Guide", None))
+        self.pushButton_3.setText(QCoreApplication.translate("MainWindow", u"Keep current position", None))
+        self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"Identify System", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QCoreApplication.translate("MainWindow", u"Auto speed", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), QCoreApplication.translate("MainWindow", u"Manual coil", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_6), QCoreApplication.translate("MainWindow", u"Control", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_7), QCoreApplication.translate("MainWindow", u"Error", None))
         self.label_50.setText(QCoreApplication.translate("MainWindow", u"Streamed Images", None))
         self.comboBox_address_2.setItemText(0, QCoreApplication.translate("MainWindow", u"camera", None))
         self.comboBox_address_2.setItemText(1, QCoreApplication.translate("MainWindow", u"Test_data_1", None))
@@ -1767,18 +1856,12 @@ class Ui_MainWindow(object):
         self.label_9.setText(QCoreApplication.translate("MainWindow", u"Capture time", None))
         self.label_11.setText(QCoreApplication.translate("MainWindow", u"Interval", None))
         self.label_33.setText(QCoreApplication.translate("MainWindow", u"Gain", None))
-        self.label.setText(QCoreApplication.translate("MainWindow", u"RA Speed ", None))
-        self.label_3.setText(QCoreApplication.translate("MainWindow", u"Dec Speed", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("MainWindow", u"Manual Speed", None))
-        self.label_4.setText(QCoreApplication.translate("MainWindow", u"Dec gain", None))
-        self.label_2.setText(QCoreApplication.translate("MainWindow", u"Ra gain", None))
-        self.checkBox_startGuiding.setText(QCoreApplication.translate("MainWindow", u"Guide", None))
-        self.pushButton_3.setText(QCoreApplication.translate("MainWindow", u"Keep current position", None))
-        self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"Identify System", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QCoreApplication.translate("MainWindow", u"Auto speed", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), QCoreApplication.translate("MainWindow", u"Manual coil", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_6), QCoreApplication.translate("MainWindow", u"Control", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_7), QCoreApplication.translate("MainWindow", u"Error", None))
+        self.label_30.setText(QCoreApplication.translate("MainWindow", u"Telescope Ra", None))
+        self.label_48.setText(QCoreApplication.translate("MainWindow", u"Sky Ra", None))
+        self.label_27.setText(QCoreApplication.translate("MainWindow", u"Telescope Dec", None))
+        self.label_49.setText(QCoreApplication.translate("MainWindow", u"Sky Dec", None))
+        self.label_7.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-weight:700;\">Battery</span></p><p><span style=\" font-weight:700;\">Voltage</span></p></body></html>", None))
+        self.label_6.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-weight:700;\">Battery</span></p><p><span style=\" font-weight:700;\">Current</span></p></body></html>", None))
         self.comboBox_address.setItemText(0, QCoreApplication.translate("MainWindow", u"10.42.0.1", None))
         self.comboBox_address.setItemText(1, QCoreApplication.translate("MainWindow", u"192.168.1.101", None))
 
@@ -1824,6 +1907,7 @@ class Ui_MainWindow(object):
         self.label_23.setText(QCoreApplication.translate("MainWindow", u"M2C2", None))
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.tab_5), QCoreApplication.translate("MainWindow", u"Motors", None))
         self.pushButton_find_location.setText(QCoreApplication.translate("MainWindow", u"Find location", None))
+        self.label_solver_status.setText("")
         self.label_42.setText(QCoreApplication.translate("MainWindow", u"Sky patch info", None))
         self.label_40.setText(QCoreApplication.translate("MainWindow", u"Ra Location", None))
         self.lineEdit_sky_ra.setText(QCoreApplication.translate("MainWindow", u"0 0 0", None))
@@ -1837,12 +1921,9 @@ class Ui_MainWindow(object):
         self.label_45.setText(QCoreApplication.translate("MainWindow", u"Dec Location", None))
         self.lineEdit_9.setText(QCoreApplication.translate("MainWindow", u"0", None))
         self.label_47.setText(QCoreApplication.translate("MainWindow", u"Rotation", None))
+        self.label_51.setText(QCoreApplication.translate("MainWindow", u"Reference Star", None))
+        self.lineEdit_ref_ra.setText("")
+        self.label_52.setText(QCoreApplication.translate("MainWindow", u"Detected", None))
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.tab_4), QCoreApplication.translate("MainWindow", u"Ident", None))
-        self.label_30.setText(QCoreApplication.translate("MainWindow", u"Telescope Ra", None))
-        self.label_48.setText(QCoreApplication.translate("MainWindow", u"Sky Ra", None))
-        self.label_27.setText(QCoreApplication.translate("MainWindow", u"Telescope Dec", None))
-        self.label_49.setText(QCoreApplication.translate("MainWindow", u"Sky Dec", None))
-        self.label_7.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-weight:700;\">Battery</span></p><p><span style=\" font-weight:700;\">Voltage</span></p></body></html>", None))
-        self.label_6.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-weight:700;\">Battery</span></p><p><span style=\" font-weight:700;\">Current</span></p></body></html>", None))
     # retranslateUi
 

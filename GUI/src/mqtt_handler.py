@@ -5,15 +5,21 @@ from ui_form import Ui_MainWindow
 import cv2
 import json
 import math
+from src.WCS import WCS, deg2dms, deg2hms
 from src.telescope_controller import TelescopeController
 from src.logger import Logger
+from PySide6.QtGui import QPixmap
+
+
 mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 
 
 class MqttHandler:
-    def __init__(self, ui: Ui_MainWindow, logger: Logger):
+    def __init__(self, ui: Ui_MainWindow, logger: Logger, wcs: WCS, ref_star_plot):
         self.image = np.zeros((1280, 96), dtype=np.uint16)
         self.image_ready = False
+        self.wcs = wcs
+        self.ref_star_plot = ref_star_plot
         self.setupClient()
         self.ui = ui
         self.logger = logger
@@ -103,6 +109,22 @@ class MqttHandler:
             self.ui.lcdNumber_M2C1_R.display(float(msg.payload.decode("utf-8"))/1000)
         elif msg.topic == "sensors/M2C2_R":
             self.ui.lcdNumber_M2C2_R.display(float(msg.payload.decode("utf-8"))/1000)
+        elif msg.topic == "solver/wcs":
+            wcs_vals = json.loads(msg.payload.decode("utf-8"))
+            print( wcs_vals )
+            self.wcs = WCS(wcs_vals[0], wcs_vals[1], wcs_vals[2], wcs_vals[3], wcs_vals[4], wcs_vals[5], wcs_vals[6], wcs_vals[7])
+            print(self.ref_star_plot.x_cent, self.ref_star_plot.y_cent)
+            ra, dec = self.wcs.pixel_to_world(self.ref_star_plot.y_cent, self.ref_star_plot.x_cent)
+            self.ui.grid_mer = self.wcs.get_meridian_grid_lines(step_deg=1)
+            self.ui.grid_lat = self.wcs.get_latitude_grid_lines()
+            self.ui.lineEdit_ref_ra.setText(deg2hms(ra))
+            self.ui.lineEdit_ref_dec.setText(deg2dms(dec))
+        elif msg.topic == "solver/status":
+            status = str(msg.payload.decode("utf-8"))
+            if status=="ok":
+                self.ui.label_solver_status.setPixmap(QPixmap(u"images/led_green.png"))
+            elif status == "n_ok":
+                self.ui.label_solver_status.setPixmap(QPixmap(u"images/led_red.png"))
 
     def setupCamera(self, exposure: int, gain: int, interval: int):
         self.mqtt_client.publish("camera/exposure", exposure)

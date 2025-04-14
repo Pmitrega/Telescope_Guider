@@ -47,6 +47,18 @@ def drawGuiding(image: np.ndarray, guiding_star: starCentroid):
                    int(math.sqrt(guiding_star.brightness / 2)), (0, 0, 255), 3)
     return image
 
+def drawGrid(image: np.ndarray, grid_mer, grid_lat):
+    for line in grid_mer:
+        pts = np.array(line, dtype=np.int32)
+        cv2.polylines(image, pts=[pts], isClosed=False, color=(126, 126, 126), thickness=1)
+
+    for line in grid_lat:
+        pts = np.array(line, dtype=np.int32)
+        cv2.polylines(image, pts=[pts], isClosed=False, color=(126, 126, 126), thickness=2)
+
+    return image
+
+
 def drawSetPoint(image: np.ndarray, setPoint: starCentroid):
     print((int(setPoint.x_cent),int(setPoint.y_cent)))
     p1 = (int(setPoint.x_cent), 0)
@@ -93,6 +105,10 @@ def transformImage(ui: Ui_MainWindow, image: np.ndarray, tel_controller: Telesco
 
     if ui.checkBox_show_guiding_star.isChecked():
         transformed_image = drawGuiding(transformed_image, tel_controller.reference_star_current)
+
+    if ui.checkBox_show_sky_grid.isChecked():
+        transformed_image = drawGrid(transformed_image, ui.grid_mer, ui.grid_lat)
+
     if True: # show setpoint
         transformed_image = drawSetPoint(transformed_image, tel_controller.go_to_loc)
 
