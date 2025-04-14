@@ -2,6 +2,9 @@ from paho.mqtt import client as mqtt_client
 import json
 import astrometry
 import math
+from astropy.coordinates import SkyCoord  # High-level coordinates
+from astropy.coordinates import ICRS, Galactic, FK4, FK5  # Low-level frames
+from astropy.time import Time
 
 broker = 'localhost'
 port = 1883
@@ -9,7 +12,7 @@ topic = "solver/solution"
 client_id = f'solver'
 username = 'stepper'
 password = 'stepper'
-sec_per_pixel = 6.35/2
+sec_per_pixel = 8.14/2
 solver = None
 
 def connect_mqtt():
@@ -90,8 +93,8 @@ def on_message(client, userdata, msg):
             solution = solver.solve(
                 stars=stars,
                 size_hint=astrometry.SizeHint(
-                    lower_arcsec_per_pixel=sec_per_pixel - 1,
-                    upper_arcsec_per_pixel=sec_per_pixel + 1,
+                    lower_arcsec_per_pixel=sec_per_pixel - 0.1,
+                    upper_arcsec_per_pixel=sec_per_pixel + 0.1,
                 ),
                 position_hint=None,
                 solution_parameters=astrometry.SolutionParameters(
@@ -104,8 +107,8 @@ def on_message(client, userdata, msg):
             solution = solver.solve(
                 stars=stars,
                 size_hint=astrometry.SizeHint(
-                    lower_arcsec_per_pixel=sec_per_pixel - 0.5,
-                    upper_arcsec_per_pixel=sec_per_pixel + 0.5,
+                    lower_arcsec_per_pixel=sec_per_pixel - 0.1,
+                    upper_arcsec_per_pixel=sec_per_pixel + 0.1,
                 ),
                 solution_parameters=astrometry.SolutionParameters(
                     positional_noise_pixels=2.0,
@@ -114,7 +117,7 @@ def on_message(client, userdata, msg):
                 ))
         if solution.has_match():
             wcs_fields = solution.best_match().wcs_fields
-
+            wcs = solution.best_match().astropy_wcs()
             CRPIX1 = float(wcs_fields["CRPIX1"][0])
             CRPIX2 = float(wcs_fields["CRPIX2"][0])
             CRVAL1 = float(wcs_fields["CRVAL1"][0])  # RA at ref pixel
@@ -123,6 +126,16 @@ def on_message(client, userdata, msg):
             CD12 = float(wcs_fields["CD1_2"][0])
             CD21 = float(wcs_fields["CD2_1"][0])
             CD22 = float(wcs_fields["CD2_2"][0])
+            
+            sol_wcs = wcs.pixel_to_world(900, 612)
+            print("WCS: ",wcs)
+            print(sol_wcs.ra)
+            print(sol_wcs.dec)
+            obstime = Time.now()  # or Time(hdul[0].header["DATE-OBS"])
+            sky_cords = SkyCoord(float(sol_wcs.ra.deg), float(sol_wcs.dec.deg), unit="deg", obstime="J2000.00")
+            coord_now = sky_cords.transform_to(FK5(equinox=obstime))
+            print(coord_now.ra.deg)
+            print(coord_now.dec.deg)
             # Image center pixel (Python uses 0-indexed, FITS often 1-indexed)
             x = 640
             y = 480
@@ -154,8 +167,10 @@ def on_message(client, userdata, msg):
             client.publish("solver/dec_dms", deg_to_dms(dec_center))
             client.publish("solver/rotation", str(round(rot, 4)))
             client.publish("solver/wcs", WCS)
+            client.publish("solver/status", "ok")
         else:
             print(f"solution not found")
+            client.publish("solver/status", "n_ok")
     if msg.topic == "solver/sec_per_pixel":
         spc = msg.payload.decode("utf-8")
         spc = float(spc)
