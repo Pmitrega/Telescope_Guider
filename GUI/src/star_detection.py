@@ -3,6 +3,10 @@ import numpy as np
 from PySide6.QtGui import QPixmap
 
 def segmentation(im: np.ndarray, thr=-5):
+    if im is None:
+        return None, [0,0,0]
+    im_filt = cv2.medianBlur(im, 3)
+    # im_filt = im
     im_filt = cv2.GaussianBlur(im, (5, 5), 2)
     im_th = cv2.adaptiveThreshold(im_filt, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, \
                                   cv2.THRESH_BINARY, 399, thr)
@@ -40,11 +44,14 @@ def segmentation(im: np.ndarray, thr=-5):
 
 
 def requestStarsLocation(star_list: list, mqtt_client, ui):
+    print(len(star_list))
     solver_star_list_req = []
     for el in star_list:
         solver_star_list_req.append([round(float(el[1]),2), round(float(el[2]),2)])
-    print(str(solver_star_list_req))
+    #print(str(solver_star_list_req))
+    print("Requesting star location")
     if len(solver_star_list_req) >= 3:
+        ui.solver_is_ready = False
         mqtt_client.publish("solver/star_locs", str(solver_star_list_req))
         ui.label_solver_status.setPixmap(QPixmap(u"images/led_yellow.png"))
 
@@ -75,25 +82,86 @@ def circularity_meassure(obj: np.ndarray, non_zero, cx, cy):
     return 1
 
 
+def wcog_centroid(image, x_range, y_range, sigma=2, init_center=None):
+    """
+    Weighted Center of Gravity (WCoG) centroid calculation.
+    
+    Parameters:
+    - image: 2D np.ndarray, input image
+    - x_range: tuple, (start_x, end_x) pixel indices (inclusive start, exclusive end)
+    - y_range: tuple, (start_y, end_y) pixel indices
+    - sigma: float, standard deviation of the Gaussian
+    - init_center: tuple (init_x, init_y) or None
+    
+    Returns:
+    - cent_x: float, centroid x position
+    - cent_y: float, centroid y position
+    """
 
+    # Create coordinate grid
+    x = np.arange(x_range[0], x_range[1])
+    y = np.arange(y_range[0], y_range[1])
+    X, Y = np.meshgrid(x, y)  # X, Y shapes: (len(y), len(x))
+
+    # Determine initial center
+    if init_center is None:
+        init_cent_x = (x_range[0] + x_range[1]) / 2
+        init_cent_y = (y_range[0] + y_range[1]) / 2
+    else:
+        init_cent_x, init_cent_y = init_center
+
+    # Shifted coordinates from initial center
+    diff_X = X - init_cent_x
+    diff_Y = Y - init_cent_y
+
+    # 2D Gaussian weights
+    W = (1.0 / (2.0 * np.pi * sigma**2)) * np.exp(-(diff_X**2 + diff_Y**2) / (2 * sigma**2))
+
+    # Extract image patch
+    patch = image[y_range[0]:y_range[1], x_range[0]:x_range[1]]
+
+    # Weighted brightness
+    weighted_patch = patch * W
+
+    # Sum weighted coordinates
+    total_brightness = np.sum(weighted_patch)
+
+    if total_brightness == 0:
+        return init_cent_x, init_cent_y  # fallback if total brightness is zero
+
+    cent_x = np.sum(weighted_patch * X) / total_brightness
+    cent_y = np.sum(weighted_patch * Y) / total_brightness
+
+    return cent_x, cent_y
+
+
+import numpy as np
+
+def gaussian_2d(x, y, sigma):
+    return (1.0 / (2.0 * np.pi * sigma**2)) * np.exp(-(x**2 + y**2) / (2 * sigma**2))
 
 def calculateStarCentroid(image, x_range, y_range, method):
     cent_x = int(0)
     cent_y = int(0)
     if method == "COG":
-        tot_brightness = 0
+        total_brightness = 0
         for i in range(x_range[0], x_range[1]):
             for j in range(y_range[0], y_range[1]):
                 brightness = int(image[j,i])**4
                 cent_x = cent_x + brightness * i
                 cent_y = cent_y + brightness * j
-                tot_brightness = tot_brightness + brightness
-        cent_x = cent_x/tot_brightness
-        cent_y = cent_y/tot_brightness
-    if method == "WCOG":
-        raise NotImplemented("WCOG not implemented")
-    if method == "IWCOG":
-        raise NotImplemented("IWCOG not implemented")
+                total_brightness = total_brightness + brightness
+        cent_x = cent_x/total_brightness
+        cent_y = cent_y/total_brightness
+    elif method == "WCOG":
+        cent_x, cent_y = wcog_centroid(image, x_range, y_range, sigma=2)
+    elif method == "IWCOG":
+        it_count = 10
+        cent_x = (x_range[0] + x_range[1]) / 2
+        cent_y = (y_range[0] + y_range[1]) / 2
+        for i in range(it_count):
+            cent_x, cent_y = wcog_centroid(image, x_range, y_range, sigma=2, init_center=[cent_x, cent_y])
+        
     return [cent_x, cent_y]
 
 
