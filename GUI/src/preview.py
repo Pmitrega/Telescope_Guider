@@ -49,18 +49,19 @@ def drawGuiding(image: np.ndarray, guiding_star: starCentroid):
 
 def drawGrid(image: np.ndarray, grid_mer, grid_lat):
     for line in grid_mer:
-        pts = np.array(line, dtype=np.int32)
+        pts = np.array(line, dtype=np.float64)
+        pts = pts.astype(np.int32)
         cv2.polylines(image, pts=[pts], isClosed=False, color=(126, 126, 126), thickness=1)
-
     for line in grid_lat:
-        pts = np.array(line, dtype=np.int32)
+        pts = np.array(line, dtype=np.float64)
+        pts = pts.astype(np.int32)
         cv2.polylines(image, pts=[pts], isClosed=False, color=(126, 126, 126), thickness=2)
 
     return image
 
 
 def drawSetPoint(image: np.ndarray, setPoint: starCentroid):
-    print((int(setPoint.x_cent),int(setPoint.y_cent)))
+    # print((int(setPoint.x_cent),int(setPoint.y_cent)))
     p1 = (int(setPoint.x_cent), 0)
     p2 = (int(setPoint.x_cent), image.shape[0])
     cv2.line(image, p1 , p2 , (255,0,0),1)

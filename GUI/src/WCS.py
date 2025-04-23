@@ -58,27 +58,6 @@ class WCS:
         header['NAXIS1'] = 1280
         header['NAXIS2'] = 960
 
-        # # WCS reference frame and projection type
-        # header['CTYPE1'] = 'RA---TAN'  # 'RA---TAN-SIP' if you add SIP distortion
-        # header['CTYPE2'] = 'DEC--TAN'
-        #
-        # # Reference pixel coordinates
-        # header['CRPIX1'] = 988.6375
-        # header['CRPIX2'] = 666.3400000000001
-        #
-        # # Sky coordinates (RA/Dec) at reference pixel
-        # header['CRVAL1'] = 308.26740797321753
-        # header['CRVAL2'] = 83.66293691523461
-        #
-        # # Units for world coordinates
-        # header['CUNIT1'] = 'deg'
-        # header['CUNIT2'] = 'deg'
-        #
-        # # CD matrix for scale, rotation, and skew
-        # header['CD1_1'] = 0.000761532972101924
-        # header['CD1_2'] = 0.000854737883087284
-        # header['CD2_1'] = 0.000862878377948734
-        # header['CD2_2'] = -0.00075439484917592
 
         self.wcs = astropy.wcs.WCS(header=header)
 
@@ -110,11 +89,18 @@ class WCS:
         min_dec = min(pos_1[1], pos_2[1], pos_3[1], pos_4[1])
         max_ra = max(pos_1[0], pos_2[0], pos_3[0], pos_4[0])
         max_dec = max(pos_1[1], pos_2[1], pos_3[1], pos_4[1])
-        ra = np.floor(min_ra)  - step_deg
+        ra_exp_step = (max_ra - min_ra) / 6
+        print("exp step", ra_exp_step)
+        step_deg = 4
+        while (step_deg > ra_exp_step or step_deg < 2**(-4) ) and not abs((step_deg - ra_exp_step)/ra_exp_step) < 0.2:
+            step_deg = step_deg/2
+
+        print("step deg:", step_deg)
+        ra = np.floor(min_ra)  - 5 * step_deg
         dec_step = (max_dec-min_dec)/steps
 
         lines = []
-        while ra < (max_ra + step_deg):
+        while ra < (max_ra + 5 * step_deg):
             line = []
             for i in range(steps + 1):
                 x, y = self.word_to_pixel(ra, min_dec + i * dec_step)
@@ -133,11 +119,11 @@ class WCS:
         min_dec = min(pos_1[1], pos_2[1], pos_3[1], pos_4[1])
         max_ra = max(pos_1[0], pos_2[0], pos_3[0], pos_4[0])
         max_dec = max(pos_1[1], pos_2[1], pos_3[1], pos_4[1])
-        dec = np.floor(min_dec) - step_deg
+        dec = np.floor(min_dec) - 5 * step_deg
         ra_step = (max_ra-min_ra)/steps
 
         lines = []
-        while dec < (max_dec + step_deg):
+        while dec < (max_dec + 5 * step_deg):
             line = []
             for i in range(steps + 1):
                 x, y = self.word_to_pixel(min_ra + i * ra_step, dec)

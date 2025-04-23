@@ -119,6 +119,8 @@ class MqttHandler:
             self.ui.grid_lat = self.wcs.get_latitude_grid_lines()
             self.ui.lineEdit_ref_ra.setText(deg2hms(ra))
             self.ui.lineEdit_ref_dec.setText(deg2dms(dec))
+            self.ui.grid_shift[0] = 0
+            self.ui.grid_shift[1] = 0
         elif msg.topic == "solver/status":
             status = str(msg.payload.decode("utf-8"))
             if status=="ok":

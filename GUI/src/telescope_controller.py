@@ -60,7 +60,7 @@ class TelescopeController:
         self.reference_star_initial = None
         self.reference_star_current = None
         self.time_interval = -1
-        self.sec_per_pixel = 3.25
+        self.sec_per_pixel = 4.1
         self.camera_rotation = 45 / 180 * math.pi
         self.telescope_ra_vect = (math.cos(self.camera_rotation), math.sin(self.camera_rotation))
         self.telescope_dec_vect = (-math.sin(self.camera_rotation), math.cos(self.camera_rotation))
@@ -83,6 +83,10 @@ class TelescopeController:
         self.curr_ctrl = [0, 0]
         self.error_x_int = 0
         self.error_y_int = 0
+        self.last_errx = None
+        self.last_erry = None
+        self.delta_errx = 0
+        self.delta_erry = 0
         self.controls_ra = []
         self.controls_dec = []
 
@@ -104,6 +108,14 @@ class TelescopeController:
         if self.reference_star_current is not None:
             self.mqtt_handler.ref_star_plot = self.reference_star_current
             err = self.getErrorToRefStar(self.go_to_loc)
+            if self.last_errx is not None and self.last_erry is not None:
+                self.delta_errx = (err[0] - self.last_errx)
+                self.delta_erry = (err[1] - self.last_erry)
+                self.delta_errx = self.delta_errx if abs(self.delta_errx) < 20 else 0
+                self.delta_erry = self.delta_erry if abs(self.delta_erry) < 20 else 0
+
+            self.last_errx = err[0]
+            self.last_erry = err[1]
             self.logger.LogErrX(err[0])
             self.logger.LogErrY(err[1])
             speeds = self.setControl(err[0], err[1], auto_control)
