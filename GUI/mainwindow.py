@@ -32,6 +32,7 @@ class MainWindow(QMainWindow):
         self.logger = Logger()
         self.ui.grid_mer = [[[0, 0]]]
         self.ui.grid_lat = [[[0, 0]]]
+        self.ui.grid_shift = [0, 0]
         self.wcs = WCS.WCS(0.00074019, 0.00085509, 0.0008611016, - 0.000761324044, 989.3, 664.5, 308.25474896 , 83.6631)
         self.ref_star_plot = starCentroid(0, 1280/2, 960/2)
         self.mqtt_handler = MqttHandler(self.ui, self.logger, self.wcs, self.ref_star_plot)
@@ -127,9 +128,14 @@ class MainWindow(QMainWindow):
             self.mqtt_handler.image_ready = False
             transformed = cv2.rotate(self.mqtt_handler.image, cv2.ROTATE_90_CLOCKWISE)
             run_auto = self.ui.radioButton_auto_speed.isChecked() and self.ui.checkBox_startGuiding.isChecked()
-            test_run = True
-            run_auto = False
+            test_run = False
+            if test_run:
+                run_auto = False
             self.telescope_controller.genNewImage(transformed, 1000, run_auto)
+            self.shiftGrid()
+            self.ui.grid_shift[0] = self.ui.grid_shift[0] + self.telescope_controller.delta_errx/self.telescope_controller.sec_per_pixel
+            self.ui.grid_shift[1] = self.ui.grid_shift[1] + self.telescope_controller.delta_erry/self.telescope_controller.sec_per_pixel
+            print(self.ui.grid_shift)
             if self.telescope_controller.reference_star_current is not None:
                 err = self.telescope_controller.getErrorToRefStar(self.telescope_controller.go_to_loc)
                 # print("error: ", err)
@@ -188,6 +194,16 @@ class MainWindow(QMainWindow):
         expo = self.ui.spinBox_setExposure.value()
         self.mqtt_handler.setupCamera(expo, gain, inter)
 
+    def shiftGrid(self):
+        for j in range(len(self.ui.grid_mer)):
+            for i in range(len(self.ui.grid_mer[0])):
+                self.ui.grid_mer[j][i][0] = self.ui.grid_mer[j][i][0] + self.telescope_controller.delta_errx/self.telescope_controller.sec_per_pixel
+                self.ui.grid_mer[j][i][1] = self.ui.grid_mer[j][i][1] + self.telescope_controller.delta_erry/self.telescope_controller.sec_per_pixel
+        for j in range(len(self.ui.grid_lat)):
+            for i in range(len(self.ui.grid_lat[0])):
+                self.ui.grid_lat[j][i][0] = self.ui.grid_lat[j][i][0] + self.telescope_controller.delta_errx/self.telescope_controller.sec_per_pixel
+                self.ui.grid_lat[j][i][1] = self.ui.grid_lat[j][i][1] + self.telescope_controller.delta_erry/self.telescope_controller.sec_per_pixel
+
     def attachImageMouseClick(self):
         def callback(event):
             if event.button() == Qt.MouseButton.LeftButton:
@@ -201,15 +217,26 @@ class MainWindow(QMainWindow):
                 self.telescope_controller.setSetPoint(y, x)
                 self.setDisplayedImage(self.mqtt_handler.image)
             else:
-                show_context_menu(event)
+                x_rescale = 1280 / self.ui.imageWidget.width()
+                y_rescale = 960 / self.ui.imageWidget.height()
+                # print("clicked", event.position().toPoint().x() * x_rescale, " ",
+                #       event.position().toPoint().y() * y_rescale)
+                x = int(event.position().toPoint().x() * x_rescale)
+                y = int(event.position().toPoint().y() * y_rescale)
+                show_context_menu(event, x, y)
 
-        def show_context_menu(event):
+        def show_context_menu(event, x_pos, y_pos):
             # Tworzymy menu kontekstowe
             context_menu = QMenu(self)
 
             # Dodajemy akcję zapisu do schowka
-            save_action = QAction("Zapisz obraz do schowka", self)
+            save_action = QAction("Save to clipboard", self)
             save_action.triggered.connect(save_image_to_clipboard)
+            context_menu.addAction(save_action)
+
+            # Dodajemy akcję zapisu do schowka
+            save_action = QAction("Copy click location", self)
+            save_action.triggered.connect(lambda: get_sky_loc(x_pos, y_pos))
             context_menu.addAction(save_action)
 
             # Wyświetlamy menu w miejscu kliknięcia
@@ -225,6 +252,11 @@ class MainWindow(QMainWindow):
             qimage = QImage(image_data.data, width, height, QImage.Format_Grayscale16)
             pixmap = QPixmap.fromImage(qimage)  # Convert to QPixmap
             clipboard.setPixmap(pixmap)
+        def get_sky_loc(x_pos, y_pos):
+            # Zapisz obraz do schowka
+            ra, dec = self.mqtt_handler.wcs.pixel_to_world(x_pos - self.ui.grid_shift[1], y_pos - self.ui.grid_shift[0])
+            clipboard = QApplication.clipboard()
+            clipboard.setText(WCS.deg2hms(ra) + " " + WCS.deg2dms(dec))
 
         self.ui.imageWidget.mousePressEvent = callback
 
