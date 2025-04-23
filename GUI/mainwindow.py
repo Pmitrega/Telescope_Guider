@@ -29,6 +29,7 @@ class MainWindow(QMainWindow):
         self.circ_center = [0, 0]
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        self.ui.solver_is_ready = True
         self.logger = Logger()
         self.ui.grid_mer = [[[0, 0]]]
         self.ui.grid_lat = [[[0, 0]]]
@@ -145,30 +146,38 @@ class MainWindow(QMainWindow):
                 self.addCtrlRa(self.telescope_controller.curr_ctrl[0])
                 self.addCtrlDec(self.telescope_controller.curr_ctrl[1])
             elif test_run:
-                if self.test_it % 40 == 0:
-                    self.addCtrlDec(150)
-                    self.addCtrlRa(0)
-                    self.mqtt_handler.setDecSpeed(150)
-                    self.mqtt_handler.setRaSpeed(0)
-                elif self.test_it % 40 == 20:
-                    self.addCtrlDec(-150)
-                    self.addCtrlRa(0)
-                    self.mqtt_handler.setDecSpeed(-150)
-                    self.mqtt_handler.setRaSpeed(0)
-                    # self.addCtrlDec(0)
-                    # self.addCtrlRa(-400)
-                    # self.mqtt_handler.setDecSpeed(0)
-                    # self.mqtt_handler.setRaSpeed(-400)
-                # elif self.test_it % 40 == 20:
-                #     self.addCtrlDec(400)
-                #     self.addCtrlRa(0)
-                #     self.mqtt_handler.setDecSpeed(400)
-                #     self.mqtt_handler.setRaSpeed(0)
-                # elif self.test_it % 40 == 30:
-                #     self.addCtrlDec(-400)
-                #     self.addCtrlRa(0)
-                #     self.mqtt_handler.setDecSpeed(-400)
-                #     self.mqtt_handler.setRaSpeed(0)
+                if self.ui.solver_is_ready is True:
+                    self.localizeField()
+                if(self.test_it == 0):
+                    print("Leaving deadzone ...")
+                    self.telescope_controller.setDecSpeed(100)
+                    self.telescope_controller.setRaSpeed(100)
+                elif self.test_it == 5:
+                    print("Motors stoped ...")
+                    self.telescope_controller.setDecSpeed(0)
+                    self.telescope_controller.setRaSpeed(0)
+                elif self.test_it == 6:
+                    print("Localizing, start moving Ra")
+                    
+                    self.telescope_controller.setRaSpeed(500)
+                    self.telescope_controller.setDecSpeed(0)
+                elif self.test_it == 40:
+                    print("Motors stoped ...")
+                    self.telescope_controller.setDecSpeed(0)
+                    self.telescope_controller.setRaSpeed(0)
+                elif self.test_it == 41:
+                    print("Localizing, start moving Dec")
+                    self.localizeField()
+                    self.telescope_controller.setDecSpeed(500)
+                    self.telescope_controller.setRaSpeed(0)
+                elif self.test_it == 75:
+                    print("Motors stoped ...")
+                    self.telescope_controller.setDecSpeed(0)
+                    self.telescope_controller.setRaSpeed(0)
+                elif self.test_it == 76:
+                    print("Localizing ...")
+                    self.localizeField()
+                
                 self.test_it = self.test_it + 1
 
             elif self.ui.radioButton_auto_speed.isChecked() and not self.ui.checkBox_startGuiding.isChecked():

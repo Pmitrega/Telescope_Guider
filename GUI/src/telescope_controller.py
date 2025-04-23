@@ -6,6 +6,7 @@ import src.star_detection as star_detection
 import csv
 from src.logger import Logger
 from ui_form import Ui_MainWindow
+from src.control_algorithm import Controller
 STEPS_TO_SECS = 0.104166666666667  # Steps to seconds for both motors.
 
 
@@ -89,6 +90,7 @@ class TelescopeController:
         self.delta_erry = 0
         self.controls_ra = []
         self.controls_dec = []
+        self.controller = Controller(0.6, 0, 0, np.array([[1,0],[0,1]]))
 
     def log_info(self, dec_speed, ra_speed, iterval):
         x = self.reference_star_current.x_cent
@@ -163,9 +165,22 @@ class TelescopeController:
                     self.telescope_ra_vect = (-ident_ra[0] / amp, -ident_ra[1] / amp)
                     self.run_ra_ident = False
                     self.run_ident = False
+                    self.update_controller()
+                    
                 self.run_ra_ident_iter += 1
                 self.last_error = err[:]
                 return
+
+    def update_controller(self):
+        Pg = math.cos(self.telescope_dec_angle / 180 * math.pi)
+        dec_x = self.telescope_dec_vect[0]
+        dec_y = self.telescope_dec_vect[1]
+        ra_x = self.telescope_ra_vect[0]
+        ra_y = self.telescope_ra_vect[1]
+        A = np.array([[dec_x, ra_x * Pg],
+                      [dec_y, ra_y * Pg]])
+        self.controller = Controller(0.6, 0.0, 0.0, A)
+        
 
     def setControl(self, error_x, error_y, enabled: bool):
         self.error_x_int += error_x
@@ -179,36 +194,33 @@ class TelescopeController:
             self.error_x_int = 250
         elif self.error_x_int <-250:
             self.error_x_int = -250
+
         
-        K_gain = 0.3
-        I_gain = 0.0000
-        tot_x = error_x * K_gain + self.error_x_int * I_gain
-        tot_y = error_y * K_gain + self.error_y_int * I_gain
-        Pg = math.cos(self.telescope_dec_angle / 180 * math.pi)
-        dec_x = self.telescope_dec_vect[0]
-        dec_y = self.telescope_dec_vect[1]
-        ra_x = self.telescope_ra_vect[0]
-        ra_y = self.telescope_ra_vect[1]
-        A = np.array([[dec_x, ra_x * Pg],
-                      [dec_y, ra_y * Pg]])
-        B = np.array([tot_x, tot_y])
-        sol = np.linalg.solve(A, B)
+        
+        # K_gain = 0.6
+        # I_gain = 0.0000
+        # Ra_ss_ctrl = -144
+        # tot_x = error_x * K_gain + self.error_x_int * I_gain
+        # tot_y = error_y * K_gain + self.error_y_int * I_gain
+
+        # B = np.array([tot_x, tot_y])
+        # sol = np.linalg.solve(A, B)
         #sol = sol / np.linalg.norm(sol) #* (tot_x ** 2 + tot_y ** 2) ** (1 / 2) * K_gain
 
-        dec_control = sol[0]
-        ra_control = sol[1]
-        if dec_control > 1500:
-            dec_control = 1500
-        elif dec_control < -1500:
-            dec_control = -1500
+        # dec_control = sol[0]
+        # ra_control = sol[1]
+        # if dec_control > 1500:
+        #     dec_control = 1500
+        # elif dec_control < -1500:
+        #     dec_control = -1500
 
-        if ra_control > 1500:
-            ra_control = 1500
-        elif ra_control < -1500:
-            ra_control = -1500
+        # if ra_control > 1500:
+        #     ra_control = 1500
+        # elif ra_control < -1500:
+        #     ra_control = -1500
         # print("ra ctrl:",-int(ra_control))
         # print("dec ctrl:",-int(dec_control))
-        
+        dec_control, ra_control = self.controller.FF_PID_controller.get_control(error_x, error_y) 
         ra_control = - ra_control
         dec_control = - dec_control
         if enabled:
@@ -217,8 +229,9 @@ class TelescopeController:
             self.controls_dec.append(dec_control)
             self.controls_ra.append(ra_control)
             if len(self.controls_ra) > 100:
-                print("dec avr: ", np.average(self.controls_dec[-100:]))
-                print("ra avr: ", np.average(self.controls_ra[-100:]))
+                pass
+                # print("dec avr: ", np.average(self.controls_dec[-100:]))
+                # print("ra avr: ", np.average(self.controls_ra[-100:]))
             
         self.curr_ctrl = [ra_control, dec_control]
         return [ra_control, dec_control]
@@ -238,19 +251,20 @@ class TelescopeController:
         I2Bin = self.image_buffer / 2 ** 8
         I2Bin = I2Bin.astype(np.uint8)
         self.adaptive_thre = int(self.ui.horizontalSlider_sens.value())
+        if I2Bin is None or I2Bin.size == 0:
+            raise ValueError("Input image is empty!")
         bin_im, star_centroids = star_detection.segmentation(I2Bin.astype(np.uint8), self.adaptive_thre)
-        print(len(star_centroids))
+        #print(len(star_centroids))
         self.ui.lineEdit_detected.setText(str(len(star_centroids)))
         # ret, I_mat = cv2.threshold(I_mat, min_I * 1.4, 65535, cv2.THRESH_BINARY)
-        if len(star_centroids) > 500:
+        if len(star_centroids) > 150:
             return
-        cv2.imwrite("../binaraized.png", bin_im)
-        output = cv2.connectedComponentsWithStats(bin_im.astype(np.uint8))
+        # cv2.imwrite("../binaraized.png", bin_im)
+        # output = cv2.connectedComponentsWithStats(bin_im.astype(np.uint8))
         current_star_centroids = []
-        for i in range(1, output[0]):
-            if output[2][i, cv2.CC_STAT_AREA] < 10000000:
-                new_star = starCentroid(output[2][i, cv2.CC_STAT_AREA], output[3][i][0], output[3][i][1])
-                current_star_centroids.append(new_star)
+        for i in range(len(star_centroids)):
+            new_star = starCentroid(star_centroids[i][0], star_centroids[i][1], star_centroids[i][2])
+            current_star_centroids.append(new_star)
         found_reference = False
         if not self.last_star_centroids:
             self.last_star_centroids = current_star_centroids[:]
