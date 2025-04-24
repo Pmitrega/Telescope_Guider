@@ -11,6 +11,7 @@
 #include "mqtt_client.hpp"
 #include <mutex>
 #include <utility>
+#include "motorMonitor.hpp"
 
 struct stepperSensorInfo{
     float value;
@@ -77,6 +78,7 @@ public:
     void handleMQTTRecieve();
     void handleUARTRequests();
     void handleCamera();
+    void handleMotorMonitor();
 private:
     bool checkForUARTUpdate();
     bool waitForUART();
@@ -88,6 +90,7 @@ private:
     stepperCommunicator m_step_com;
     stepperControllerSensors m_stepper_sensors;
     stepperControllerMotorsInfo m_motor_info;
+    motorMonitor m_motor_monitor;
     imageInfo m_image_info;
     cameraSettings m_camera_settings;
     bool m_send_jpg = false;

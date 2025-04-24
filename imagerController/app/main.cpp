@@ -168,15 +168,18 @@ void testStepperControllerComm(){
 int main(){
 	// streamCameraMQTT();
 	GuiderWorker worker;
-	
+
 	std::thread thread_MQTT_trans(&GuiderWorker::handleMQTTTransmission, &worker);
 	std::thread thread_UART_REQ(&GuiderWorker::handleUARTRequests, &worker);
 	std::thread thread_CameraControl(&GuiderWorker::handleCamera, &worker);
 	std::thread thread_MQTTRec(&GuiderWorker::handleMQTTRecieve, &worker);
+	std::thread thread_motorMonitor(&GuiderWorker::handleMotorMonitor, &worker);
+	
 	thread_MQTTRec.join();
 	thread_CameraControl.join();
 	thread_MQTT_trans.join();
 	thread_UART_REQ.join();
+	thread_motorMonitor.join();
 	//testStepperControllerComm();
 	//testMQTT();
     return EXIT_SUCCESS;

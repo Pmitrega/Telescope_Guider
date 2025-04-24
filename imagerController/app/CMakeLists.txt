@@ -11,6 +11,7 @@ set(SOURCES
     src/stepperComm.cpp
     src/mqtt_client.cpp
     src/Worker.cpp
+    src/motorMonitor.cpp
 )
 
 set(STATIC_LIBS

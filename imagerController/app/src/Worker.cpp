@@ -88,6 +88,8 @@ void GuiderWorker::handleMQTTTransmission(){
     const int hearthbeat_timeout = 200;
     int hearthbeat_timer = 0;
 
+    long unsigned int send_motor_info_it = 0
+
     std::string test1_path = "/home/guider/Project/Telescope_Guider/imagerController/test_images/series_1/";
     std::string test2_path = "/home/guider/Project/Telescope_Guider/imagerController/test_images/series_2/";
     auto test1_ImagesInfo = readCSV(test1_path + "info.csv");
@@ -162,6 +164,19 @@ void GuiderWorker::handleMQTTTransmission(){
             m_mqtt_client.publishMessageNumber("sensors/battcurr", m_stepper_sensors.BattCurren.value);
         }
 
+        if(send_motor_info_it % 10 == 0){
+            double ra  =  m_motor_monitor.getPositionRa();
+            double dec = m_motor_monitor.getPositionDec();
+            std::ostringstream json;
+            json << std::fixed << std::setprecision(6);
+            json << "{"
+                 << "\"ra\": " << ra << ", "
+                 << "\"dec\": " << dec
+                 << "}";
+
+            m_mqtt_client.publishMessageString("motors/position", json.str())
+        }
+        send_motor_info_it +=1;
         // mqtt_client.publishMessageString("images/raw/title", filename);
 		// mqtt_client.publishMessageString("images/raw/capture_time", oss.str());
 		// mqtt_client.publishMessageNumber("images/raw/exposure", 500);
@@ -171,7 +186,7 @@ void GuiderWorker::handleMQTTTransmission(){
 		// mqtt_client.publishMessageString("images/raw/ROIheight", "960");
 		// mqtt_client.publishMessageString("images/raw/ROIstart_x", "0");
 		// mqtt_client.publishMessageString("images/raw/ROIstart_y", "0");
-        
+
 
         if(m_image_info.image_width.second == true){
             m_image_info.image_width.second = false;
@@ -302,6 +317,7 @@ void GuiderWorker::handleMQTTRecieve(){
                 if(m_motor_info.ra_speed.first != mqtt_message.payload){
                     m_motor_info.ra_speed.first = mqtt_message.payload;
                     m_step_com.setRaSpeed(std::stoi(m_motor_info.ra_speed.first));
+                    m_motor_monitor.updateRaSpeed((double)std::stoi(m_motor_info.ra_speed.first));
                     m_motor_info.ra_speed.second = true;
                 }
             }
@@ -309,6 +325,7 @@ void GuiderWorker::handleMQTTRecieve(){
                 if(m_motor_info.dec_speed.first != mqtt_message.payload){
                     m_motor_info.dec_speed.first = mqtt_message.payload;
                     m_step_com.setDecSpeed(std::stoi(m_motor_info.dec_speed.first));
+                    m_motor_monitor.updateDecSpeed((double)std::stoi(m_motor_info.dec_speed.first));
                     m_motor_info.dec_speed.second = true;
                 }
             }
@@ -618,10 +635,25 @@ void GuiderWorker::handleCameraSettChangeReq(){
     }
 }
 
+void GuiderWorker::handleMotorMonitor(){
+    while(true){
+        auto start = std::chrono::high_resolution_clock::now();
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        auto end = std::chrono::high_resolution_clock::now();
+        auto duration = end - start;
+        double microseconds = duration.count() * 1.0;
+        m_motor_monitor.updateRaPosition(microseconds/1.0e6);
+        m_motor_monitor.updateDecPosition(microseconds/1.0e6);
+    }
+
+}
+
 
 void GuiderWorker::requestCameraInfoTransmision(){
 
 }
+
+
 
 void GuiderWorker::requestImageTransimssion(){
         m_image_info.image_capture_time.second = true;
