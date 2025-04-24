@@ -174,7 +174,7 @@ void GuiderWorker::handleMQTTTransmission(){
                  << "\"dec\": " << dec
                  << "}";
 
-            m_mqtt_client.publishMessageString("motors/position", json.str())
+            m_mqtt_client.publishMessageString("motors/position", json.str());
         }
         send_motor_info_it +=1;
         // mqtt_client.publishMessageString("images/raw/title", filename);
