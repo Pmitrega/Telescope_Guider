@@ -87,9 +87,11 @@ def transformImage(ui: Ui_MainWindow, image: np.ndarray, tel_controller: Telesco
         transformed_image = cv2.adaptiveThreshold(transformed_image, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
                                                   cv2.THRESH_BINARY, 399, tel_controller.adaptive_thre)
     if transform_type == opts[2]:
-        bgrd = np.min(transformed_image)
-        transformed_image = transformed_image - bgrd
-        transformed_image =  np.sqrt(transformed_image)
+        bgrd = cv2.GaussianBlur(transformed_image, (25, 25), ui.spinBox_sigma.value())
+        transformed_image = cv2.subtract(transformed_image, bgrd)
+        transformed_image = np.sqrt(transformed_image)
+        transformed_image = transformed_image * 2
+        transformed_image = np.clip(transformed_image,0,255).astype(np.uint8)
         transformed_image = transformed_image/transformed_image.max() * 255
         transformed_image = transformed_image.astype(np.uint8)
 

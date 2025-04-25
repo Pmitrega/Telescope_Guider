@@ -29,6 +29,8 @@ class MqttHandler:
         self.localization_dec_ra_rot = [None, None, None]
         self.star_loc_center_x = 0
         self.star_loc_center_y = 0
+        self.telescope_ra = 0
+        self.telescope_dec = 0
 
 
     def on_message(self, client, userdata, msg):
@@ -127,7 +129,10 @@ class MqttHandler:
                 self.ui.label_solver_status.setPixmap(QPixmap(u"images/led_green.png"))
             elif status == "n_ok":
                 self.ui.label_solver_status.setPixmap(QPixmap(u"images/led_red.png"))
-
+        elif msg.topic == "motors_info/position":
+            loc = json.loads(msg.payload.decode("utf-8"))
+            self.telescope_ra = loc["ra"]
+            self.telescope_dec = loc["dec"]
     def setupCamera(self, exposure: int, gain: int, interval: int):
         self.mqtt_client.publish("camera/exposure", exposure)
         self.mqtt_client.publish("camera/interval", interval)

@@ -56,6 +56,28 @@ class MainWindow(QMainWindow):
         self.ui.pushButton_3.clicked.connect(self.keepCurrentLoc)
         self.localize_request_time = None
         self.test_it = 0
+        self.capture_dark = False
+        self.capture_dark_it = 0
+        self.dark_frame = np.zeros((960, 1280), dtype=np.uint16)
+        self.dark_frame_temp = self.dark_frame_temp = np.zeros((960, 1280), dtype=np.uint32)
+        self.ui.progressBar_capture_dark.setValue(0)
+        self.ui.progressBar_capture_dark.setFormat("No capture in progress")   # Your custom text
+        self.ui.progressBar_capture_dark.setTextVisible(True)
+
+        # 🎨 Optional: Style it
+        self.ui.progressBar_capture_dark.setStyleSheet("""
+            QProgressBar {
+                text-align: center;
+                font: bold 14px;
+                color: black;
+            }
+        """)
+    def acquireDarkFrame(self):
+        print("capturing dark!!!!!!!!!!!")
+        self.capture_dark = True
+        self.capture_dark_it = 0
+        self.ui.progressBar_capture_dark.setValue(0)
+        self.ui.progressBar_capture_dark.setFormat("Taken image 0 out of 10")
 
     def setDisplayedImage(self, img: np.ndarray):
         transformed = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
@@ -127,16 +149,47 @@ class MainWindow(QMainWindow):
             self.telescope_controller.sky_dec_vect = self.mqtt_handler.sky_dec_vect
             self.telescope_controller.sky_ra_vect = self.mqtt_handler.sky_ra_vect
             self.mqtt_handler.image_ready = False
-            transformed = cv2.rotate(self.mqtt_handler.image, cv2.ROTATE_90_CLOCKWISE)
+            if self.capture_dark is True:
+                if self.capture_dark_it == 0:
+                    print("Begining calibration")
+                    self.dark_frame_temp = np.zeros((960, 1280), dtype=np.uint32)
+                self.dark_frame_temp = self.dark_frame_temp + self.mqtt_handler.image
+                self.capture_dark_it = self.capture_dark_it + 1
+                self.ui.progressBar_capture_dark.setValue(self.capture_dark_it * 10)
+                self.ui.progressBar_capture_dark.setFormat(f"Taken {self.capture_dark_it} out of 10 images")
+
+                if self.capture_dark_it == 10:
+                    self.ui.progressBar_capture_dark.setValue(100)
+                    self.ui.progressBar_capture_dark.setFormat("Calibration finished! Taken 10 out of 10 images")
+                    self.capture_dark = False
+                    self.dark_frame_temp = self.dark_frame_temp/10
+                    self.dark_frame = self.dark_frame_temp.astype(np.uint16)
+
+                self.setDisplayedImage(self.mqtt_handler.image)
+                return
+            #calibrate with dark frame
+            im = cv2.subtract(self.mqtt_handler.image, self.dark_frame)
+            transformed = cv2.rotate(im, cv2.ROTATE_90_CLOCKWISE)
             run_auto = self.ui.radioButton_auto_speed.isChecked() and self.ui.checkBox_startGuiding.isChecked()
             test_run = False
             if test_run:
                 run_auto = False
+
             self.telescope_controller.genNewImage(transformed, 1000, run_auto)
+            print(self.telescope_controller.getGuidingStarDecHr())
+            detected_centroids = int(self.ui.lineEdit_detected.text())
+            if self.ui.checkBox_auto_sensivity.isChecked():
+                if detected_centroids > 30:
+                    curr_sens = self.ui.horizontalSlider_sens.value()
+                    self.ui.horizontalSlider_sens.setValue(curr_sens - 1)
+                elif detected_centroids < 15:
+                    curr_sens = self.ui.horizontalSlider_sens.value()
+                    self.ui.horizontalSlider_sens.setValue(curr_sens + 1)
+
             self.shiftGrid()
             self.ui.grid_shift[0] = self.ui.grid_shift[0] + self.telescope_controller.delta_errx/self.telescope_controller.sec_per_pixel
             self.ui.grid_shift[1] = self.ui.grid_shift[1] + self.telescope_controller.delta_erry/self.telescope_controller.sec_per_pixel
-            print(self.ui.grid_shift)
+            #print(self.ui.grid_shift)
             if self.telescope_controller.reference_star_current is not None:
                 err = self.telescope_controller.getErrorToRefStar(self.telescope_controller.go_to_loc)
                 # print("error: ", err)
@@ -185,7 +238,7 @@ class MainWindow(QMainWindow):
                 self.mqtt_handler.setRaSpeed(0)
                 self.addCtrlRa(0)
                 self.addCtrlDec(0)
-            self.setDisplayedImage(self.mqtt_handler.image)
+            self.setDisplayedImage(im)
 
     def initializePlots(self):
         image_data = np.random.randn(1280, 960) * 2000 + 20000
@@ -244,8 +297,13 @@ class MainWindow(QMainWindow):
             context_menu.addAction(save_action)
 
             # Dodajemy akcję zapisu do schowka
-            save_action = QAction("Copy click location", self)
+            save_action = QAction("Copy click equatorial location", self)
             save_action.triggered.connect(lambda: get_sky_loc(x_pos, y_pos))
+            context_menu.addAction(save_action)
+
+            # Dodajemy akcję zapisu do schowka
+            save_action = QAction("Copy click xy", self)
+            save_action.triggered.connect(lambda: get_xy_loc(x_pos, y_pos))
             context_menu.addAction(save_action)
 
             # Wyświetlamy menu w miejscu kliknięcia
@@ -266,6 +324,10 @@ class MainWindow(QMainWindow):
             ra, dec = self.mqtt_handler.wcs.pixel_to_world(x_pos - self.ui.grid_shift[1], y_pos - self.ui.grid_shift[0])
             clipboard = QApplication.clipboard()
             clipboard.setText(WCS.deg2hms(ra) + " " + WCS.deg2dms(dec))
+
+        def get_xy_loc(x_pos, y_pos):
+            clipboard = QApplication.clipboard()
+            clipboard.setText(str(x_pos) + " " + str(y_pos))
 
         self.ui.imageWidget.mousePressEvent = callback
 

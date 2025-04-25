@@ -2,12 +2,13 @@ import cv2
 import numpy as np
 from PySide6.QtGui import QPixmap
 
-def segmentation(im: np.ndarray, thr=-5):
+def segmentation(im: np.ndarray, thr=-5, sigma = 5):
     if im is None:
         return None, [0,0,0]
-    im_filt = cv2.medianBlur(im, 3)
-    # im_filt = im
-    im_filt = cv2.GaussianBlur(im, (5, 5), 2)
+    # im_filt = cv2.medianBlur(im, 3)
+    bgrd = cv2.GaussianBlur(im, (25, 25), sigma)
+    im_filt = cv2.subtract(im, bgrd)
+    # im_filt = cv2.GaussianBlur(im, (5, 5), 2)
     im_th = cv2.adaptiveThreshold(im_filt, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, \
                                   cv2.THRESH_BINARY, 399, thr)
     seg = cv2.connectedComponentsWithStats(im_th)
@@ -20,7 +21,7 @@ def segmentation(im: np.ndarray, thr=-5):
             x_en = seg[2][i][cv2.CC_STAT_WIDTH] + seg[2][i][cv2.CC_STAT_LEFT]
             y_st = seg[2][i][cv2.CC_STAT_TOP]
             y_en = seg[2][i][cv2.CC_STAT_HEIGHT] + seg[2][i][cv2.CC_STAT_TOP]
-            center = calculateStarCentroid(im_filt, (x_st, x_en), (y_st, y_en), "COG")             
+            center = calculateStarCentroid(im_filt, (x_st, x_en), (y_st, y_en), "IWCOG")
             # print("COG",center[0], center[1])
             # print("bin_COG",seg[3][i][0], seg[3][i][1])
             new_star = [seg[2][i, cv2.CC_STAT_AREA], center[0], center[1], np.sqrt(seg[2][i, cv2.CC_STAT_AREA])]
