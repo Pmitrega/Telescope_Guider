@@ -60,17 +60,51 @@ def drawGrid(image: np.ndarray, grid_mer, grid_lat):
     return image
 
 
+def drawScale(image: np.ndarray, asec_per_pixel: float = 4.1):
+    print(image.shape)
+    if image.shape[0] == 960:
+        return image
+    scale_sizes = [20*60, 10*60, 5*60, 2]
+    scale_pix_size = 0
+    selected_scale = 0
+    for scale in scale_sizes:
+        scale_pix_size = scale/asec_per_pixel
+        selected_scale = scale
+        if scale_pix_size < 200:
+            break
+
+    cv2.line(image, [900, 1200], [900, 1200 - int(scale_pix_size)], color=(126, 126, 0), thickness=2)
+    cv2.line(image, [910, 1200 - int(scale_pix_size)], [890, 1200 - int(scale_pix_size)], color=(126, 126, 0), thickness=2)
+    cv2.line(image, [910, 1200], [890, 1200], color=(126, 126, 0), thickness=2)
+
+    #subscale
+    divisions = 10
+    for i in range(1, divisions):
+        cv2.line(image, [905, 1200 - int(scale_pix_size/10 * i)], [895, 1200 - int(scale_pix_size/10 * i)], color=(126, 126, 0), thickness=2)
+
+    # Create a transparent image (single-channel for text)
+    text_img = np.zeros((40, 60, 3), dtype=np.uint8)
+    # Put text on the imag
+    cv2.putText(text_img, f"{int(selected_scale/60)}\'",(0, 32), cv2.FONT_HERSHEY_SIMPLEX,0.7, color=(126, 126, 0), thickness=1, lineType=cv2.LINE_AA)
+    text_img = cv2.rotate(text_img, cv2.ROTATE_90_CLOCKWISE)
+    text_img = cv2.flip(text_img, 1)
+    h, w = text_img.shape[:2]
+    x_offset, y_offset = 850, 1160
+    cv2.add(image[y_offset:y_offset + h, x_offset:x_offset + w], text_img, image[y_offset:y_offset + h, x_offset:x_offset + w])
+    # image[y_offset:y_offset + h, x_offset:x_offset + w] = text_img
+    return image
+
+
 def drawSetPoint(image: np.ndarray, setPoint: starCentroid):
     # print((int(setPoint.x_cent),int(setPoint.y_cent)))
     p1 = (int(setPoint.x_cent), 0)
     p2 = (int(setPoint.x_cent), image.shape[0])
-    cv2.line(image, p1 , p2 , (255,0,0),1)
+    cv2.line(image, p1, p2, (255, 0, 0), 1)
     p1 = (0, int(setPoint.y_cent))
     p2 = (image.shape[1], int(setPoint.y_cent))
-    cv2.line(image, p1 , p2 , (255,0,0),1)
-    
-    return image
+    cv2.line(image, p1, p2, (255, 0, 0), 1)
 
+    return image
 
 def transformImage(ui: Ui_MainWindow, image: np.ndarray, tel_controller: TelescopeController) -> np.ndarray:
     transform_type = ui.comboBox_preview.currentText()
@@ -112,7 +146,10 @@ def transformImage(ui: Ui_MainWindow, image: np.ndarray, tel_controller: Telesco
     if ui.checkBox_show_sky_grid.isChecked():
         transformed_image = drawGrid(transformed_image, ui.grid_mer, ui.grid_lat)
 
-    if True: # show setpoint
+    if ui.checkBox_show_set_point.isChecked(): # show setpoint
         transformed_image = drawSetPoint(transformed_image, tel_controller.go_to_loc)
+
+    if True: # show setpoint
+        transformed_image = drawScale(transformed_image)
 
     return transformed_image

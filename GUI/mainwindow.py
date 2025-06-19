@@ -23,6 +23,29 @@ from src.logger import Logger
 
 from datetime import datetime
 
+def deg2dms(degrees_float):
+    degrees = int(degrees_float)
+    minutes_float = abs(degrees_float - degrees) * 60
+    minutes = int(minutes_float)
+    seconds = round((minutes_float - minutes) * 60, 2)
+
+    # Handle negative values for proper formatting
+    sign = '-' if degrees_float < 0 else ''
+
+    return f"{sign}{abs(degrees)}° {minutes}' {seconds}\""
+
+
+def deg2hms(degrees_float):
+    total_hours = degrees_float / 15.0
+    hours = int(total_hours)
+    minutes_float = abs(total_hours - hours) * 60
+    minutes = int(minutes_float)
+    seconds = round((minutes_float - minutes) * 60, 2)
+
+    # Handle negative values for proper formatting
+    sign = '-' if degrees_float < 0 else ''
+
+    return f"{sign}{abs(hours)}h {minutes}m {seconds}s"
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -42,7 +65,7 @@ class MainWindow(QMainWindow):
         self.errors_y = []
         self.ctrl_ra = []
         self.ctrl_dec = []
-
+        self.transformed_image = None
         self.attachImageMouseClick()
         self.initializePlots()
         self.timer_image_update = QTimer()
@@ -79,16 +102,29 @@ class MainWindow(QMainWindow):
         self.ui.progressBar_capture_dark.setValue(0)
         self.ui.progressBar_capture_dark.setFormat("Taken image 0 out of 10")
 
+    def reselectGuidingStar(self):
+        self.telescope_controller.find_new_ref = True
     def setDisplayedImage(self, img: np.ndarray):
         transformed = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
         transformed = transformImage(self.ui, transformed, self.telescope_controller)
-        cv2.circle(transformed, self.circ_center, 20, color=(255, 255, 0))
+        self.transformed_image = transformed
+        # cv2.circle(transformed, self.circ_center, 20, color=(255, 255, 0))
         transformed = cv2.resize(transformed, (self.ui.imageWidget.height(), self.ui.imageWidget.width()))
 
         self.ui.imageWidget.setImage(transformed, levels=(0, 256))
         hist = np.histogram(img, 256, range=(0, 65536))
         self.ui.histogramWidget.clear()
-        self.ui.histogramWidget.plot(hist[0], hist[1][0:-1])
+        self.ui.histogramWidget.plot(hist[0], hist[1][1:])
+        # import csv
+        #
+        # counts = hist[0]
+        # bin_starts = hist[1][1:]
+        #
+        # with open("histogram.csv", mode="w", newline="") as file:
+        #     writer = csv.writer(file)
+        #     writer.writerow(["Bin_Start", "Count"])  # Nagłówki kolumn
+        #     for bin_start, count in zip(bin_starts, counts):
+        #         writer.writerow([int(bin_start), count])
 
     def addErrorX(self, err_x):
         self.errors_x.append(err_x)
@@ -148,6 +184,9 @@ class MainWindow(QMainWindow):
         if self.mqtt_handler.image_ready:
             self.telescope_controller.sky_dec_vect = self.mqtt_handler.sky_dec_vect
             self.telescope_controller.sky_ra_vect = self.mqtt_handler.sky_ra_vect
+            sky_ra_vect = self.mqtt_handler.sky_ra_vect
+            self.telescope_controller.sky_rot_angle = np.atan2(sky_ra_vect[0]/np.sqrt(sky_ra_vect[0]**2 + sky_ra_vect[1]**2), sky_ra_vect[1]/np.sqrt(sky_ra_vect[0]**2 + sky_ra_vect[1]**2)) * 180 / np.pi + 90
+
             self.mqtt_handler.image_ready = False
             if self.capture_dark is True:
                 if self.capture_dark_it == 0:
@@ -169,6 +208,9 @@ class MainWindow(QMainWindow):
                 return
             #calibrate with dark frame
             im = cv2.subtract(self.mqtt_handler.image, self.dark_frame)
+            if self.ui.checkBox_save_raw.isChecked():
+                path = "./saved/" + self.ui.lineEdit_rec_title.text() + ".png"
+                cv2.imwrite(path, im)
             transformed = cv2.rotate(im, cv2.ROTATE_90_CLOCKWISE)
             run_auto = self.ui.radioButton_auto_speed.isChecked() and self.ui.checkBox_startGuiding.isChecked()
             test_run = False
@@ -176,15 +218,29 @@ class MainWindow(QMainWindow):
                 run_auto = False
 
             self.telescope_controller.genNewImage(transformed, 1000, run_auto)
-            print(self.telescope_controller.getGuidingStarDecHr())
+            tel_pos = self.telescope_controller.getTelescopePos()
+            star_pos = self.telescope_controller.getGuidingStarDecHr()
+            self.telescope_controller.gd_star_loc_init = self.telescope_controller.gd_star_loc_init + 0.0041666
+            ctrl_dec = self.telescope_controller.controller.FF_PID_controller.get_declination_from_hr_angle(self.telescope_controller.gd_star_loc_init)
+            ctrl_hr = self.telescope_controller.controller.FF_PID_controller.get_tel_hr_angle(
+                self.telescope_controller.gd_star_loc_init)
+            try:
+                pass
+                #print(deg2dms(ctrl_dec), deg2hms(ctrl_hr))
+            except:
+                pass
+
+            self.logger.logMotorAndSky(tel_pos["hr"], tel_pos["dec"], star_pos["hr"], star_pos["dec"])
             detected_centroids = int(self.ui.lineEdit_detected.text())
             if self.ui.checkBox_auto_sensivity.isChecked():
                 if detected_centroids > 30:
                     curr_sens = self.ui.horizontalSlider_sens.value()
-                    self.ui.horizontalSlider_sens.setValue(curr_sens - 1)
+                    if curr_sens > -30:
+                        self.ui.horizontalSlider_sens.setValue(curr_sens - 1)
                 elif detected_centroids < 15:
                     curr_sens = self.ui.horizontalSlider_sens.value()
-                    self.ui.horizontalSlider_sens.setValue(curr_sens + 1)
+                    if curr_sens < - 6:
+                        self.ui.horizontalSlider_sens.setValue(curr_sens + 1)
 
             self.shiftGrid()
             self.ui.grid_shift[0] = self.ui.grid_shift[0] + self.telescope_controller.delta_errx/self.telescope_controller.sec_per_pixel
@@ -295,6 +351,10 @@ class MainWindow(QMainWindow):
             save_action = QAction("Save to clipboard", self)
             save_action.triggered.connect(save_image_to_clipboard)
             context_menu.addAction(save_action)
+            # Dodajemy akcję zapisu do schowka
+            save_action = QAction("Save preview to clipboard", self)
+            save_action.triggered.connect(save_preview_to_clipboard)
+            context_menu.addAction(save_action)
 
             # Dodajemy akcję zapisu do schowka
             save_action = QAction("Copy click equatorial location", self)
@@ -319,6 +379,24 @@ class MainWindow(QMainWindow):
             qimage = QImage(image_data.data, width, height, QImage.Format_Grayscale16)
             pixmap = QPixmap.fromImage(qimage)  # Convert to QPixmap
             clipboard.setPixmap(pixmap)
+
+
+
+        def save_preview_to_clipboard():
+            # Zapisz obraz do schowka
+            clipboard = QApplication.clipboard()
+            if self.transformed_image is not None:
+                image_data = cv2.rotate(self.transformed_image, cv2.ROTATE_90_CLOCKWISE)
+                image_data = cv2.flip(image_data, 1)
+                height, width, channels = image_data.shape
+
+                # Ensure the image is in 8-bit RGB format (uint8)
+                assert channels == 3 and image_data.dtype == np.uint8
+
+                # Convert to QImage using Format_RGB888
+                qimage = QImage(image_data.data, width, height, width * channels, QImage.Format_RGB888)
+                pixmap = QPixmap.fromImage(qimage)  # Convert to QPixmap
+                clipboard.setPixmap(pixmap)
         def get_sky_loc(x_pos, y_pos):
             # Zapisz obraz do schowka
             ra, dec = self.mqtt_handler.wcs.pixel_to_world(x_pos - self.ui.grid_shift[1], y_pos - self.ui.grid_shift[0])

@@ -9,8 +9,9 @@ def segmentation(im: np.ndarray, thr=-5, sigma = 5):
     bgrd = cv2.GaussianBlur(im, (25, 25), sigma)
     im_filt = cv2.subtract(im, bgrd)
     # im_filt = cv2.GaussianBlur(im, (5, 5), 2)
-    im_th = cv2.adaptiveThreshold(im_filt, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, \
-                                  cv2.THRESH_BINARY, 399, thr)
+    # im_th = cv2.adaptiveThreshold(im_filt, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, \
+    #                               cv2.THRESH_BINARY, 399, thr)
+    _, im_th = cv2.threshold(im_filt, -thr, 255, cv2.THRESH_BINARY)
     seg = cv2.connectedComponentsWithStats(im_th)
     im_ret = cv2.cvtColor(im.astype(np.uint8), cv2.COLOR_GRAY2RGB)
     current_star_centroids = []
@@ -22,9 +23,12 @@ def segmentation(im: np.ndarray, thr=-5, sigma = 5):
             y_st = seg[2][i][cv2.CC_STAT_TOP]
             y_en = seg[2][i][cv2.CC_STAT_HEIGHT] + seg[2][i][cv2.CC_STAT_TOP]
             center = calculateStarCentroid(im_filt, (x_st, x_en), (y_st, y_en), "IWCOG")
+            sat_pix = np.count_nonzero(im[y_st:y_en, x_st:x_en] == 255)
+            brigthness = np.sum(im_filt[y_st:y_en, x_st:x_en]) / 255
             # print("COG",center[0], center[1])
             # print("bin_COG",seg[3][i][0], seg[3][i][1])
-            new_star = [seg[2][i, cv2.CC_STAT_AREA], center[0], center[1], np.sqrt(seg[2][i, cv2.CC_STAT_AREA])]
+            # new_star = [seg[2][i, cv2.CC_STAT_AREA], center[0], center[1], np.sqrt(seg[2][i, cv2.CC_STAT_AREA]), sat_pix]
+            new_star = [brigthness, center[0], center[1], np.sqrt(seg[2][i, cv2.CC_STAT_AREA]), sat_pix]
             #new_star = [seg[2][i, cv2.CC_STAT_AREA], seg[3][i][0], seg[3][i][1], np.sqrt(seg[2][i, cv2.CC_STAT_AREA])]
             # print(new_star[3])
             current_star_centroids.append(new_star)
@@ -45,7 +49,7 @@ def segmentation(im: np.ndarray, thr=-5, sigma = 5):
 
 
 def requestStarsLocation(star_list: list, mqtt_client, ui):
-    print(len(star_list))
+    # print(len(star_list))
     solver_star_list_req = []
     for el in star_list:
         solver_star_list_req.append([round(float(el[1]),2), round(float(el[2]),2)])

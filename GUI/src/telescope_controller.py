@@ -63,13 +63,14 @@ class starCentroid:
         self.brightness = brightness
         self.x_cent = x_cent
         self.y_cent = y_cent
+        self.sat_pix = 0
 
     def getDistance(self, star):
         return ((self.x_cent - star.x_cent) ** 2 + (self.y_cent - star.y_cent) ** 2) ** (1 / 2)
 
     def does_match(self, star):
         distance = self.getDistance(star)
-        if distance < 10:
+        if distance < 30:
             return True
         else:
             return False
@@ -100,17 +101,21 @@ class TelescopeController:
         self.reference_star_current = None
         self.time_interval = -1
         self.sec_per_pixel = 4.1
-        self.camera_rotation = 45 / 180 * math.pi
+        self.camera_rotation = 0 / 180 * math.pi
         self.telescope_ra_vect = (math.cos(self.camera_rotation), math.sin(self.camera_rotation))
         self.telescope_dec_vect = (-math.sin(self.camera_rotation), math.cos(self.camera_rotation))
         self.sky_ra_vect = (1, 0)
         self.sky_dec_vect = (0, 1)
+        self.gd_star_wrld2pix_matr = [[1,0],[0,1]]
+        self.sky_rot_angle = np.atan2(self.sky_ra_vect[0]/np.sqrt(self.sky_ra_vect[0]**2 + self.sky_ra_vect[1]**2), self.sky_ra_vect[1]/np.sqrt(self.sky_ra_vect[0]**2 + self.sky_ra_vect[1]**2)) * 180 / np.pi
+        self.motor_rot_angle = 0
         self.telescope_dec_angle = 70
         self.go_to_loc = starCentroid(0, 960 / 2, 1280 / 2)
         self.setSetPoint(960 / 2, 1280 / 2)
         self.mode = "IDEN_TEL_RA"
         self.run_ra_ident = False
         self.run_ra_ident_iter = 0
+        self.find_new_ref = False
         self.run_dec_ident = False
         self.run_dec_ident_iter = 0
         self.last_error = (0, 0)
@@ -122,6 +127,7 @@ class TelescopeController:
         self.curr_ctrl = [0, 0]
         self.error_x_int = 0
         self.error_y_int = 0
+        self.Dec_Delta = 0
         self.last_errx = None
         self.last_erry = None
         self.delta_errx = 0
@@ -131,8 +137,15 @@ class TelescopeController:
         self.controller = Controller(0.6, 0, 0, np.array([[1, 0], [0, 1]]))
         self.guiding_star_dec = 0
         self.guiding_star_ra = 0
+        self.gd_star_loc_init = 0
         self.telescope_ra_offset = 0
         self.telescope_dec_offset = 0
+        self.ra_ident_points_x = []
+        self.ra_ident_points_y = []
+        self.dec_ident_points_x = []
+        self.dec_ident_points_y = []
+        self.ra_ident_beg_point = (0,0)
+        self.dec_ident_beg_point = (0,0)
 
     def log_info(self, dec_speed, ra_speed, iterval):
         x = self.reference_star_current.x_cent
@@ -155,8 +168,8 @@ class TelescopeController:
             if self.last_errx is not None and self.last_erry is not None:
                 self.delta_errx = (err[0] - self.last_errx)
                 self.delta_erry = (err[1] - self.last_erry)
-                self.delta_errx = self.delta_errx if abs(self.delta_errx) < 20 else 0
-                self.delta_erry = self.delta_erry if abs(self.delta_erry) < 20 else 0
+                self.delta_errx = self.delta_errx if abs(self.delta_errx) < 80 and abs(self.delta_erry) < 80 else 0
+                self.delta_erry = self.delta_erry if abs(self.delta_errx) < 80 and abs(self.delta_erry) < 80 else 0
 
             self.last_errx = err[0]
             self.last_erry = err[1]
@@ -167,47 +180,113 @@ class TelescopeController:
                 self.log_info(speeds[0], speeds[1], time_interval)
 
     def runIdent(self):
+        ra_ident_count = 11
+        dec_ident_count = 11
+        elements_excluded = 4
         if self.reference_star_current is not None and self.reference_star_initial is not None:
             err = self.getErrorToRefStar(self.go_to_loc)
             if self.run_dec_ident:
                 if self.run_dec_ident_iter == 0:
-                    self.setDecSpeed(1000)
-                elif self.run_dec_ident_iter == 1:
-                    pass
-                elif self.run_dec_ident_iter == 4:
+                    self.setDecSpeed(500)
+                    self.setRaSpeed(0)
+                    self.dec_ident_points_x = []
+                    self.dec_ident_points_y = []
+                    self.dec_ident_beg_point = (err[0], err[1])
+                elif self.run_dec_ident_iter < dec_ident_count:
+                    self.dec_ident_points_x.append(self.dec_ident_beg_point[0] - err[0])
+                    self.dec_ident_points_y.append(self.dec_ident_beg_point[1] - err[1])
+                elif self.run_dec_ident_iter == dec_ident_count:
                     try:
-                        ident_dec = (self.last_error[0] - err[0], self.last_error[1] - err[1])
+                        coeff_x = np.polyfit(np.arange(1, len(self.dec_ident_points_x[elements_excluded:]) + 1), self.dec_ident_points_x[elements_excluded:], 1)
+                        coeff_y = np.polyfit(np.arange(1, len(self.dec_ident_points_y[elements_excluded:]) + 1), self.dec_ident_points_y[elements_excluded:], 1)
+                        ident_dec = (coeff_x[0], coeff_y[0])
+                        print("dec_y: ", self.dec_ident_points_y)
+                        print("dec_x: ", self.dec_ident_points_x)
+                        #ident_dec = (self.last_error[0] - err[0], self.last_error[1] - err[1])
                         amp = math.sqrt(ident_dec[0] ** 2 + ident_dec[1] ** 2)
                         self.diff_amp = amp
                         self.telescope_dec_vect = (-ident_dec[0] / amp, -ident_dec[1] / amp)
                         # self.telescope_ra_vect = (-ident_dec[1] / amp, ident_dec[0] / amp)
                         self.run_dec_ident = False
                         self.setDecSpeed(0)
+                        self.setRaSpeed(0)
+                        self.motor_rot_angle = 270 - np.atan2(-ident_dec[0]/amp, ident_dec[1]/amp) * 180/np.pi
+
                     except:
                         print("faied identtification")
                         self.setDecSpeed(0)
+                        self.setRaSpeed(0)
                 self.run_dec_ident_iter += 1
                 self.last_error = err[:]
+
                 return
 
             if self.run_ra_ident:
                 err = self.getErrorToRefStar(self.go_to_loc)
                 if self.run_ra_ident_iter == 0:
-                    self.setRaSpeed(1000)
-                elif self.run_ra_ident_iter == 1:
-                    pass
-                elif self.run_ra_ident_iter == 4:
-                    ident_ra = (self.last_error[0] - err[0], self.last_error[1] - err[1])
+                    self.setRaSpeed(500)
+                    self.setDecSpeed(0)
+                    self.ra_ident_points_x = []
+                    self.ra_ident_points_y = []
+                    self.ra_ident_beg_point = (err[0], err[1])
+                elif self.run_ra_ident_iter  < ra_ident_count:
+                    self.ra_ident_points_x.append(self.ra_ident_beg_point[0] - err[0])
+                    self.ra_ident_points_y.append(self.ra_ident_beg_point[1] - err[1])
+                elif self.run_ra_ident_iter == ra_ident_count:
+                    coeff_x = np.polyfit(np.arange(1, len(self.ra_ident_points_x[elements_excluded:]) + 1),
+                                         self.ra_ident_points_x[elements_excluded:], 1)
+                    coeff_y = np.polyfit(np.arange(1, len(self.ra_ident_points_y[elements_excluded:]) + 1),
+                                         self.ra_ident_points_y[elements_excluded:], 1)
+                    ident_ra = (coeff_x[0], coeff_y[0])
+                    print("ra_y: ", self.ra_ident_points_y)
+                    print("ra_x: ", self.ra_ident_points_x)
+                    # print("ident_ra_now: ", ident_ra)
+                    # ident_ra = (self.last_error[0] - err[0], self.last_error[1] - err[1])
+                    # print("ident_ra_last: ", ident_ra)
+
                     amp = math.sqrt(ident_ra[0] ** 2 + ident_ra[1] ** 2)
+                    # print(amp)
+                    # print(self.diff_amp)
                     cos_ident = amp / self.diff_amp
+                    self.setDecSpeed(0)
                     self.setRaSpeed(0)
                     if cos_ident < 1:
+                        self.ui.lineEdit_curr_dec.setText(str(math.acos(cos_ident) * 180 / math.pi))
+                        self.dec_deg = math.acos(cos_ident) * 180 / math.pi
                         self.telescope_dec_angle = math.acos(cos_ident) * 180 / math.pi
                         print("identified  angle:", cos_ident)
+
+                        phi = self.sky_rot_angle - self.motor_rot_angle
+                        self.identify_from_dec_phi(self.telescope_dec_angle, self.guiding_star_dec, phi)
+                        gd_star = self.getGuidingStarDecHr()
+                        self.gd_star_loc_init = gd_star["hr"]
+                        Phi = (self.sky_rot_angle - self.motor_rot_angle) * np.pi / 180
+                        dec_t0 = self.dec_deg * np.pi / 180
+                        dec_s = gd_star["dec"] * np.pi / 180
+                        Delta = np.acos(np.cos(dec_t0) * np.cos(dec_s) + np.sin(dec_t0) * np.sin(dec_s) * np.cos(Phi))
+
+                        licz = np.cos(dec_t0) - np.cos(dec_s) * np.cos(Delta)
+                        mian = np.sin(dec_s) * np.sin(Delta)
+                        if (mian != 0) and licz / mian < 1:
+                            C = np.acos(licz / mian) * 180 / np.pi
+                            if Phi > 0:
+                                gamma = gd_star["hr"] - C
+                            else:
+                                gamma = gd_star["hr"] + C
+                            print("Setting gamma and Delta to:", gamma, Delta * 180 / np.pi )
+                            init_x, init_y = self.mqtt_handler.wcs.word_to_pixel(gd_star["hr"], gd_star["dec"])
+                            ra_shift_x, ra_shift_y = self.mqtt_handler.wcs.word_to_pixel(gd_star["hr"] + 1/3600, gd_star["dec"])
+                            dec_shift_x, dec_shift_y = self.mqtt_handler.wcs.word_to_pixel(gd_star["hr"], gd_star["dec"] + 1/3600)
+                            self.gd_star_wrld2pix_matr = [[init_x - ra_shift_x, init_x - dec_shift_x],
+                                                          [init_y - ra_shift_y, init_y - dec_shift_y]]
+                            self.update_controller()
+                            self.controller.FF_PID_controller.gamma = gamma
+                            self.controller.FF_PID_controller.Delta = Delta * 180 / np.pi
+                            self.controller.FF_PID_controller.dec_star = gd_star["dec"]
                     self.telescope_ra_vect = (-ident_ra[0] / amp, -ident_ra[1] / amp)
                     self.run_ra_ident = False
                     self.run_ident = False
-                    self.update_controller()
+                    #
 
                 self.run_ra_ident_iter += 1
                 self.last_error = err[:]
@@ -222,6 +301,7 @@ class TelescopeController:
         A = np.array([[dec_x, ra_x * Pg],
                       [dec_y, ra_y * Pg]])
         self.controller = Controller(0.6, 0.0, 0.0, A)
+        self.controller.WCS_PID_controller.update_matrices(A_matr=A, WCS_matr=self.gd_star_wrld2pix_matr)
 
     def setControl(self, error_x, error_y, enabled: bool):
         self.error_x_int += error_x
@@ -236,30 +316,26 @@ class TelescopeController:
         elif self.error_x_int < -250:
             self.error_x_int = -250
 
-        # K_gain = 0.6
-        # I_gain = 0.0000
-        # Ra_ss_ctrl = -144
-        # tot_x = error_x * K_gain + self.error_x_int * I_gain
-        # tot_y = error_y * K_gain + self.error_y_int * I_gain
+        self.controller.setPIDGains(self.ui.doubleSpinBox_P_gain.value(), self.ui.doubleSpinBox_I_gain.value(), self.ui.doubleSpinBox_D_gain.value())
+        if self.ui.comboBox_controller.currentText() == "PID":
+            dec_control, ra_control = self.controller.PID_controller.get_control(error_x, error_y)
+        elif self.ui.comboBox_controller.currentText() == "Adaptive_PID":
+            dec_control, ra_control = self.controller.FF_PID_Adaptive_Avr_controller.get_control(error_x, error_y)
+        elif self.ui.comboBox_controller.currentText() == "WCS_FF_PID":
+            dec_control, ra_control = self.controller.WCS_PID_controller.get_control(error_x, error_y)
 
-        # B = np.array([tot_x, tot_y])
-        # sol = np.linalg.solve(A, B)
-        # sol = sol / np.linalg.norm(sol) #* (tot_x ** 2 + tot_y ** 2) ** (1 / 2) * K_gain
+        if dec_control > 1000:
+            dec_control = 1000
+        elif dec_control < -1000:
+            dec_control = -1000
 
-        # dec_control = sol[0]
-        # ra_control = sol[1]
-        # if dec_control > 1500:
-        #     dec_control = 1500
-        # elif dec_control < -1500:
-        #     dec_control = -1500
+        if ra_control > 1000:
+            ra_control = 1000
+        elif ra_control < -1000:
+            ra_control = -1000
 
-        # if ra_control > 1500:
-        #     ra_control = 1500
-        # elif ra_control < -1500:
-        #     ra_control = -1500
-        # print("ra ctrl:",-int(ra_control))
-        # print("dec ctrl:",-int(dec_control))
-        dec_control, ra_control = self.controller.FF_PID_controller.get_control(error_x, error_y)
+        # print(dec_control)
+        # print(ra_control)
         ra_control = - ra_control
         dec_control = - dec_control
         if enabled:
@@ -267,10 +343,6 @@ class TelescopeController:
             self.setDecSpeed(dec_control)
             self.controls_dec.append(dec_control)
             self.controls_ra.append(ra_control)
-            if len(self.controls_ra) > 100:
-                pass
-                # print("dec avr: ", np.average(self.controls_dec[-100:]))
-                # print("ra avr: ", np.average(self.controls_ra[-100:]))
 
         self.curr_ctrl = [ra_control, dec_control]
         return [ra_control, dec_control]
@@ -303,9 +375,11 @@ class TelescopeController:
         current_star_centroids = []
         for i in range(len(star_centroids)):
             new_star = starCentroid(star_centroids[i][0], star_centroids[i][1], star_centroids[i][2])
+            new_star.sat_pix = star_centroids[i][4]
             current_star_centroids.append(new_star)
         found_reference = False
-        if not self.last_star_centroids:
+        if not self.last_star_centroids or self.find_new_ref is True:
+            self.find_new_ref = False
             self.last_star_centroids = current_star_centroids[:]
             self.find_new_reference_star(current_star_centroids)
             print("initial reference star:", self.reference_star_initial)
@@ -330,12 +404,27 @@ class TelescopeController:
             # f.close()
 
     def find_new_reference_star(self, centroids):
-        min_br = 0
+        x_center = 960 / 2
+        y_center = 1280 / 2
+
+        best_weight = -math.inf
+        best_centroid = starCentroid(-1, -1, -1)
+
         for star in centroids:
-            if star.brightness > min_br:
-                min_br = star.brightness
-                self.reference_star_initial = star
-                self.reference_star_current = star
+            if star.brightness > 2:
+                distance_sq = (star.x_cent - x_center) ** 2 + (star.y_cent - y_center) ** 2
+                weight = star.brightness * 100 - 1/2 * np.sqrt(distance_sq) - star.sat_pix * 250
+                # print("BRIGH_W = ", star.brightness * 100 )
+                # print("DIS_W = ", np.sqrt(distance_sq))
+                # print("SAT_W = ", star.sat_pix * 250)
+                # print("TOTAL = ", weight)
+
+                if weight > best_weight:
+                    best_weight = weight
+                    best_centroid = star
+
+        self.reference_star_initial = best_centroid
+        self.reference_star_current = best_centroid
 
     def getTrackedStar(self) -> starCentroid:
         # return starCentroid(500,500,500)
@@ -351,8 +440,14 @@ class TelescopeController:
         self.telescope_dec_offset = self.mqtt_handler.telescope_dec - dec_pos
 
     def getTelescopePos(self):
-        return {"ra": self.mqtt_handler.telescope_ra - self.telescope_ra_offset,
+        return {"hr": self.mqtt_handler.telescope_ra - self.telescope_ra_offset,
                 "dec": self.mqtt_handler.telescope_dec - self.telescope_dec_offset}
+
+    def identify_from_dec_phi(self, dec, phi, dec_star):
+        self.ui.lineEdit_curr_dec.setText(str(dec))
+        self.ui.lineEdit_curr_dec_delta.setText(str(np.arccos(np.cos(dec) * np.cos(dec_star) + np.sin(dec) * np.sin(dec_star) * np.cos(phi)) * 180 / np.pi))
+        self.ui.lineEdit_curr_hr.setText(str(phi))
+
 
     def getGuidingStarDecHr(self):
         if self.reference_star_current is not None:
@@ -367,7 +462,7 @@ class TelescopeController:
             ha = float("NaN")
             dec = float("NaN")
 
-        return {"ha":ha, "dec":dec}
+        return {"hr":ha, "dec":dec}
 
 
 if __name__ == "__main__":

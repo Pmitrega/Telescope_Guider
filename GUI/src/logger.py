@@ -22,12 +22,19 @@ class Logger:
         self.x_SP_path = "./logs/" + date + "/" + time_dir + "/" + formatted_time + "_x_SP.csv"
         self.y_SP_path = "./logs/" + date + "/" + time_dir + "/" + formatted_time + "_y_SP.csv"
         self.skypatch_path = "./logs/" + date + "/" + time_dir + "/" + formatted_time + "_skypatch.csv"
+        self.motor_sky_pos = "./logs/" + date + "/" + time_dir + "/" + formatted_time + "_motor_and_sky.csv"
         self.loc_capt_time = None
 
     def logRaCtrl(self, raCtrl: float):
         with open(self.ra_ctrl_path, "a") as file:
             t_diff = datetime.now() - self.start_time
             new_line = f"{raCtrl:.{3}f}, {t_diff.total_seconds()}\n"
+            file.write(new_line)
+
+    def logMotorAndSky(self, tel_hr, tel_dec, sky_hr, sky_dec):
+        with open(self.motor_sky_pos , "a") as file:
+            t_diff = datetime.now() - self.start_time
+            new_line = f"{tel_hr:.{5}f}, {tel_dec:.{5}f}, {sky_hr:.{5}f}, {sky_dec:.{5}f}, {t_diff.total_seconds()}\n"
             file.write(new_line)
 
     def logDecCtrl(self, decCtrl: float):
