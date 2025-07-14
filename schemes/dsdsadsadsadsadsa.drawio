@@ -1,0 +1,102 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 OPR/119.0.0.0" version="28.0.4">
+  <diagram name="Strona-1" id="_tGODj7FOIDmW_PYqf6r">
+    <mxGraphModel dx="1717" dy="1001" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="3AdQC0iYvYuLWcXGcJ9l-1" value="" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="50" width="610" height="580" as="geometry" />
+        </mxCell>
+        <mxCell id="3AdQC0iYvYuLWcXGcJ9l-2" value="Capture and Share" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=19;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="298" y="60" width="254" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="3AdQC0iYvYuLWcXGcJ9l-3" value="SENDER/READER THREAD" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="320" y="465" width="220" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="3AdQC0iYvYuLWcXGcJ9l-6" value="" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="98.5" y="710" width="220" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="3AdQC0iYvYuLWcXGcJ9l-10" value="SHARED MEMORY:&lt;div&gt;guider/image&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="92.5" y="722.5" width="220" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="3AdQC0iYvYuLWcXGcJ9l-11" value="&lt;ul&gt;&lt;li&gt;struct ImageInfo&lt;/li&gt;&lt;li&gt;image buffer&lt;/li&gt;&lt;/ul&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="98.5" y="752.5" width="176" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="3AdQC0iYvYuLWcXGcJ9l-12" value="CAMERA HANDLER THREAD" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="320" y="230" width="220" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="3AdQC0iYvYuLWcXGcJ9l-18" value="" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="322.5" y="710" width="220" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="3AdQC0iYvYuLWcXGcJ9l-19" value="SHARED MEMORY:&lt;div&gt;guider/camera_controls&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="322.5" y="722.5" width="220" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="3AdQC0iYvYuLWcXGcJ9l-20" value="&lt;ul&gt;&lt;li&gt;struct CameraInfo&lt;/li&gt;&lt;/ul&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="332" y="742.5" width="176" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="3AdQC0iYvYuLWcXGcJ9l-21" value="" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="547.5" y="710" width="220" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="3AdQC0iYvYuLWcXGcJ9l-22" value="SHARED MEMORY:&lt;div&gt;guider/camera_setup&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="552.5" y="722.5" width="220" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="3AdQC0iYvYuLWcXGcJ9l-23" value="&lt;ul&gt;&lt;li&gt;struct CameraSetup&lt;/li&gt;&lt;/ul&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="560" y="742.5" width="176" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="3AdQC0iYvYuLWcXGcJ9l-24" value="Holds information of id, resolution, controls and ranges" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="330" y="790" width="180" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="3AdQC0iYvYuLWcXGcJ9l-25" value="Holds info of writable options (gain, exposure ...)" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="567.5" y="790" width="180" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="3AdQC0iYvYuLWcXGcJ9l-26" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="3AdQC0iYvYuLWcXGcJ9l-3" target="3AdQC0iYvYuLWcXGcJ9l-6">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="550" y="620" as="sourcePoint" />
+            <mxPoint x="600" y="570" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="375" y="650" />
+              <mxPoint x="210" y="650" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3AdQC0iYvYuLWcXGcJ9l-27" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="3AdQC0iYvYuLWcXGcJ9l-3" target="3AdQC0iYvYuLWcXGcJ9l-18">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="550" y="620" as="sourcePoint" />
+            <mxPoint x="600" y="570" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3AdQC0iYvYuLWcXGcJ9l-28" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.75;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="3AdQC0iYvYuLWcXGcJ9l-21" target="3AdQC0iYvYuLWcXGcJ9l-3">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="550" y="620" as="sourcePoint" />
+            <mxPoint x="600" y="570" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="658" y="670" />
+              <mxPoint x="485" y="670" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3AdQC0iYvYuLWcXGcJ9l-31" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="3AdQC0iYvYuLWcXGcJ9l-12" target="3AdQC0iYvYuLWcXGcJ9l-3">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="490" y="560" as="sourcePoint" />
+            <mxPoint x="540" y="510" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3AdQC0iYvYuLWcXGcJ9l-33" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;entryX=0.75;entryY=1;entryDx=0;entryDy=0;exitX=0.75;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="3AdQC0iYvYuLWcXGcJ9l-3" target="3AdQC0iYvYuLWcXGcJ9l-12">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="490" y="560" as="sourcePoint" />
+            <mxPoint x="540" y="510" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3AdQC0iYvYuLWcXGcJ9l-34" value="Camera setup" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="492.5" y="370" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="3AdQC0iYvYuLWcXGcJ9l-35" value="Camera info" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="312.5" y="400" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="3AdQC0iYvYuLWcXGcJ9l-36" value="image" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="312.5" y="360" width="60" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
